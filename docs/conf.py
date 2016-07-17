@@ -62,7 +62,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'knittingpattern'
+project = 'AYABInterface'
 copyright = '2016, AllYarnsAreBeautiful'
 author = 'AllYarnsAreBeautiful'
 
