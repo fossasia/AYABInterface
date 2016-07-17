@@ -11,7 +11,7 @@ install:
 - TAG_NAME=v$PACKAGE_VERSION
 # install from the zip file to see if files were forgotten
 - python3 setup.py sdist --dist-dir=dist --formats=zip
-- ( cd dist ; python3 -m pip install knittingpattern-${PACKAGE_VERSION}.zip )
+- ( cd dist ; python3 -m pip install AYABInterface-${PACKAGE_VERSION}.zip )
 # install the test requirements
 - python3 -m pip install -r test-requirements.txt
 before_script:
@@ -25,11 +25,11 @@ before_script:
 script:
 # test with pep8
 # add coverage for python 3.3 and above
-- py.test --cov=knittingpattern --pep8
+- py.test --cov=AYABInterface --pep8
 # test import form everywhere
-- ( cd / && python3 -c "import knittingpattern;print(\"imported\")" )
+- ( cd / && python3 -c "import AYABInterface;print(\"imported\")" )
 # run tests from installation
-- "( cd / && py.test --pyargs knittingpattern )"
+- "( cd / && py.test --pyargs AYABInterface )"
 # test that the tag represents the version
 # https://docs.travis-ci.com/user/environment-variables/#Default-Environment-Variables
 - ( if [ -n "$TRAVIS_TAG" ]; then if [ $TAG_NAME != $TRAVIS_TAG ]; then echo "This tag is for the wrong version. Got \"$TRAVIS_TAG\" expected \"$TAG_NAME\"."; exit 1; fi; fi; )
@@ -51,4 +51,4 @@ deploy:
   on:
     tags: true
     distributions: sdist bdist_wininst bdist_wheel
-    repo: AllYarnsAreBeautiful/knittingpattern
+    repo: AllYarnsAreBeautiful/AYABInterface

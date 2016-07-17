@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# knittingpattern documentation build configuration file, created by
+# AYABInterface documentation build configuration file, created by
 # sphinx-quickstart on Thu Jun 23 09:49:51 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -261,7 +261,7 @@ html_search_language = 'en'
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'knittingpatterndoc'
+htmlhelp_basename = 'AYABInterfacedoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -287,7 +287,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'knittingpattern.tex', 'knittingpattern Documentation',
+    (master_doc, 'AYABInterface.tex', 'AYABInterface Documentation',
      'AllYarnsAreBeautiful', 'manual'),
 ]
 
