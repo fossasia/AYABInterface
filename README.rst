@@ -29,9 +29,9 @@ AYABInterface
    :target: https://pypi.python.org/pypi/AYABInterface#downloads
    :alt: Downloads from pypi   
 
-.. image:: https://readthedocs.org/projects/AYABInterface/badge/?version=latest
-   :target: https://AYABInterface.readthedocs.org
-   :alt: Read the Documentation
+.. image:: https://readthedocs.org/projects/ayabinterface/badge/?version=latest
+   :target: http://ayabinterface.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 .. image:: https://landscape.io/github/AllYarnsAreBeautiful/AYABInterface/master/landscape.svg?style=flat
    :target: https://landscape.io/github/AllYarnsAreBeautiful/AYABInterface/master
