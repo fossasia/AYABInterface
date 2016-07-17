@@ -1,0 +1,3 @@
+recursive-include AYABInterface *.py
+include *requirements.txt
+include LICENSE

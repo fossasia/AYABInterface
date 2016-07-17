@@ -1,0 +1,47 @@
+AYABInterface
+=============
+
+.. image:: https://travis-ci.org/AllYarnsAreBeautiful/AYABInterface.svg
+   :target: https://travis-ci.org/AllYarnsAreBeautiful/AYABInterface
+   :alt: Build Status
+   
+.. image:: https://ci.appveyor.com/api/projects/status/c1983ovsc8thlhvi?svg=true
+   :target: https://ci.appveyor.com/project/AllYarnsAreBeautiful/AYABInterface
+   :alt: AppVeyor CI build status (Windows)
+   
+.. image:: https://codeclimate.com/github/AllYarnsAreBeautiful/AYABInterface/badges/gpa.svg
+   :target: https://codeclimate.com/github/AllYarnsAreBeautiful/AYABInterface
+   :alt: Code Climate
+
+.. image:: https://codeclimate.com/github/AllYarnsAreBeautiful/AYABInterface/badges/coverage.svg
+   :target: https://codeclimate.com/github/AllYarnsAreBeautiful/AYABInterface/coverage
+   :alt: Test Coverage
+
+.. image:: https://codeclimate.com/github/AllYarnsAreBeautiful/AYABInterface/badges/issue_count.svg
+   :target: https://codeclimate.com/github/AllYarnsAreBeautiful/AYABInterface
+   :alt: Issue Count
+
+.. image:: https://badge.fury.io/py/AYABInterface.svg
+   :target: https://pypi.python.org/pypi/AYABInterface
+   :alt: Issue Count
+   
+.. image:: https://img.shields.io/pypi/dm/AYABInterface.svg
+   :target: https://pypi.python.org/pypi/AYABInterface#downloads
+   :alt: Downloads from pypi   
+
+.. image:: https://readthedocs.org/projects/AYABInterface/badge/?version=latest
+   :target: https://AYABInterface.readthedocs.org
+   :alt: Read the Documentation
+
+.. image:: https://landscape.io/github/AllYarnsAreBeautiful/AYABInterface/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/AllYarnsAreBeautiful/AYABInterface/master
+   :alt: Code Health
+
+.. image:: https://badge.waffle.io/AllYarnsAreBeautiful/ayab-desktop.svg?label=ready&title=issues%20ready
+   :target: https://waffle.io/AllYarnsAreBeautiful/ayab-desktop
+   :alt: Issues ready to work on
+
+A Python library with the interface to the AYAB shield.
+   
+For installation instructions and more, `see the documentation
+<http://AYABInterface.readthedocs.io/>`__.
