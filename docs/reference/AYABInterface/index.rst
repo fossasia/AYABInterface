@@ -5,3 +5,9 @@ The ``AYABInterface`` Module Reference
    :maxdepth: 2
 
    init
+   actions
+   carriages
+   communication
+   configuration
+   interface
+   machines

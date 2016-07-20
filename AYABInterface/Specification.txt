@@ -1,0 +1,97 @@
+
+
+class Interface()
+
+def  __init__(configuration, AYABCommunication):
+    configuration 
+
+    start needle
+
+    stop needle fuer erste Reihe
+
+    reihen - 200 pixel breites bild aus Farbnummern (0, 1, 2, 3, 4, ...)
+
+    bei welcher reihe geht es los, start offset
+
+    single bed, doppelbett
+
+    Anzahl der Farben
+
+    Maschinentyp auf dem gestrickt wird
+
+AYABCommunication
+
+    Hardware:
+
+    Serial port
+
+
+Zustände/Strickablauf:
+
+    start 
+
+    in: getInfo()    
+
+    Invalid Firmware state else:pre initialize
+
+    pre initialize
+
+    emit: reqStart()
+
+    Warten auf dass der Schlitten am linken Hall-Sensor vorbei kommt.
+
+    Ausgabe: Man soll an den linken Hall-Sensor gehen.
+
+    Emit GUI: nachricht, dass der Schlitten in den Sensor vorbei ist
+
+    initialized
+
+    (1)controller fragt: Get Zeilex
+
+    Antwort 200bit, eventuell mit last-line flag
+
+    Hubt
+
+    weiter mit (1)
+
+    last-line is being knit
+
+    controller sagt Bescheid
+
+    stop
+
+
+- identifikation beim linken, beim rechten nur: da ist ein schlitten, um zählfehler zu vermeiden
+- kann nur jede zweite zeile mit löchern stricken
+
+
+- wo ist der schlitten, links, rechts, in transition: nach links und nach rechts(wo ist zu langsam)
+- Zeile als index in der Liste der Reihen
+- welche farben wurden gestrickt
+- welche farbe muss eingelegt werden
+- ob eine farbe eingelegt werden muss
+- wohin soll der schlitten bewegt werden
+
+    - Zweck: initialisierung, 
+
+    - nach links über hall sensor
+
+    - normal nach links oder rechts schieben
+
+
+
+Extraklasse:
+
+    Löcher - [200 breit] [+2,+1, 0, 0, 0, -1]
+
+                                       -> ->          <--
+
+
+Wishes:
+- infinite mode
+- alle x zeilen mal wieder am Hall-Sensor vorbeifahren
+
+1. ayab
+2. wissen über die maschine
+3., 4 wie man mit dem nutzer redet
+
