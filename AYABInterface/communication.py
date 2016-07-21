@@ -1,5 +1,6 @@
 """This module is used to communicate with the shield.
 
+Requirement: Make objects from binary stuff.
 """
 
 class Communication(object):
