@@ -71,6 +71,8 @@ class ColorChange(ActionOnCarriage):
     
     """The base action for changing colors."""
     
+    
+    # TODO: Nut A and Nut B is very specific to the carriage. This should be in the carriage.
     def changes_color_in_nut_a(self):
         """Whether the color in nut A should be changed.
         
