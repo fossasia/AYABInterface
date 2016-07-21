@@ -15,6 +15,13 @@ class Communication(object):
           :class:`serial.Serial` or a :meth:`socket.socket.makefile`.
         """
         self._file = file
+        
+    def send_info(self, configuration):
+        """"""
+        
+    def get_line(self, function):
+        """"""
+        
     
     def close(self):
         """Close the connection."""
