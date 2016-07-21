@@ -74,6 +74,14 @@ class Machine(object):
         return isinstance(self, KH965)
 
 
+    def is_kh270(self):
+        """Whether this machine is a Brother KH-270.
+        
+        :rtype: bool
+        """
+        return isinstance(self, KH270)
+
+
 class KH9XXSeries(Machine):
     
     """The base class for the KH9XX series."""
@@ -117,6 +125,15 @@ class CK35(Machine):
     
     def __init__(self):
         """Create a new machine type for the Brother CK-35."""
+        assert False, "The number of needles is unknown."
+        super().__init__(NotImplemented)
+
+class KH270(Machine):
+    
+    """The machine type for the Brother KH-270."""
+    
+    def __init__(self):
+        """Create a new machine type for the Brother KH-270."""
         assert False, "The number of needles is unknown."
         super().__init__(NotImplemented)
 
