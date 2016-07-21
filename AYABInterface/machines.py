@@ -125,8 +125,8 @@ class CK35(Machine):
     
     def __init__(self):
         """Create a new machine type for the Brother CK-35."""
-        assert False, "The number of needles is unknown."
-        super().__init__(NotImplemented)
+        super().__init__(200)
+
 
 class KH270(Machine):
     
@@ -134,8 +134,7 @@ class KH270(Machine):
     
     def __init__(self):
         """Create a new machine type for the Brother KH-270."""
-        assert False, "The number of needles is unknown."
-        super().__init__(NotImplemented)
+        super().__init__(114)
 
 
 __all__ = ["Machine", "KH9XXSeries", "CK35", "KH900", "KH910", "KH930",
