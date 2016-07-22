@@ -1,47 +1,58 @@
 """This module provides the interface to the AYAB shield."""
 from itertools import chain
+from .Communication import Content
 
-
-class NeeldePositions(object):
+class NeeldePositions(Content):
 
     """An interface that just focusses on the needle positions."""
     
-    def __init__(self, needle_positions, start_index, machine):
+    def __init__(self, rows, machine):
         """Create a needle interface.
         
-        :needle_positions: a"""
+        :param list rows: a list of lists of :attr:`needle positions
+            <AYABInterface.machines.Machine.needle_positions>`
+        :param AYABInterface.machines.Machine: the machine type to use
+        :raises ValueError: if the arguments are not valid, see :meth:`check`
+        """
         self._needle_positions = needle_positions
         self._machine = machine
         self.check()
-    
+
+    def check(self):
+        """Check for validity.
+        
+        :raises ValueError: 
+          
+          - if not all lines are as long as the :attr:`number of needles
+            <AYABInterface.machines.Machine.number_of_needles>`
+          - if the contents of the rows are not :attr:`needle positions
+            <AYABInterface.machines.Machine.needle_positions>`
+        """
+
+    # The Content interface
+        
     @property
     def machine(self):
         """The machine these positions are on."""
         return self._machine
-        
     
-    def check(self):
-        """Check for validity.
+    def get_row(self, index, default=None):
+        """Return the row at the given index or the default value."""
+
+    def row_completed(self, index):
+        """Mark the row at index as completed.
         
-        :raises TypeError: if the contents of the lists in the list are not
-          all :class:`integers <int>`
-        :raises ValueError: if the lines are empty or not of same size or the
-          contents are not within the range of
-          :attr:`number_of_needle_positions`
-        """
+        .. seealso:: :meth:`completed_row_indices`"""
     
     @property
-    def all_needle_positions(self):
-        """The posistions of the needles.
+    def completed_row_indices(self):
+        """The indices of the completed rows.
         
         :rtype: list
-        """
-        return self._needle_positions
-
-    def current_needle_positions()
         
-
-
+        When a :meth:`row was completed <row_completed>`, the index of the row
+        turns up here. The order is preserved, entries may occur duplicated.
+        """
 
 
 class ColorInterface(object):
@@ -125,10 +136,10 @@ class ColorInterface(object):
         """
         # TODO: does this match the expectations?
         
-    def primitive_interface(self):
-        """Return the primitive interface.
+    def needle_positions(self):
+        """Return the needle positions.
         
-        :rtype: PrimitiveInterface
+        :rtype: NeeldePositions
         """
 
-__all__ = ["Interface"]
+__all__ = ["ColorInterface", "NeeldePositions"]

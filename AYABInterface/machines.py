@@ -30,7 +30,7 @@ class Machine(object, metaclass=ABCMeta):
     def needle_positions(self):
         """The different needle positions.
         
-        :rtype: set
+        :rtype: tuple
         """
 
     def is_ck35(self):
@@ -88,20 +88,22 @@ class KH9XXSeries(Machine):
     
     """The base class for the KH9XX series."""
 
-    @abstractproperty
     def number_of_needles(self):
-        """The number of needles of this machine.
+        """The number of needles on this machine.
         
         :rtype: int
+        :return: ``200``. The KH9XX series has 200 needles.
         """
         return 200
 
-    @abstractproperty
     def needle_positions(self):
         """The different needle positions.
         
-        :rtype: set
+        :rtype: tuple
+        :return: the needle positions are "B" and "D"
         """
+        return ("B", "D")
+
 
 class KH900(KH9XXSeries):
     
@@ -132,19 +134,30 @@ class CK35(Machine):
     
     """The machine type for the Brother CK-35."""
     
-    def __init__(self):
-        """Create a new machine type for the Brother CK-35."""
-        super().__init__(200)
+    def number_of_needles(self):
+        """The number of needles on this machine.
+        
+        :rtype: int
+        :return: ``200``. The KH9XX series has 200 needles.
+        """
+        return 200
+
 
 
 class KH270(Machine):
     
     """The machine type for the Brother KH-270."""
     
-    def __init__(self):
-        """Create a new machine type for the Brother KH-270."""
-        super().__init__(114)
+    def number_of_needles(self):
+        """The number of needles on this machine.
+        
+        :rtype: int
+        :return: ``200``. The KH9XX series has 200 needles.
+        """
+        return 114
+
+
 
 
 __all__ = ["Machine", "KH9XXSeries", "CK35", "KH900", "KH910", "KH930",
-           "KH950", "KH965"]
+           "KH950", "KH965", "KH270"]
