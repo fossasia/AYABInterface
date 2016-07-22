@@ -9,27 +9,29 @@ knowledge is, for example:
 - the name of the machine
 
 """
+from abc import ABCMeta, abstractmethod,abstractproperty
 
 
-class Machine(object):
+class Machine(object, metaclass=ABCMeta):
 
-    """The type of the machine."""
-    
-    def __init__(self, number_of_needles):
-        """Create a new machine type.
-        
-        :param int number_of_needles: the number of needles that his machine
-          has
-        """
-        self._number_of_needles = number_of_needles
+    """The type of the machine.
 
-    @property
+    This is an abstract base class and some methods need to be overwritten.
+    """
+
+    @abstractproperty
     def number_of_needles(self):
         """The number of needles of this machine.
         
         :rtype: int
         """
-        return self._number_of_needles
+
+    @abstractproperty
+    def needle_positions(self):
+        """The different needle positions.
+        
+        :rtype: set
+        """
 
     def is_ck35(self):
         """Whether this machine is a Brother CK-35.
@@ -85,14 +87,21 @@ class Machine(object):
 class KH9XXSeries(Machine):
     
     """The base class for the KH9XX series."""
-    
-    def __init__(self):
-        """Create a new machine type for the KH9Xx series.
-        
-        .. warning:: Use the subclasses to create instances of this.
-        """
-        super().__init__(200)
 
+    @abstractproperty
+    def number_of_needles(self):
+        """The number of needles of this machine.
+        
+        :rtype: int
+        """
+        return 200
+
+    @abstractproperty
+    def needle_positions(self):
+        """The different needle positions.
+        
+        :rtype: set
+        """
 
 class KH900(KH9XXSeries):
     

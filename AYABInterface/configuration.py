@@ -63,9 +63,9 @@ class Configuration(object):
         self._machine_type = machine_type
         self._index_of_first_row = start_index_in_rows
         self._number_of_colors = number_of_colors(rows)
-        self.check_validity()
+        self.check()
     
-    def check_validity(self):
+    def check(self):
         """Check whether this configuration is valid.
         
         :raises AYABInterface.configuration.InvalidConfigurationException:

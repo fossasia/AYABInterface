@@ -1,7 +1,50 @@
 """This module provides the interface to the AYAB shield."""
+from itertools import chain
 
 
-class Interface(object):
+class NeeldePositions(object):
+
+    """An interface that just focusses on the needle positions."""
+    
+    def __init__(self, needle_positions, start_index, machine):
+        """Create a needle interface.
+        
+        :needle_positions: a"""
+        self._needle_positions = needle_positions
+        self._machine = machine
+        self.check()
+    
+    @property
+    def machine(self):
+        """The machine these positions are on."""
+        return self._machine
+        
+    
+    def check(self):
+        """Check for validity.
+        
+        :raises TypeError: if the contents of the lists in the list are not
+          all :class:`integers <int>`
+        :raises ValueError: if the lines are empty or not of same size or the
+          contents are not within the range of
+          :attr:`number_of_needle_positions`
+        """
+    
+    @property
+    def all_needle_positions(self):
+        """The posistions of the needles.
+        
+        :rtype: list
+        """
+        return self._needle_positions
+
+    def current_needle_positions()
+        
+
+
+
+
+class ColorInterface(object):
 
     """This class provides the interface for communication with the shield."""
     
@@ -81,5 +124,11 @@ class Interface(object):
           <AYABInterface.actions.Action>` to perform.
         """
         # TODO: does this match the expectations?
+        
+    def primitive_interface(self):
+        """Return the primitive interface.
+        
+        :rtype: PrimitiveInterface
+        """
 
 __all__ = ["Interface"]
