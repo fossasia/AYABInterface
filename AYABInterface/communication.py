@@ -13,9 +13,7 @@ class Content(object, metaclass=ABCMeta):
 
     .. seealso:: :class:`AYABInterface.interface.NeedlePositions`
 
-    .. _communication_rows:
-    Rows
-    ----
+    .. _communication-rows:
 
     When we talk about a row, we talk about a list
 
@@ -23,6 +21,7 @@ class Content(object, metaclass=ABCMeta):
       <AYABInterface.machines.Machine.needle_positions>`
     - with a length of :attr:`the number of needles
       <AYABInterface.machines.Machine.number_of_needles>`.
+
     """
 
     @abstractproperty
@@ -48,7 +47,7 @@ class Content(object, metaclass=ABCMeta):
         :param int index:
         :return:
 
-          - If there is a :ref:`row <_communication_rows>` at this index,
+          - If there is a :ref:`row <communication-rows>` at this index,
             this returns the row.
           - If there is no row at this index, this returns :paramref:`default`.
         """
@@ -76,4 +75,4 @@ class Communication(object):
     def stop(self):
         """Stop the communication with the shield."""
 
-__all__ = ["Communication"]
+__all__ = ["Communication", "Content"]

@@ -3,7 +3,7 @@
 The configuration is seperate from the interface. They are composed instead of
 inherited.
 """
-from .utility import number_of_colors
+from .utils import number_of_colors
 
 _NUMBER_OF_NEEDLES_ERROR_MESSAGE = \
     "The number of needles in row {index} is {got} but {expected} was" \

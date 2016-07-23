@@ -163,7 +163,7 @@ class ColorInterface(object):
     def needle_positions(self):
         """Return the needle positions.
 
-        :rtype: NeedlePositions
+        :rtype: AYABInterface.interface.NeedlePositions
         """
 
 __all__ = ["ColorInterface", "NeedlePositions"]

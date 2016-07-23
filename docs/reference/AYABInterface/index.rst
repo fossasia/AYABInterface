@@ -11,3 +11,4 @@ The ``AYABInterface`` Module Reference
    configuration
    interface
    machines
+   utils
