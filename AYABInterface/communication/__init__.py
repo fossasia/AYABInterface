@@ -3,7 +3,7 @@
 Requirement: Make objects from binary stuff.
 """
 from abc import ABCMeta, abstractmethod, abstractproperty
-
+from .received_messages import read_message_type, ConnectionClosed
 
 class Content(object, metaclass=ABCMeta):
 
@@ -173,5 +173,53 @@ class Communication(object):
 
     def stop(self):
         """Stop the communication with the shield."""
+
+
+class Communication(object):
+
+    """This class comunicates with the AYAB shield."""
+
+    def __init__(self, file, get_line, on_message_received=[]):
+        """Create a new Communication object.
+
+        :param file: a file-like object with read and write methods for the
+          communication with the Arduino. This could be a
+          :class:`serial.Serial` or a :meth:`socket.socket.makefile`.
+        """
+        self._file = file
+        self._get_line = get_line
+        self._on_message_received = on_message_received
+        self._started = False
+        self._stopped = False
+        
+
+    def start(self):
+        """Start the communication about a content.
+
+        :param Content content: the content of the communication.
+        """
+        self._started = True
+    
+    _read_message_type = staticmethod(read_message_type)
+    
+    def _message_received(self, message):
+        """Notify the observers about the received message."""
+        for callable in self._on_message_received:
+            callable(message)
+
+    def receive_message(self):
+        """Receive a message from the file."""
+        assert self._started and not self._stopped
+        message_type = self._read_message_type(self._file)
+        message = message_type(self._file, self)
+        if message.wants_to_answer():
+            message.send_answer()
+        self._message_received(message)
+
+    def stop(self):
+        """Stop the communication with the shield."""
+        self._stopped = True
+        self._message_received(ConnectionClosed(self._file, self))
+
 
 __all__ = ["Communication", "Content"]

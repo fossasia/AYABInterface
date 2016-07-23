@@ -53,7 +53,12 @@ class TestUnknownMessage(object):
     
     @fixture
     def message(self):
+        """The message to test."""
         return UnknownMessage(BytesIO(), MagicMock())
     
     def test_tests(self, message):
+        """Test the is_* methods."""
         assert_identify(message, ["is_unknown"])
+
+
+

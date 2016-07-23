@@ -67,6 +67,14 @@ class Message(object):
         """
         return False     
         
+    def is_connection_closed(self):
+        """Whether this is a ConnectionClosed message.
+        
+        :rtype: bool
+        :returns: :obj:`False`
+        """
+        return False     
+        
     def is_unknown(self):
         """Whether this is a StateIndication message.
         
@@ -82,6 +90,19 @@ class Message(object):
         :returns: :obj:`False`
         """
         return False
+
+        
+class ConnectionClosed(Message):
+    
+    """This message is notified about when the connection is closed."""
+    
+    def is_connection_closed(self):
+        """Whether this is a ConnectionClosed message.
+        
+        :rtype: bool
+        :returns: :obj:`True`
+        """
+        return True 
 
 
 class UnknownMessage(Message):
@@ -121,6 +142,10 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
         
         :rtype: AYABInterface.conmmunication.sent_messages.SentMessage
         """
+
+    def send_answer(self):
+        """Send the answer via the communication."""
+        self.answer.send()
 
 
 class ConfigurationSuccess(Message):
@@ -268,4 +293,4 @@ def read_message_type(file):
 __all__ = ["read_message_type", "StateIndication", "LineRequest",
            "ConfigurationTest", "ConfigurationInformation",
            "ConfigurationStart", "ConfigurationSuccess", "MessageWithAnswer",
-           "UnknownMessage", "Message"]
+           "UnknownMessage", "Message", "ConnectionClosed"]
