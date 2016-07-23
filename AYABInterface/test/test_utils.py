@@ -1,6 +1,6 @@
 """Test utility methods."""
-
-from AYABInterface.interface import sum_all, number_of_colors
+import pytest
+from AYABInterface.utils import sum_all, number_of_colors
 
 
 class TestSumAll(object):
@@ -17,7 +17,7 @@ class TestSumAll(object):
 
     def test_sets(self):
         """Sum up :class:`sets <set>`."""
-        assert sum_all(map(set, [[1, 2], [3, 5], [3, 1]], set([0, 5]))) == \
+        assert sum_all(map(set, [[1, 2], [3, 5], [3, 1]]), set([0, 5])) == \
             set([0, 1, 2, 3, 5])
 
     

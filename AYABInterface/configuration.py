@@ -3,6 +3,7 @@
 The configuration is seperate from the interface. They are composed instead of
 inherited.
 """
+from .utility import number_of_colors
 
 _NUMBER_OF_NEEDLES_ERROR_MESSAGE = \
     "The number of needles in row {index} is {got} but {expected} was" \
@@ -15,25 +16,6 @@ _COLOR_SHOULD_BE_INT = \
 _COLOR_OUT_OF_BOUNDS = \
     "The color {got} at {index} in row {row_index} is a out of bounds." \
     " Expected 0 <= {got} <= {maximum}."
-
-
-def sum_all(iterable, start):
-    """Sum up an iterable starting with a start value.
-    
-    In contrast to :func:`sum`, this also works on other types like
-    :class:`lists <list>` and :class:`sets <set>`.
-    """
-    for value in iterable:
-        start = start + value
-    return start
-
-
-def number_of_colors(rows):
-    """Determine the numer of colors in the rows.
-    
-    :rtype: int
-    """
-    return len(sum_all(map(set, rows), set()))
 
 
 class InvalidConfigurationException(ValueError):
