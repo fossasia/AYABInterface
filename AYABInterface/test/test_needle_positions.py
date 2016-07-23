@@ -27,7 +27,7 @@ def rows():
 @fixture
 def needle_positions(rows, machine):
     """The initialized needle positions."""
-    return NeeldePositions(rows, machine)
+    return NeedlePositions(rows, machine)
 
 
 class TestInvalidInitialization(object):
@@ -49,20 +49,21 @@ class TestInvalidInitialization(object):
             needle_positions(rows, Machine(number_of_needles, (1, 2)))
         message = "The length of row {} is {} but {} is expected.".format(
             row_index, length_of_row, number_of_needles)
-        assert error.args[0] == message
+        assert error.value.args[0] == message
 
-    @pytest.mark.parametrize("position,value,positions",
-        [[3, 4, "D"], [4, 1, 3], [0, 0, "asd"], [7, 7, 77]])
-    def test_needle_positions(self, position, value, positions):
+    @pytest.mark.parametrize("pos_x,pos_y,value,positions",
+        [[3, 4, "D", ("A", "C", "F")], [4, 1, 3, ("a", "b")],
+         [0, 0, "asd", (1, 2, 3)], [7, 7, 77, ("a", "b")]])
+    def test_needle_positions(self, pos_x, pos_y, value, positions):
         """Test needle positions that are not allowed."""
-        rows = [["A"] * 8 for i in range(8)]
-        rows[position[0]][position[1]] = value
+        rows = [[positions[0]] * 8 for i in range(8)]
+        rows[pos_x][pos_y] = value
         with raises(ValueError) as error:
             needle_positions(rows, Machine(8, positions))
         message = "Needle position in row {} at index {} is {} but one of"\
-            " {} was expected".format(position[0], posistion[1], value,
-                ", ".join(map(repr, positions))
-        assert error.args[0] == message
+            " {} was expected.".format(pos_x, pos_y, repr(value),
+                ", ".join(map(repr, positions)))
+        assert error.value.args[0] == message
 
 
 def test_machine(needle_positions, machine):
@@ -76,13 +77,13 @@ class TestGetRows(object):
 
     @pytest.mark.parametrize("index", range(len(rows())))
     @pytest.mark.parametrize("default", [None, object(), []])
-    def test_index(self, needle_positions, rows, index):
+    def test_index(self, needle_positions, rows, index, default):
         """Test valid indices."""
         assert needle_positions.get_row(index, default) == rows[index]
 
     @pytest.mark.parametrize("index", [-4, -1, 8, 12, 1000, "ads"])
     @pytest.mark.parametrize("default", [None, object(), []])
-    def test_invalid_index(self, needle_positions, rows, index):
+    def test_invalid_index(self, needle_positions, rows, index, default):
         """Test invalid indices."""
         assert needle_positions.get_row(index, default) == default
 
@@ -106,4 +107,4 @@ class TestCompletedRows(object):
         """Test that completed rows are listed."""
         for index in indices:
             needle_positions.row_completed(index)
-        assert needle_positions.completed_rows == indices
+        assert needle_positions.completed_row_indices == indices

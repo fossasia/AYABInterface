@@ -1,8 +1,12 @@
 """This module provides the interface to the AYAB shield."""
-from itertools import chain
-from .Communication import Content
+print("IMPORTED")
+from .communication import Content
 
-class NeeldePositions(Content):
+_NEEDLE_POSITION_ERROR_MESSAGE = \
+    "Needle position in row {} at index {} is {} but one of {} was expected."
+_ROW_LENGTH_ERROR_MESSAGE = "The length of row {} is {} but {} is expected."
+
+class NeedlePositions(Content):
 
     """An interface that just focusses on the needle positions."""
     
@@ -14,8 +18,9 @@ class NeeldePositions(Content):
         :param AYABInterface.machines.Machine: the machine type to use
         :raises ValueError: if the arguments are not valid, see :meth:`check`
         """
-        self._needle_positions = needle_positions
+        self._rows = rows
         self._machine = machine
+        self._completed_rows = []
         self.check()
 
     def check(self):
@@ -28,6 +33,19 @@ class NeeldePositions(Content):
           - if the contents of the rows are not :attr:`needle positions
             <AYABInterface.machines.Machine.needle_positions>`
         """
+        expected_positions = self._machine.needle_positions
+        expected_row_length = self._machine.number_of_needles
+        for row_index, row in enumerate(self._rows):
+            if len(row) != expected_row_length:
+                message = _ROW_LENGTH_ERROR_MESSAGE.format(
+                    row_index, len(row), expected_row_length)
+                raise ValueError(message)
+            for needle_index, needle_position in enumerate(row):
+                if needle_position not in expected_positions:
+                    message = _NEEDLE_POSITION_ERROR_MESSAGE.format(
+                        row_index, needle_index, repr(needle_position), 
+                        ", ".join(map(repr, expected_positions)))
+                    raise ValueError(message)
 
     # The Content interface
         
@@ -38,11 +56,16 @@ class NeeldePositions(Content):
     
     def get_row(self, index, default=None):
         """Return the row at the given index or the default value."""
+        if not isinstance(index, int) or index < 0 or index >= len(self._rows):
+            return default
+        return self._rows[index]
 
     def row_completed(self, index):
         """Mark the row at index as completed.
         
-        .. seealso:: :meth:`completed_row_indices`"""
+        .. seealso:: :meth:`completed_row_indices`
+        """
+        self._completed_rows.append(index)
     
     @property
     def completed_row_indices(self):
@@ -53,6 +76,7 @@ class NeeldePositions(Content):
         When a :meth:`row was completed <row_completed>`, the index of the row
         turns up here. The order is preserved, entries may occur duplicated.
         """
+        return self._completed_rows.copy()
 
 
 class ColorInterface(object):
@@ -139,7 +163,7 @@ class ColorInterface(object):
     def needle_positions(self):
         """Return the needle positions.
         
-        :rtype: NeeldePositions
+        :rtype: NeedlePositions
         """
 
-__all__ = ["ColorInterface", "NeeldePositions"]
+__all__ = ["ColorInterface", "NeedlePositions"]
