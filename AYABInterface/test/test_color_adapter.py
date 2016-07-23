@@ -8,6 +8,7 @@ from collections import namedtuple
 from pytest import fixture
 Machine = namedtuple("Machine", ("number_of_needles", "needle_positions"))
 
+
 @fixture
 def machine():
     """The machine to knit on."""
@@ -17,4 +18,3 @@ def machine():
 class TestNeedlePositionInitialization(object):
 
     """Test """
-

@@ -13,16 +13,17 @@ def one_byte_file(byte):
     """Create a BytesIO with one byte."""
     return BytesIO(bytes([byte]))
 
+
 class TestReadMessageFromFile(object):
 
     """Test read_message_type.
-    
+
     .. seealso::
       :func:`AYABInterface.communication.received_messages.read_message_type`.
     """
 
     @pytest.mark.parametrize("byte,message_type", [
-        (0xc1, ConfigurationStart), (0xc3, ConfigurationInformation), 
+        (0xc1, ConfigurationStart), (0xc3, ConfigurationInformation),
         (0xc4, ConfigurationTest), (0x82, LineRequest),
         (0x84, StateIndication)])
     def test_read_message_from_file(self, byte, message_type):
@@ -46,19 +47,16 @@ def assert_identify(message, true=[]):
 class TestUnknownMessage(object):
 
     """Test UnknownMessage.
-    
+
     .. seealso::
       :func:`AYABInterface.communication.received_messages.UnknownMessage`.
     """
-    
+
     @fixture
     def message(self):
         """The message to test."""
         return UnknownMessage(BytesIO(), MagicMock())
-    
+
     def test_tests(self, message):
         """Test the is_* methods."""
         assert_identify(message, ["is_unknown"])
-
-
-

@@ -31,4 +31,3 @@ class TestNumberOfColors(object):
     def test_number_of_colors(self, colors, number):
         """Test different inputs."""
         assert number_of_colors(colors) == number
-

@@ -112,7 +112,7 @@ class TestCompletedRows(object):
 class TestObserver(object):
 
     """Test the observation capabilities when a row is completed.
-    
+
     .. seealso::
       :meth:`AYABInterface.interface.NeedlePositions.on_row_completed` and
       :meth:`AYABInterface.interface.NeedlePositions.row_completed`

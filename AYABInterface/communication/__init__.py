@@ -5,14 +5,15 @@ Requirement: Make objects from binary stuff.
 from abc import ABCMeta, abstractmethod, abstractproperty
 from .received_messages import read_message_type, ConnectionClosed
 
+
 class Content(object, metaclass=ABCMeta):
 
     """The interface used by the Communication.
 
     This class is the interface that the :class:`Communication` requires.
 
-    This class does no validity checks, it assumes the :class:`Configuration` is
-    valid and there are only valid parameters given to the methods.
+    This class does no validity checks, it assumes the :class:`Configuration`
+    is valid and there are only valid parameters given to the methods.
 
     In the message specification, the term 'line' equivalent to 'row'.
 
@@ -104,7 +105,6 @@ class Content(object, metaclass=ABCMeta):
             returned.
         """
 
-
     @abstractmethod
     def req_start(self, left_end_needle, right_end_needle):
         """Start request message.
@@ -135,9 +135,11 @@ class Content(object, metaclass=ABCMeta):
         The data sent here is parsed by the Arduino controller to set the
         knitting needles accordingly in the next carriage run.
 
-        :param int line_number: Same line number as given in the req_line message
+        :param int line_number: Same line number as given in the req_line
+          message
         :param row line_data: The bytearray to be sent to needles.
-        :param bytes last_line: Indicates whether this is the last line to knit.
+        :param bytes last_line: Indicates whether this is the last line to
+          knit.
 
         Flags are given as parameters to this method explicitly,
         conversion to byte represenation is done here, as this is protocol
@@ -151,8 +153,7 @@ class Content(object, metaclass=ABCMeta):
         """
 
 
-
-class Communication(object):
+class _Communication(object):
 
     """This class comunicates with the AYAB shield."""
 
@@ -191,7 +192,6 @@ class Communication(object):
         self._on_message_received = on_message_received
         self._started = False
         self._stopped = False
-        
 
     def start(self):
         """Start the communication about a content.
@@ -199,9 +199,9 @@ class Communication(object):
         :param Content content: the content of the communication.
         """
         self._started = True
-    
+
     _read_message_type = staticmethod(read_message_type)
-    
+
     def _message_received(self, message):
         """Notify the observers about the received message."""
         for callable in self._on_message_received:

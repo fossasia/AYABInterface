@@ -31,7 +31,7 @@ class Configuration(object):
     """The configuration of the interface."""
 
     def __init__(self, rows, machine_type, left_end_needle, right_end_needle,
-      start_index_in_rows=0):
+                 start_index_in_rows=0):
         """Create a new configuration.
 
         :param list rows: a :class:`list` of :class:`lists <list>` of
@@ -79,22 +79,25 @@ class Configuration(object):
                         got=color, index=color_index, row_index=index,
                         maximum=max_color)
                     raise InvalidConfigurationException(message)
-                    
+
         index = self._index_of_first_row
         if index < 0:
             message = _INDEX_NOT_IN_ROWS.format(got=index)
             raise InvalidConfigurationException(message)
 
-        if left_end_needle < 0 or \
-            left_end_needle >= expected_needles:
-            message = _END_NEEDLE_INVALID.format(which="left",
-                min=0, max=expected_needles-1, got=left_end_needle)
+        left_end_needle = self._left_end_needle
+        if left_end_needle < 0 or left_end_needle >= expected_needles:
+            message = _END_NEEDLE_INVALID.format(
+                which="left", min=0, max=expected_needles-1,
+                got=left_end_needle)
             raise InvalidConfigurationException(message)
 
+        right_end_needle = self._right_end_needle
         if right_end_needle <= left_end_needle or \
-            right_end_needle > expected_needles:
-            message = _END_NEEDLE_INVALID.format(which="right",
-                min=left_end_needle+1, max=expected_needles, got=right_end_needle)
+                right_end_needle > expected_needles:
+            message = _END_NEEDLE_INVALID.format(
+                which="right", min=left_end_needle+1, max=expected_needles,
+                got=right_end_needle)
             raise InvalidConfigurationException(message)
 
     @property

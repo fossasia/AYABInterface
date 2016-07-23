@@ -44,7 +44,7 @@ def create_message():
 @fixture
 def communication(file, on_message_received, monkeypatch, create_message):
     monkeypatch.setattr(Communication, '_read_message_type', create_message)
-    return Communication(file, MagicMock(), 
+    return Communication(file, MagicMock(),
                          on_message_received=[on_message_received])
 
 
@@ -73,9 +73,9 @@ def test_receiving_message_after_stop_is_forbidden(started_communication):
     with raises(AssertionError):
         started_communication.receive_message()
 
-    
+
 @fixture
-def message(create_message):    
+def message(create_message):
     message_type = create_message.return_value
     return message_type.return_value
 
@@ -105,4 +105,3 @@ def test_message_does_not_answer(
 def test_stop_notifies_with_close_message(started_communication, messages):
     started_communication.stop()
     assert messages[0].is_connection_closed()
-    

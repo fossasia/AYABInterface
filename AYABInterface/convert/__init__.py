@@ -7,12 +7,12 @@ NeedlePositions = namedtuple("NeedlePositions", ["needle_coloring", "colors",
 
 def _row_color(row, color):
     return [(0 if color_ == color else 1) for color_ in row]
-                                                 
-                                                 
+
+
 def colors_to_needle_positions(rows):
     """Convert rows to needle positions.
-    
-    :return: 
+
+    :return:
     :rtype: list
     """
     needles = []
@@ -33,9 +33,9 @@ def colors_to_needle_positions(rows):
                     colors.append(color)
             needles_ = []
             for color in colors:
-                needles_.append(NeedlePositions(_row_color(row, color), 
+                needles_.append(NeedlePositions(_row_color(row, color),
                                                 (color,), False))
             needles.append(needles_)
     return needles
 
-__all__ = ["colors_to_needle_positions"]
+__all__ = ["colors_to_needle_positions", "NeedlePositions"]
