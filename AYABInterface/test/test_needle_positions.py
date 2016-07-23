@@ -31,15 +31,15 @@ def needle_positions(rows, machine):
 
 
 class TestInvalidInitialization(object):
-    
+
     """Test the invalid arguments.
-    
-    These arguments are captured by 
+
+    These arguments are captured by
     Test :meth:`AYABInterface.interface.NeeldePositions.check`.
     """
-    
-    @pytest.mark.parametrize("number_of_needles,length_of_row,row_index",
-        [[5, 4, 2], [3, 4, 2], [100, 101, 4], [5, 2, 0], [114, 200, 8], ])
+
+    @pytest.mark.parametrize("number_of_needles,length_of_row,row_index", [
+        [5, 4, 2], [3, 4, 2], [100, 101, 4], [5, 2, 0], [114, 200, 8], ])
     def test_number_of_needles(self, length_of_row, number_of_needles,
                                row_index):
         """Test a row with a different length than the number of neeedles."""
@@ -51,8 +51,8 @@ class TestInvalidInitialization(object):
             row_index, length_of_row, number_of_needles)
         assert error.value.args[0] == message
 
-    @pytest.mark.parametrize("pos_x,pos_y,value,positions",
-        [[3, 4, "D", ("A", "C", "F")], [4, 1, 3, ("a", "b")],
+    @pytest.mark.parametrize("pos_x,pos_y,value,positions", [
+         [3, 4, "D", ("A", "C", "F")], [4, 1, 3, ("a", "b")],
          [0, 0, "asd", (1, 2, 3)], [7, 7, 77, ("a", "b")]])
     def test_needle_positions(self, pos_x, pos_y, value, positions):
         """Test needle positions that are not allowed."""
@@ -62,7 +62,7 @@ class TestInvalidInitialization(object):
             needle_positions(rows, Machine(8, positions))
         message = "Needle position in row {} at index {} is {} but one of"\
             " {} was expected.".format(pos_x, pos_y, repr(value),
-                ", ".join(map(repr, positions)))
+                                       ", ".join(map(repr, positions)))
         assert error.value.args[0] == message
 
 
@@ -70,7 +70,7 @@ def test_machine(needle_positions, machine):
     """Test :meth:`AYABInterface.interface.NeeldePositions.machine`."""
     assert needle_positions.machine == machine
 
-    
+
 class TestGetRows(object):
 
     """Test :meth:`AYABInterface.interface.NeeldePositions.get_row`."""
@@ -89,9 +89,9 @@ class TestGetRows(object):
 
 
 class TestCompletedRows(object):
-    
+
     """Test the completion of rows.
-    
+
     This is a unity of
     :meth:`AYABInterface.interface.NeeldePositions.row_completed` and
     :meth:`AYABInterface.interface.NeeldePositions.completed_row_indices`

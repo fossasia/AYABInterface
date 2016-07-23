@@ -3,7 +3,7 @@
 class Interface()
 
 def  __init__(configuration, AYABCommunication):
-    configuration 
+    configuration
 
     start needle
 
@@ -28,9 +28,9 @@ AYABCommunication
 
 Zustände/Strickablauf:
 
-    start 
+    start
 
-    in: getInfo()    
+    in: getInfo()
 
     Invalid Firmware state else:pre initialize
 
@@ -72,7 +72,7 @@ Zustände/Strickablauf:
 - ob eine farbe eingelegt werden muss
 - wohin soll der schlitten bewegt werden
 
-    - Zweck: initialisierung, 
+    - Zweck: initialisierung,
 
     - nach links über hall sensor
 

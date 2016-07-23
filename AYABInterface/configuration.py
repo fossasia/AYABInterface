@@ -29,7 +29,7 @@ class Configuration(object):
 
     def __init__(self, rows, machine_type, start_index_in_rows=0):
         """Create a new configuration.
-        
+
         :param list rows: a :class:`list` of :class:`lists <list>` of
           :class:`colors <int>`. Each color is a positive :class:`integer
           <int>`. All colors start from 0 and go up to the
@@ -46,10 +46,10 @@ class Configuration(object):
         self._index_of_first_row = start_index_in_rows
         self._number_of_colors = number_of_colors(rows)
         self.check()
-    
+
     def check(self):
         """Check whether this configuration is valid.
-        
+
         :raises AYABInterface.configuration.InvalidConfigurationException:
           if this configuration is invalid
         """
@@ -72,43 +72,41 @@ class Configuration(object):
                         maximum=max_color)
                     raise InvalidConfigurationException(message)
         index = self._index_of_first_row
-        max_index = len(self._rows)
         if index < 0:
             message = _INDEX_NOT_IN_ROWS.format(got=index)
             raise InvalidConfigurationException(message)
-    
+
     @property
     def machine(self):
         """The machine type.
-        
+
         :rtype: AYABInterface.machines.Machine
         """
         return self._machine_type
-    
+
     @property
     def rows(self):
         """The rows that should be knit
-        
+
         :rtype: list
         :return: the rows
         """
         return self._rows
-    
+
     @property
     def index_of_first_row(self):
         """The index of the current row in progress.
-        
+
         :rtype: int
         """
         return self._index_of_first_row
-    
+
     @property
     def number_of_colors(self):
         """The number of colors used in the rows.
-        
+
         :rtype: int
         """
         return self._number_of_colors
 
-__all__ = ["Configuration", "InvalidConfigurationException", "sum_all",
-           "number_of_colors"]
+__all__ = ["Configuration", "InvalidConfigurationException"]
