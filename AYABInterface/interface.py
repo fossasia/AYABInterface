@@ -21,6 +21,7 @@ class NeedlePositions(Content):
         self._rows = rows
         self._machine = machine
         self._completed_rows = []
+        self._on_row_completed = []
         self.check()
 
     def check(self):
@@ -33,6 +34,10 @@ class NeedlePositions(Content):
           - if the contents of the rows are not :attr:`needle positions
             <AYABInterface.machines.Machine.needle_positions>`
         """
+        # TODO: This violates the law of demeter.
+        #       The architecture should be changed that this check is either
+        #       performed by the machine or by the unity of machine and
+        #       carriage.
         expected_positions = self._machine.needle_positions
         expected_row_length = self._machine.number_of_needles
         for row_index, row in enumerate(self._rows):
@@ -47,7 +52,7 @@ class NeedlePositions(Content):
                         ", ".join(map(repr, expected_positions)))
                     raise ValueError(message)
 
-    # The Content interface
+    # the Content interface
 
     @property
     def machine(self):
@@ -64,8 +69,14 @@ class NeedlePositions(Content):
         """Mark the row at index as completed.
 
         .. seealso:: :meth:`completed_row_indices`
+        
+        This method notifies the obsevrers from :meth:`on_row_completed`.
         """
         self._completed_rows.append(index)
+        for row_completed in self._on_row_completed:
+            row_completed(index)
+
+    # end of the Content interface
 
     @property
     def completed_row_indices(self):
@@ -78,7 +89,78 @@ class NeedlePositions(Content):
         """
         return self._completed_rows.copy()
 
+    def on_row_completed(self, callable):
+        """Add an observer for completed rows.
+        
+        :param callable: a callable that is called with the row index as first
+          argument
+        
+        When :meth:`row_completed` was called, this :paramref:`callable` is
+        called with the row index as first argument. Call this method several
+        times to register more observers.
+        """
+        self._on_row_completed.append(callable)
 
+
+class ColorAdapter(object):
+
+    """This class is an adapter for the NeedlePositions with focus on colors.
+    
+    Using the needle interface, this class shows rows of colors and how
+    much of them is completed.
+    
+    .. _color-adapter-color:
+    Throughtout this class we define color as identifyable objects.
+    Colors can be
+    
+    - :class:`integer <int>` like ``1``, ``2``, ``3``
+    - :class:`strings <str>` like ``"black"``, ``"blue"`` or even ``"a"``
+    - any other :class:`object`
+    """
+    
+    def __init__(self, color_rows, machine, new_needle_positions):
+        """Create a ColorAdapter.
+        
+        :param list color_rows: a list of lists of colors. Only the identity
+          and order of occurence matters for the
+          :ref:`colors <color-adapter-color>`.
+        :param AYABInterface.machines.Machine machine: the machine type to
+          knit on
+        :param new_needle_positions:
+          a callble that returns 
+          :class:`AYABInterface.interface.NeedlePositions`
+        :raises ValueError:
+        
+          - if not all lines are as long as the :attr:`number of needles
+            <AYABInterface.machines.Machine.number_of_needles>`
+
+        """
+        
+    @property
+    def rows(self):
+        """The rows of color to be knit."""
+    
+    @property
+    def progress(self):
+        """The progress already made.
+        
+        :rtype: list
+        :return: a :class:`list` of :class:`lists <list>` for each row
+          consisting of :class:`booleans <bool>`. Each booleadn indicates
+          whether a color has been knit.
+        """
+    
+    def on_row_change(self, callable):
+        """Add an observer for row changes.
+        
+        :param callable: a callable that is called with the row index as first
+          argument
+        
+        When a row is changed or completed, this :paramref:`callable` is
+        called.
+        """
+
+    
 class ColorInterface(object):
 
     """This class provides the interface for communication with the shield."""

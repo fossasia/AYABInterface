@@ -1,11 +1,12 @@
 """Test utility methods."""
 import pytest
-from AYABInterface.utils import sum_all, number_of_colors
+from AYABInterface.utils import sum_all, number_of_colors, \
+    color_to_needle_positions
 
 
 class TestSumAll(object):
 
-    """Test :func:`AYABInterface.interface.sum_all`."""
+    """Test :func:`AYABInterface.utils.sum_all`."""
 
     def test_integers(self):
         """Sum up :class:`integers <int>`."""
@@ -21,9 +22,14 @@ class TestSumAll(object):
             set([0, 1, 2, 3, 5])
 
 
-@pytest.mark.parametrize("colors,number", [
-    [[[1, 2, 3], [2, 3, 3, 3], [2, 2, 2], [0]], 4],
-    [[[], [], []], 0], [[[1, 1, 1], ["", "q"], ["asd"]], 4]])
-def test_number_of_colors(colors, number):
-    """Test :func:`AYABInterface.interface.number_of_colors`."""
-    assert number_of_colors(colors) == number
+class TestNumberOfColors(object):
+
+    """Test :func:`AYABInterface.utils.number_of_colors`."""
+
+    @pytest.mark.parametrize("colors,number", [
+        [[[1, 2, 3], [2, 3, 3, 3], [2, 2, 2], [0]], 4],
+        [[[], [], []], 0], [[[1, 1, 1], ["", "q"], ["asd"]], 4]])
+    def test_number_of_colors(self, colors, number):
+        """Test different inputs."""
+        assert number_of_colors(colors) == number
+

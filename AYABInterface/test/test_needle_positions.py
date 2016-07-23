@@ -7,9 +7,6 @@ import pytest
 from pytest import fixture, raises
 from AYABInterface import NeedlePositions
 from unittest.mock import MagicMock
-from collections import namedtuple
-
-Machine = namedtuple("Machine", ("number_of_needles", "needle_positions"))
 
 
 @fixture
@@ -92,9 +89,9 @@ class TestCompletedRows(object):
 
     """Test the completion of rows.
 
-    This is a unity of
-    :meth:`AYABInterface.interface.NeeldePositions.row_completed` and
-    :meth:`AYABInterface.interface.NeeldePositions.completed_row_indices`
+    .. seealso::
+      :meth:`AYABInterface.interface.NeeldePositions.row_completed` and
+      :meth:`AYABInterface.interface.NeeldePositions.completed_row_indices`
     """
 
     def test_thread_safety(self, needle_positions):
@@ -108,3 +105,24 @@ class TestCompletedRows(object):
         for index in indices:
             needle_positions.row_completed(index)
         assert needle_positions.completed_row_indices == indices
+
+
+class TestObserver(object):
+
+    """Test the observation capabilities when a row is completed.
+    
+    .. seealso::
+      :meth:`AYABInterface.interface.NeedlePositions.on_row_completed` and
+      :meth:`AYABInterface.interface.NeedlePositions.row_completed`
+    """
+
+    @pytest.mark.parametrize("observers,row", zip(range(5), range(2, 7)))
+    @pytest.mark.parametrize("calls", range(1, 4))
+    def test_observing(self, needle_positions, observers, row, calls):
+        """Test that observers are notified."""
+        rows = []
+        for i in range(observers):
+            needle_positions.on_row_completed(rows.append)
+        for i in range(calls):
+            needle_positions.row_completed(row)
+        assert rows == [row] * observers * calls
