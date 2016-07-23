@@ -150,6 +150,8 @@ class Content(object, metaclass=ABCMeta):
         .. todo:: Calculate CRC8 in this method, as it is part of the protocol
         """
 
+
+
 class Communication(object):
 
     """This class comunicates with the AYAB shield."""
