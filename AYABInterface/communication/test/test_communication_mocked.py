@@ -49,7 +49,7 @@ def communication(file, on_message_received, monkeypatch, create_message):
 
 
 def test_before_start_no_message_was_received(communication, create_message):
-    assert create_message.assert_not_called()
+    create_message.assert_not_called()
 
 
 @fixture
@@ -60,7 +60,7 @@ def started_communication(communication):
 
 def test_after_start_no_message_was_received(
         started_communication, create_message):
-    assert create_message.assert_not_called()
+    create_message.assert_not_called()
 
 
 def test_receiving_message_before_start_is_forbidden(communication):
@@ -99,7 +99,7 @@ def test_message_does_not_answer(
         started_communication, create_message, message):
     message.wants_to_answer.return_value = False
     started_communication.receive_message()
-    assert message.send_answer.assert_not_called()
+    message.send_answer.assert_not_called()
 
 
 def test_stop_notifies_with_close_message(started_communication, messages):
