@@ -1,7 +1,6 @@
 """Test utility methods."""
 import pytest
-from AYABInterface.utils import sum_all, number_of_colors, \
-    color_to_needle_positions
+from AYABInterface.utils import sum_all, number_of_colors
 
 
 class TestSumAll(object):
