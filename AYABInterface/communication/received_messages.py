@@ -84,7 +84,7 @@ class Message(object):
         return False
 
 
-class UnknownMessage(Messsage):
+class UnknownMessage(Message):
     
     """This is a special message for unknown message types."""
     
@@ -94,7 +94,7 @@ class UnknownMessage(Messsage):
         :rtype: bool
         :returns: :obj:`True`
         """
-        return False
+        return True
 
     def is_valid(self):
         """Whether the message is valid.
@@ -137,7 +137,7 @@ class ConfigurationSuccess(Message):
         return self._success
 
 
-class ConfigurationStart(ConfigurationSuccessMessage):
+class ConfigurationStart(ConfigurationSuccess):
 
     """This message is sent at/when""" # TODO
 
@@ -186,7 +186,7 @@ class ConfigurationInformation(Message):
         return self.api_version == self.communication.api_version
 
 
-class ConfigurationTest(ConfigurationSuccessMessage):
+class ConfigurationTest(ConfigurationSuccess):
 
     """This message is sent at/when""" # TODO
     
@@ -225,7 +225,7 @@ class LineRequest(MessageWithAnswer):
         """The line number that was requested."""
         return self._line_number
     
-    @propetry
+    @property
     def answer(self):
         """Message to inform about the upcoming line."""
 
@@ -252,10 +252,18 @@ class StateIndication(Message):
         self._carriage_position = self._file.read(1)
 
 
+_message_types = {}     
+for message_type in list(globals().values()):
+    message_id = getattr(message_type, "MESSAGE_ID", None)
+    if message_id is not None:
+        _message_types[message_id] = message_type
+del message_type, message_id
+
+
 def read_message_type(file):
     """Read the message type from a file."""
-    message_number = file.read(1)
-    return message_types.get(message_number, UnknownMessage)
+    message_number = file.read(1)[0]
+    return _message_types.get(message_number, UnknownMessage)
 
 __all__ = ["read_message_type", "StateIndication", "LineRequest",
            "ConfigurationTest", "ConfigurationInformation",

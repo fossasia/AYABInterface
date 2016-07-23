@@ -4,6 +4,8 @@
 """
 from AYABInterface.interface import ColorAdapter
 from unittest.mock import MagicMock
+from collections import namedtuple
+Machine = namedtuple("Machine", ("number_of_needles", "needle_positions"))
 
 @fixture
 def machine():

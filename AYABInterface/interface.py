@@ -1,12 +1,11 @@
 """This module provides the interface to the AYAB shield."""
-from .communication import Content
 
 _NEEDLE_POSITION_ERROR_MESSAGE = \
     "Needle position in row {} at index {} is {} but one of {} was expected."
 _ROW_LENGTH_ERROR_MESSAGE = "The length of row {} is {} but {} is expected."
 
 
-class NeedlePositions(Content):
+class NeedlePositions(object):
 
     """An interface that just focusses on the needle positions."""
 

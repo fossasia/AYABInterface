@@ -7,6 +7,8 @@ import pytest
 from pytest import fixture, raises
 from AYABInterface import NeedlePositions
 from unittest.mock import MagicMock
+from collections import namedtuple
+Machine = namedtuple("Machine", ("number_of_needles", "needle_positions"))
 
 
 @fixture
