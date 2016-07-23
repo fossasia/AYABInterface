@@ -168,6 +168,8 @@ class ColorInterface(object):
     def __init__(self, configuration, communication):
         """Create a new interface to the AYAB shield.
 
+        .. todo:: Provide an interface to stop knitting manually.
+
         :param AYABInterface.configuration.Configuration configuration:
           the configuration of the interface
         :param AYABInterface.communication.Communication communication:

@@ -16,6 +16,9 @@ _COLOR_SHOULD_BE_INT = \
 _COLOR_OUT_OF_BOUNDS = \
     "The color {got} at {index} in row {row_index} is a out of bounds." \
     " Expected 0 <= {got} <= {maximum}."
+_END_NEEDLE_INVALID = \
+    "The {which} end needle has to be between {min} and {max}, but is " \
+    "set to {got}."
 
 
 class InvalidConfigurationException(ValueError):
@@ -27,7 +30,8 @@ class Configuration(object):
 
     """The configuration of the interface."""
 
-    def __init__(self, rows, machine_type, start_index_in_rows=0):
+    def __init__(self, rows, machine_type, left_end_needle, right_end_needle,
+      start_index_in_rows=0):
         """Create a new configuration.
 
         :param list rows: a :class:`list` of :class:`lists <list>` of
@@ -36,6 +40,8 @@ class Configuration(object):
           :attr:`number of colors <number_of_colors>` - 1.
         :param AYABInterface.machines.Machine machine_type: the type of the
           used machine
+        :param int left_end_needle: Leftmost needle of the pattern to knit.
+        :param int right_end_needle: Rightmost needle of the pattern to knit.
         :param int start_index_in_rows: the index of the first row to use.
           The rows with an index lower than this are ignored.
         :raises AYABInterface.configuration.InvalidConfigurationException:
@@ -43,6 +49,8 @@ class Configuration(object):
         """
         self._rows = rows
         self._machine_type = machine_type
+        self._left_end_needle = left_end_needle
+        self._right_end_needle = right_end_needle
         self._index_of_first_row = start_index_in_rows
         self._number_of_colors = number_of_colors(rows)
         self.check()
@@ -71,9 +79,22 @@ class Configuration(object):
                         got=color, index=color_index, row_index=index,
                         maximum=max_color)
                     raise InvalidConfigurationException(message)
+                    
         index = self._index_of_first_row
         if index < 0:
             message = _INDEX_NOT_IN_ROWS.format(got=index)
+            raise InvalidConfigurationException(message)
+
+        if left_end_needle < 0 or \
+            left_end_needle >= expected_needles:
+            message = _END_NEEDLE_INVALID.format(which="left",
+                min=0, max=expected_needles-1, got=left_end_needle)
+            raise InvalidConfigurationException(message)
+
+        if right_end_needle <= left_end_needle or \
+            right_end_needle > expected_needles:
+            message = _END_NEEDLE_INVALID.format(which="right",
+                min=left_end_needle+1, max=expected_needles, got=right_end_needle)
             raise InvalidConfigurationException(message)
 
     @property

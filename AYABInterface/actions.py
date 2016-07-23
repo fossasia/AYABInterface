@@ -20,7 +20,7 @@ class Action(object):
         return isinstance(self, ColorChange)
 
     def has_carriage(self):
-        """Whether this action is performed using a carraige."""
+        """Whether this action is performed using a carriage."""
         return isinstance(self, ActionOnCarriage)
 
 
@@ -29,7 +29,7 @@ class ActionOnCarriage(Action):
     """This is an action that requires a carriage."""
 
     @property
-    def carraige(self):
+    def carriage(self):
         """The carriage to move.
 
         :rtype: AYABInterface.carriages.Carriage
@@ -47,13 +47,13 @@ class Movement(ActionOnCarriage):
         """
 
     def is_move_left(self):
-        """Whether the carraige should be moved to the left.
+        """Whether the carriage should be moved to the left.
 
         :rtype: bool
         """
 
     def is_move_right(self):
-        """Whether the carraige should be moved to the right.
+        """Whether the carriage should be moved to the right.
 
         :rtype: bool
         """
