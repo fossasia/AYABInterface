@@ -70,7 +70,7 @@ hardware   .. _m4-C3: 0xC3 4      ``0xaa 0xbb 0xcc``
            cnfInfo                - ``aa`` = Version identifier
                                   - ``bb`` = Major Version
                                   - ``cc`` = Minor Version
-hardware   .. _m4-84: 0x84 2       ``0x0a``
+hardware   .. _m4-84: 0x84 2      ``0x0a``
 
            indInit                - a = initialized (0 = false, 1 = true)
 hardware   .. _m4-FF: 0xFF var    a debug string ending with ``\r\n``
