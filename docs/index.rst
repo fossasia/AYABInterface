@@ -14,6 +14,7 @@ Contents:
    Installation
    DevelopmentSetup
    reference/index
+   communication/index
 
 
 Indices and tables
