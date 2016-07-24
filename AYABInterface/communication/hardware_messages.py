@@ -290,7 +290,7 @@ class StateIndication(Message):
 
     """This message shows the state of the controller.
     
-    .. seealso:: :ref:`indinit`
+    .. seealso:: :ref:`indstate`
     """
 
     MESSAGE_ID = 0x84  #: The first byte that indicates this message

@@ -1,8 +1,9 @@
-Communication
-=============
+Communication Specification
+===========================
 
-This document specifies the communication between the host computer and the
-Controller.
+This document specifies the communication between the host and a controller
+with the 
+`AYAB firmware <https://github.com/AllYarnsAreBeautiful/ayab-firmware>`_.
 
 Serial Communication
 --------------------
@@ -42,7 +43,8 @@ CCCC	message identifier
 Message definitions (API v4)
 ----------------------------
 
-The length is the total length with id and parameters.
+The length is the total length with id and parameters. Note that the two
+characters ``\r\n`` following the message are not included in the length.
 
 ========== ========== ==== ====== =============================================
   source      name     id  length        parameters
@@ -172,7 +174,7 @@ The ``indState`` Message
 
 TODO: When is this sent?
 
-- Python: :class:`~AYABInterface.communication.hardware_messages.InitializationIndication`
+- Python: :class:`~AYABInterface.communication.hardware_messages.StateIndication`
 - Arduino: `Knitter::indState <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/knitter.cpp#L375>`__
 - table: :ref:`indState <m4-84>`
 - direction: controller → host
@@ -186,7 +188,7 @@ The ``debug`` Message
 TODO: How to parse this message?
 
 - Python: :class:`~AYABInterface.communication.hardware_messages.Debug`
-- Arduino: `DEBUG_PRINT <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/debug.h#L32>`
+- Arduino: `DEBUG_PRINT <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/debug.h#L32>`__
 - table: :ref:`debug <m4-FF>`
 - direction: controller → host
 
