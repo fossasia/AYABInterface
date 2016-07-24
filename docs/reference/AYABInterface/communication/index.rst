@@ -5,5 +5,5 @@ The ``AYABInterface.communication`` Module Reference
    :maxdepth: 2
 
    init
-   received_messages
-   requests
+   hardware_messages
+   host_messages

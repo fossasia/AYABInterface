@@ -85,7 +85,12 @@ debug      .. _m-FF:  0xFF var    a debug string ending with ``\r\n``
            hardware
 ========== ========== ==== ====== =============================================
 
-.. seealso:: `the original specification <https://bitbucket.org/chris007de/ayab-apparat/wiki/english/Software/SerialCommunication>`__,
-  the :mod:`received messages module <AYABInterface.communication.received_messages>`,
-  the :mod:`requested messages module <AYABInterface.communication.requests>`,
-  
+.. seealso:: 
+  - `the original specification
+    <https://bitbucket.org/chris007de/ayab-apparat/wiki/english/Software/SerialCommunication>`__
+  - the :mod:`hardware messages module
+    <AYABInterface.communication.hardware_messages>`
+    for messages sent by the hardware
+  - the :mod:`host messages module
+    <AYABInterface.communication.host_messages>`
+    for messages sent by the host

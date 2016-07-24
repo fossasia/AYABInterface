@@ -3,7 +3,7 @@
 Requirement: Make objects from binary stuff.
 """
 from abc import ABCMeta, abstractmethod, abstractproperty
-from .received_messages import read_message_type, ConnectionClosed
+from .hardware_messages import read_message_type, ConnectionClosed
 
 
 class Content(object, metaclass=ABCMeta):
