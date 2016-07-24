@@ -238,7 +238,7 @@ class LineRequest(MessageWithAnswer):
     """The controller requests a line.
 
     .. seealso:: :ref:`"reqLine" in the specification <m-82>`
-   `"""
+    """
 
     MESSAGE_ID = 0x82  #: The first byte that indicates this message
 
