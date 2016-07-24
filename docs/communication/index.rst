@@ -107,7 +107,7 @@ The controller indicates the success of :ref:`message-reqstart`.
 - direction: controller → host
 
 
-.. message-reqline:
+.. _message-reqline:
 
 The ``reqLine`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,7 +120,7 @@ The controller requests a new line from the host.
 - direction: controller → host
 
 
-.. message-cnfline:
+.. _message-cnfline:
 
 The ``cnfLine`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -133,7 +133,7 @@ The host answers `The reqLine Message`_ with a line configuration.
 - direction: host → controller
 
 
-.. message-reqinfo:
+.. _message-reqinfo:
 
 The ``reqInfo`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,7 +146,7 @@ The host initializes the handshake.
 - direction: host → controller
 
 
-.. message-cnfinfo:
+.. _message-cnfinfo:
 
 The ``cnfInfo`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -159,7 +159,7 @@ The controller answers `The reqInfo Message`_ with the API version.
 - direction: controller → host
 
 
-.. message-indinit:
+.. _message-indinit:
 
 The ``indInit`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -171,7 +171,7 @@ TODO: What is this? Is this indState?
 - direction: controller → host
 
 
-.. message-debug:
+.. _message-debug:
 
 The ``debug`` Message
 ~~~~~~~~~~~~~~~~~~~~~

@@ -255,7 +255,7 @@ class LineRequest(MessageWithAnswer):
 
     """The controller requests a line.
 
-    .. seealso:: :ref:`messagex-reqline`
+    .. seealso:: :ref:`message-reqline`
 
     """
 
