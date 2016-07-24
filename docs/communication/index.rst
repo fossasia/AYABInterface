@@ -95,7 +95,6 @@ The host starts the knitting process.
 - direction: host → controller
 
 
-
 .. _cnfstart:
 
 The ``cnfStart`` Message

@@ -108,12 +108,16 @@ class ConfigurationSuccess(Message):
         """Read the success byte."""
         self._success = self._file.read(1)
 
+    def is_valid(self):
+        """Whether this message is valid."""
+        return self._success <= b"\x01"
+
     def is_success(self):
         """Whether the configuration was successful.
 
         :rtype: bool
         """
-        return self._success
+        return self._success == b"\x01"
 
 
 class ConfigurationStart(ConfigurationSuccess):

@@ -18,11 +18,17 @@ class Message(object):
     FIRST_BYTE = None  #: the first byte to identify this message
 
     def content_bytes(self):
-        """The message content as bytes."""
+        """The message content as bytes.
+        
+        :rtype: bytes
+        """
         return b''
 
     def as_bytes(self):
-        """The message represented as bytes."""
+        """The message represented as bytes.
+        
+        :rtype: bytes
+        """
         return bytes([self.FIRST_BYTE]) + self.content_bytes()
 
     def send(self):
@@ -87,7 +93,10 @@ class RequestStart(Message):
         return self._stop_needle
 
     def content_bytes(self):
-        """Return the start and stop needle."""
+        """Return the start and stop needle.
+        
+        :rtype: bytes
+        """
         return bytes([self._start_needle, self._stop_needle])
 
 

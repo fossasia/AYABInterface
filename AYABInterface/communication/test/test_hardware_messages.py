@@ -44,6 +44,18 @@ def assert_identify(message, true=[]):
             assert test_method() == value
 
 
+@fixture
+def file():
+    """The file to read the messages from."""
+    return BytesIO()
+
+
+@fixture
+def communication():
+    """The communication object."""
+    return MagicMock()
+
+
 class TestUnknownMessage(object):
 
     """Test UnknownMessage.
@@ -53,10 +65,58 @@ class TestUnknownMessage(object):
     """
 
     @fixture
-    def message(self):
+    def message(self, file, communication):
         """The message to test."""
-        return UnknownMessage(BytesIO(), MagicMock())
+        return UnknownMessage(file, communication)
 
     def test_tests(self, message):
         """Test the is_* methods."""
         assert_identify(message, ["is_unknown"])
+
+
+class TestSuccessMessage(object):
+
+    """Test success messages.
+    
+    .. seealso::
+      :class:`AYABInterface.communication.hardware_messages.SuccessMessage`
+    """
+    
+    message_type = ConfigurationSuccess
+    identifiers = []
+    success = b'\x01'
+    failure = b'\x00'
+    
+    def test_success(self, communication):
+        message = self.message_type(BytesIO(self.success), communication)
+        assert_identify(message, self.identifiers + ["is_success", "is_valid"])
+        
+    def test_failure(self, communication):
+        message = self.message_type(BytesIO(self.failure), communication)
+        assert_identify(message, self.identifiers + ["is_valid"])
+        
+    @pytest.mark.parametrize("byte", [2, 20, 220, 255])
+    def test_invalid(self, communication, byte):
+        message = self.message_type(BytesIO(bytes([byte])), communication)
+        assert_identify(message, self.identifiers)
+        
+
+class TestConfigurationStart(TestSuccessMessage):
+
+    """Test the ConfigurationStart.
+    
+    .. seealso::
+      :class:`AYABInterface.communication.hardware_messages.ConfigurationStart`
+    """
+
+    message_type = ConfigurationStart
+    identifiers = ["is_configutation_start"]
+
+
+class TestLineRequest(object):
+
+    """Test the LineRequest.
+    
+    .. seealso::
+      :class:`AYABInterface.communication.hardware_messages.LineRequest`
+    """
