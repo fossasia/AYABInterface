@@ -91,6 +91,7 @@ class Message(object):
         """
         return False
 
+
 class ConfigurationSuccess(Message):
 
     """Base class for massages of success and failure."""
@@ -110,7 +111,7 @@ class ConfigurationSuccess(Message):
 class ConfigurationStart(ConfigurationSuccess):
 
     """This marks the success or failure of a reqStart message.
-    
+
     .. seealso:: :ref:`"cnfStart" in the specification <m-C1>`
     """
 
@@ -235,7 +236,7 @@ class ConfigurationTest(ConfigurationSuccess):
 class LineRequest(MessageWithAnswer):
 
     """The controller requests a line.
-    
+
     .. seealso:: :ref:`"reqLine" in the specification <m-82>`
    `"""
 
@@ -263,6 +264,7 @@ class LineRequest(MessageWithAnswer):
     def answer(self):
         """Message to inform about the upcoming line."""
         #  TODO: LineConfiguration
+
 
 class StateIndication(Message):
 

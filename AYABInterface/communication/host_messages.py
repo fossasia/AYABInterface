@@ -33,12 +33,12 @@ class Message(object):
 class RequestStart(Message):
 
     """This is the start of the conversation.
-    
+
     .. seealso:: :ref:`"reqStart" in the specification <m-01>`
     """
 
     FIRST_BYTE = 0x01  #: the first byte to identify this message
-    
+
     def init(self, start_needle, stop_needle):
         """Initialize the RequestStart with start and stop needle."""
 
@@ -49,12 +49,12 @@ class RequestStart(Message):
 class LineConfiguration(Message):
 
     """This message send the data to configure a line.
-    
+
     .. seealso:: :ref:`"cnfLine" in the specification <m-42>`
     """
 
     FIRST_BYTE = 0x42  #: the first byte to identify this message
-    
+
     def init(self, line_number):
         """Initialize the RequestStart with the line number."""
 
