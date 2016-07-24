@@ -34,7 +34,7 @@ class RequestStart(Message):
 
     """This is the start of the conversation.
 
-    .. seealso:: :ref:`message-reqstart`
+    .. seealso:: :ref:`reqstart`
     """
 
     FIRST_BYTE = 0x01  #: the first byte to identify this message
@@ -50,7 +50,7 @@ class LineConfiguration(Message):
 
     """This message send the data to configure a line.
 
-    .. seealso:: :ref:`message-cnfline`
+    .. seealso:: :ref:`cnfline`
     """
 
     FIRST_BYTE = 0x42  #: the first byte to identify this message
@@ -66,7 +66,7 @@ class InformationRequest(Message):
 
     """Start the initial handshake.
 
-    .. seealso:: :ref:`message-reqinfo`,
+    .. seealso:: :ref:`reqinfo`,
       :class:`ConfigurationInformation
       <AYABInterface.communication.hardware_messages.ConfigurationInformation>`
     """

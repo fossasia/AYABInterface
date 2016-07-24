@@ -120,7 +120,7 @@ class ConfigurationStart(ConfigurationSuccess):
 
     """This marks the success or failure of a reqStart message.
 
-    .. seealso:: :ref:`message-cnfstart`
+    .. seealso:: :ref:`cnfstart`
     """
 
     MESSAGE_ID = 0xc1  #: The first byte that indicates this message
@@ -199,7 +199,7 @@ class ConfigurationInformation(Message):
     A :class:`~AYABInterface.communication.host_messages.InformationRequest`
     requests this message from the controller to start the initial handshake.
 
-    .. seealso:: :ref:`message-cnfinfo`
+    .. seealso:: :ref:`cnfinfo`
       :class:`~AYABInterface.communication.host_messages.InformationRequest`
     """
 
@@ -252,7 +252,7 @@ class LineRequest(MessageWithAnswer):
 
     """The controller requests a line.
 
-    .. seealso:: :ref:`message-reqline`
+    .. seealso:: :ref:`reqline`
 
     """
 
@@ -284,7 +284,10 @@ class LineRequest(MessageWithAnswer):
 
 class StateIndication(Message):
 
-    """This message is sent at/when"""  # TODO
+    """This message shows the state of the controller.
+    
+    .. seealso:: :ref:`indinit`
+    """
 
     MESSAGE_ID = 0x84  #: The first byte that indicates this message
 
@@ -304,25 +307,6 @@ class StateIndication(Message):
         self._carriage_position = self._file.read(1)
 
 
-class InitializationIndication(ConfigurationSuccess):
-
-    """This message is sent at/when
-
-    .. seealso:: :ref:`message-indinit`
-
-    """  # TODO should this be StateIndication
-
-    MESSAGE_ID = 0x84fffffffff    #: The first byte that indicates this message
-
-    def is_initialization_indication(self):
-        """Whether this is a ConfigurationTest message.
-
-        :rtype: bool
-        :returns: :obj:`True`
-        """
-        return True
-
-
 _message_types = {}
 for message_type in list(globals().values()):
     message_id = getattr(message_type, "MESSAGE_ID", None)
@@ -339,5 +323,4 @@ def read_message_type(file):
 __all__ = ["read_message_type", "StateIndication", "LineRequest",
            "ConfigurationTest", "ConfigurationInformation",
            "ConfigurationStart", "ConfigurationSuccess", "MessageWithAnswer",
-           "UnknownMessage", "Message", "ConnectionClosed",
-           "InitializationIndication"]
+           "UnknownMessage", "Message", "ConnectionClosed"]
