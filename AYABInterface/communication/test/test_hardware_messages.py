@@ -19,7 +19,7 @@ class TestReadMessageFromFile(object):
     """Test read_message_type.
 
     .. seealso::
-      :func:`AYABInterface.communication.received_messages.read_message_type`.
+      :func:`AYABInterface.communication.hardware_messages.read_message_type`
     """
 
     @pytest.mark.parametrize("byte,message_type", [
@@ -49,7 +49,7 @@ class TestUnknownMessage(object):
     """Test UnknownMessage.
 
     .. seealso::
-      :func:`AYABInterface.communication.received_messages.UnknownMessage`.
+      :class:`AYABInterface.communication.hardware_messages.UnknownMessage`
     """
 
     @fixture
