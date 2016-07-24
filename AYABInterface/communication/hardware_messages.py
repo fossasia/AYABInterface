@@ -91,6 +91,39 @@ class Message(object):
         """
         return False
 
+class ConfigurationSuccess(Message):
+
+    """Base class for massages of success and failure."""
+
+    def _init(self):
+        """Read the success byte."""
+        self._success = self._file.read(1)
+
+    def is_success(self):
+        """Whether the configuration was successful.
+
+        :rtype: bool
+        """
+        return self._success
+
+
+class ConfigurationStart(ConfigurationSuccess):
+
+    """This marks the success or failure of a reqStart message.
+    
+    .. seealso:: :ref:`"cnfStart" in the specification <m-C1>`
+    """
+
+    MESSAGE_ID = 0xc1  #: The first byte that indicates this message
+
+    def is_configutation_start(self):
+        """Whether this is a ConfigurationStart message.
+
+        :rtype: bool
+        :returns: :obj:`True`
+        """
+        return True
+
 
 class ConnectionClosed(Message):
 
@@ -150,37 +183,6 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
         self.answer.send()
 
 
-class ConfigurationSuccess(Message):
-
-    """Base class for massages of success and failure."""
-
-    def _init(self):
-        """Read the success byte."""
-        self._success = self._file.read(1)
-
-    def is_success(self):
-        """Whether the configuration was successful.
-
-        :rtype: bool
-        """
-        return self._success
-
-
-class ConfigurationStart(ConfigurationSuccess):
-
-    """This message is sent at/when"""  # TODO
-
-    MESSAGE_ID = 0xc1  #: The first byte that indicates this message
-
-    def is_configutation_start(self):
-        """Whether this is a ConfigurationStart message.
-
-        :rtype: bool
-        :returns: :obj:`True`
-        """
-        return True
-
-
 class ConfigurationInformation(Message):
 
     """This message is sent at/when"""  # TODO
@@ -232,7 +234,10 @@ class ConfigurationTest(ConfigurationSuccess):
 
 class LineRequest(MessageWithAnswer):
 
-    """This message is sent at/when"""  # TODO
+    """The controller requests a line.
+    
+    .. seealso:: :ref:`"reqLine" in the specification <m-82>`
+   `"""
 
     MESSAGE_ID = 0x82  #: The first byte that indicates this message
 
@@ -257,7 +262,7 @@ class LineRequest(MessageWithAnswer):
     @property
     def answer(self):
         """Message to inform about the upcoming line."""
-
+        #  TODO: LineConfiguration
 
 class StateIndication(Message):
 

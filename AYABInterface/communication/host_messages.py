@@ -1,7 +1,7 @@
 """This module contains the messages that are sent to the controller."""
 
 
-class Request(object):
+class Message(object):
 
     """This is the interface for sent messages."""
 
@@ -30,25 +30,35 @@ class Request(object):
         self._file.write(self.as_bytes())
 
 
-class Information(Request):
+class RequestStart(Message):
 
-    """An information request message."""
+    """This is the start of the conversation.
+    
+    .. seealso:: :ref:`"reqStart" in the specification <m-01>`
+    """
 
-    FIRST_BYTE = None  #: the first byte to identify this message
+    FIRST_BYTE = 0x01  #: the first byte to identify this message
+    
+    def init(self, start_needle, stop_needle):
+        """Initialize the RequestStart with start and stop needle."""
+
+    def content_bytes(self):
+        """Return the start and stop needle."""
 
 
-class Test(Request):
+class LineConfiguration(Message):
 
-    """Set the controller into test mode."""
+    """This message send the data to configure a line.
+    
+    .. seealso:: :ref:`"cnfLine" in the specification <m-42>`
+    """
 
-    FIRST_BYTE = None  #: the first byte to identify this message
-
-
-class LineConfiguration(Request):
-
-    """Senf information about a specific line."""
-
-    FIRST_BYTE = None  #: the first byte to identify this message
-
+    FIRST_BYTE = 0x42  #: the first byte to identify this message
+    
     def init(self, line_number):
-        """Create a new LineConfiguration message."""
+        """Initialize the RequestStart with the line number."""
+
+    def content_bytes(self):
+        """Return the start and stop needle."""
+
+__all__ = ["Message", "RequestStart", "LineConfiguration"]

@@ -50,14 +50,20 @@ reqStart   .. _m-01:  0x01 3      ``0xaa 0xbb``
 
                                   - ``aa`` = startNeedle (Range: 0..198)
            host                   - ``bb`` = stopNeedle  (Range: 1..199)
+                                  
+                                  .. seealso:: :class:`~AYABInterface.communication.host_messages.RequestStart`
 
 cnfStart   .. _m-C1:  0xC1 2      ``0x0a``
            
            hardware               - ``a`` = success (0 = false, 1 = true)
+           
+                                  .. seealso:: :class:`~AYABInterface.communication.hardware_messages.ConfigurationStart`
 
 reqLine    .. _m-82:  0x82 2      ``0xaa``
 
            hardware               - ``aa`` = lineNumber (Range: 0..255)
+           
+                                  .. seealso:: :class:`~AYABInterface.communication.hardware_messages.LineRequest`
 
 cnfLine    .. _m-42:  0x42 29     ``0xaa 0xbb[24, 23, 22, ... 1, 0] 0xcc 0xdd``
 
@@ -65,6 +71,8 @@ cnfLine    .. _m-42:  0x42 29     ``0xaa 0xbb[24, 23, 22, ... 1, 0] 0xcc 0xdd``
                                   - ``bb[24 to 0]`` = binary pixel data
                                   - ``cc`` = flags (bit 0: lastLine)
                                   - ``dd`` = CRC8 Checksum
+                                  
+                                  .. seealso:: :class:`~AYABInterface.communication.host_messages.LineConfiguration`
 
 reqInfo    .. _m-03:  0x03 1      
 
