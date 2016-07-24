@@ -1,5 +1,5 @@
 """Test the received messages."""
-from AYABInterface.communication.received_messages import read_message_type, \
+from AYABInterface.communication.hardware_messages import read_message_type, \
     StateIndication, LineRequest, ConfigurationTest, MessageWithAnswer, \
     ConfigurationStart, ConfigurationSuccess, ConfigurationInformation, \
     UnknownMessage
