@@ -51,6 +51,14 @@ class Message(object):
         """
         return False
 
+    def is_initialization_indication(self):
+        """Whether this is a InitializationIndication message.
+
+        :rtype: bool
+        :returns: :obj:`False`
+        """
+        return False
+
     def is_line_request(self):
         """Whether this is a LineRequest message.
 
@@ -112,7 +120,7 @@ class ConfigurationStart(ConfigurationSuccess):
 
     """This marks the success or failure of a reqStart message.
 
-    .. seealso:: :ref:`"cnfStart" in the specification <m-C1>`
+    .. seealso:: :ref:`message-cnfstart`
     """
 
     MESSAGE_ID = 0xc1  #: The first byte that indicates this message
@@ -186,7 +194,14 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
 
 class ConfigurationInformation(Message):
 
-    """This message is sent at/when"""  # TODO
+    """This message is the answer in the initial handshake.
+    
+    A :class:`~AYABInterface.communication.host_messages.InformationRequest`
+    requests this message from the controller to start the initial handshake.
+    
+    .. seealso:: :ref:`message-cnfinfo`
+      :class:`~AYABInterface.communication.host_messages.InformationRequest`
+    """
 
     MESSAGE_ID = 0xc3  #: The first byte that indicates this message
 
@@ -232,12 +247,16 @@ class ConfigurationTest(ConfigurationSuccess):
         """
         return True
 
+        
+
+
 
 class LineRequest(MessageWithAnswer):
 
     """The controller requests a line.
 
-    .. seealso:: :ref:`"reqLine" in the specification <m-82>`
+    .. seealso:: :ref:`messagex-reqline`
+
     """
 
     MESSAGE_ID = 0x82  #: The first byte that indicates this message
@@ -287,7 +306,25 @@ class StateIndication(Message):
         self._carriage_type = self._file.read(1)
         self._carriage_position = self._file.read(1)
 
+class InitializationIndication(ConfigurationSuccess):
 
+    """This message is sent at/when
+    
+    .. seealso:: :ref:`message-indinit`
+    
+    """  # TODO should this be StateIndication
+
+    MESSAGE_ID = 0x84  #: The first byte that indicates this message
+
+    def is_initialization_indication(self):
+        """Whether this is a ConfigurationTest message.
+
+        :rtype: bool
+        :returns: :obj:`True`
+        """
+        return True
+        
+        
 _message_types = {}
 for message_type in list(globals().values()):
     message_id = getattr(message_type, "MESSAGE_ID", None)
@@ -304,4 +341,5 @@ def read_message_type(file):
 __all__ = ["read_message_type", "StateIndication", "LineRequest",
            "ConfigurationTest", "ConfigurationInformation",
            "ConfigurationStart", "ConfigurationSuccess", "MessageWithAnswer",
-           "UnknownMessage", "Message", "ConnectionClosed"]
+           "UnknownMessage", "Message", "ConnectionClosed",
+           "InitializationIndication"]

@@ -34,7 +34,7 @@ class RequestStart(Message):
 
     """This is the start of the conversation.
 
-    .. seealso:: :ref:`"reqStart" in the specification <m-01>`
+    .. seealso:: :ref:`message-reqstart`
     """
 
     FIRST_BYTE = 0x01  #: the first byte to identify this message
@@ -50,7 +50,7 @@ class LineConfiguration(Message):
 
     """This message send the data to configure a line.
 
-    .. seealso:: :ref:`"cnfLine" in the specification <m-42>`
+    .. seealso:: :ref:`message-cnfline`
     """
 
     FIRST_BYTE = 0x42  #: the first byte to identify this message
@@ -61,4 +61,19 @@ class LineConfiguration(Message):
     def content_bytes(self):
         """Return the start and stop needle."""
 
-__all__ = ["Message", "RequestStart", "LineConfiguration"]
+
+class InformationRequest(Message):
+
+    """Start the initial handshake.
+
+    .. seealso:: :ref:`message-reqinfo`,
+      :class:`ConfigurationInformation
+      <AYABInterface.communication.hardware_messages.ConfigurationInformation>`
+    """
+
+    FIRST_BYTE = 0x03  #: the first byte to identify this message
+
+
+
+__all__ = ["Message", "RequestStart", "LineConfiguration",
+           "InformationRequest"]
