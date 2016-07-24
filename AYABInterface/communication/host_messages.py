@@ -74,6 +74,5 @@ class InformationRequest(Message):
     FIRST_BYTE = 0x03  #: the first byte to identify this message
 
 
-
 __all__ = ["Message", "RequestStart", "LineConfiguration",
            "InformationRequest"]

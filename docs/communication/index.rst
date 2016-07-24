@@ -27,10 +27,10 @@ Message identifier format
 ======= ===================== =====================
   Bit        Description             Values
 ======= ===================== =====================
-A       message source        
+A       message source
                               - 0 = host
                               - 1 = hardware
-B	    message type          
+B	    message type
                               - 0 = request
                               - 1 = confirm
 r	    reserved
@@ -51,7 +51,7 @@ host       .. _m4-01: 0x01 3      ``0xaa 0xbb``
            reqStart               - ``aa`` = startNeedle (Range: 0..198)
                                   - ``bb`` = stopNeedle  (Range: 1..199)
 hardware   .. _m4-C1: 0xC1 2      ``0x0a``
-           
+
            cnfStart               - ``a`` = success (0 = false, 1 = true)
 hardware   .. _m4-82: 0x82 2      ``0xaa``
 
@@ -62,9 +62,9 @@ host       .. _m4-42: 0x42 29     ``0xaa 0xbb[24, 23, 22, ... 1, 0] 0xcc 0xdd``
                                   - ``bb[24 to 0]`` = binary pixel data
                                   - ``cc`` = flags (bit 0: lastLine)
                                   - ``dd`` = CRC8 Checksum
-host       .. _m4-03: 0x03 1      
+host       .. _m4-03: 0x03 1
 
-           reqInfo                   
+           reqInfo
 hardware   .. _m4-C3: 0xC3 4      ``0xaa 0xbb 0xcc``
 
            cnfInfo                - ``aa`` = Version identifier
@@ -80,7 +80,7 @@ hardware   .. _m4-FF: 0xFF var    a debug string ending with ``\r\n``
 
 
 
-.. _message-reqstart: 
+.. _message-reqstart:
 
 The ``reqStart`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -152,7 +152,7 @@ The ``cnfInfo`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The controller answers `The reqInfo Message`_ with the API version.
-                                  
+
 - implementation: :class:`~AYABInterface.communication.hardware_messages.ConfigurationInformation`
 - table: :ref:`cnfInfo <m4-C3>`
 - answers: `The reqInfo Message`_
@@ -186,7 +186,7 @@ TODO: How to parse this message?
 References
 ~~~~~~~~~~
 
-.. seealso:: 
+.. seealso::
   - `the original specification
     <https://bitbucket.org/chris007de/ayab-apparat/wiki/english/Software/SerialCommunication>`__
   - the :mod:`hardware messages module

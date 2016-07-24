@@ -30,7 +30,7 @@ class TestReadMessageFromFile(object):
         assert message_type.MESSAGE_ID == byte
         assert read_message_type(one_byte_file(byte)) == message_type
 
-    @pytest.mark.parametrize("byte", [0x00, 0xff, 0x0d1])
+    @pytest.mark.parametrize("byte", [0x00, 0xfe, 0x0d1])
     def test_read_unknown_message(self, byte):
         assert read_message_type(one_byte_file(byte)) == UnknownMessage
 

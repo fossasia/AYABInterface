@@ -195,10 +195,10 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
 class ConfigurationInformation(Message):
 
     """This message is the answer in the initial handshake.
-    
+
     A :class:`~AYABInterface.communication.host_messages.InformationRequest`
     requests this message from the controller to start the initial handshake.
-    
+
     .. seealso:: :ref:`message-cnfinfo`
       :class:`~AYABInterface.communication.host_messages.InformationRequest`
     """
@@ -246,9 +246,6 @@ class ConfigurationTest(ConfigurationSuccess):
         :returns: :obj:`True`
         """
         return True
-
-        
-
 
 
 class LineRequest(MessageWithAnswer):
@@ -306,15 +303,16 @@ class StateIndication(Message):
         self._carriage_type = self._file.read(1)
         self._carriage_position = self._file.read(1)
 
+
 class InitializationIndication(ConfigurationSuccess):
 
     """This message is sent at/when
-    
+
     .. seealso:: :ref:`message-indinit`
-    
+
     """  # TODO should this be StateIndication
 
-    MESSAGE_ID = 0x84  #: The first byte that indicates this message
+    MESSAGE_ID = 0x84fffffffff    #: The first byte that indicates this message
 
     def is_initialization_indication(self):
         """Whether this is a ConfigurationTest message.
@@ -323,8 +321,8 @@ class InitializationIndication(ConfigurationSuccess):
         :returns: :obj:`True`
         """
         return True
-        
-        
+
+
 _message_types = {}
 for message_type in list(globals().values()):
     message_id = getattr(message_type, "MESSAGE_ID", None)
