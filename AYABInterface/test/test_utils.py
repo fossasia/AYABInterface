@@ -1,6 +1,6 @@
 """Test utility methods."""
 import pytest
-from AYABInterface.utils import sum_all, number_of_colors
+from AYABInterface.utils import sum_all, number_of_colors, next_line
 
 
 class TestSumAll(object):
@@ -31,3 +31,23 @@ class TestNumberOfColors(object):
     def test_number_of_colors(self, colors, number):
         """Test different inputs."""
         assert number_of_colors(colors) == number
+
+
+class TestNextLine(object):
+    
+    """Test the next_line function.
+    
+    The behaviour of :func:`AYABInterface.utils.next_line`
+    is specified in :ref:`reqline`.
+    """
+
+    @pytest.mark.parametrize("last_line,expected_next_lines", [
+        (0, list(range(0, 128)) + list(range(-128, 0))),
+        (30, list(range(0, 158)) + list(range(-98, 0))),
+        (127, list(range(0, 255)) + [-1]),
+        (128, list(range(0, 256))),
+        (200, list(range(256, 328)) + list(range(72, 256))),
+        (256, list(range(256, 384)) + list(range(128, 256)))])
+    def test_valid_arguments(self, last_line, expected_next_lines):
+        next_lines = [next_line(last_line, i) for i in range(256)]
+        assert next_lines == expected_next_lines

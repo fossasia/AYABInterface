@@ -133,6 +133,19 @@ The ``reqLine`` Message
 
 The controller requests a new line from the host.
 
+More than 256 lines are supported.
+There are three possibilities for the next line based on the last line:
+
+1. the new line is greater than the last line
+2. the new line is lower than the last line
+3. the new line is the last line
+
+We choose the line closest to the last line. This is trivial for (3).
+In case two lines are equally distant from the last line, we choose the
+smaller line.
+
+This is computed by the function :func:`AYABInterface.utils.next_line`.
+
 - Python: :class:`~AYABInterface.communication.hardware_messages.LineRequest`
 - Arduino: `Knitter::reqLine <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/knitter.cpp#L366>`__
 - table: :ref:`reqLine <m4-82>`

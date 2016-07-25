@@ -1,12 +1,14 @@
 """Test the received messages."""
+from AYABInterface.communication.host_messages import LineConfiguration
 from AYABInterface.communication.hardware_messages import read_message_type, \
-    StateIndication, LineRequest, ConfigurationTest, MessageWithAnswer, \
-    ConfigurationStart, ConfigurationSuccess, ConfigurationInformation, \
-    UnknownMessage
+    UnknownMessage, ConfigurationSuccess, ConfigurationStart, LineRequest, \
+    ConfigurationInformation, ConfigurationTest, StateIndication
 import pytest
 from io import BytesIO
 from pytest import fixture
 from unittest.mock import MagicMock
+from AYABInterface.utils import next_line
+import AYABInterface.communication.hardware_messages as hardware_messages
 
 
 def one_byte_file(byte):
@@ -120,3 +122,41 @@ class TestLineRequest(object):
     .. seealso::
       :class:`AYABInterface.communication.hardware_messages.LineRequest`
     """
+
+    @pytest.mark.parametrize("last_line", [-123, 1, 3000])
+    @pytest.mark.parametrize("next_line", [-4, 444, 60000])
+    @pytest.mark.parametrize("byte", [b'\x00', b'f'])
+    def test_line_number(self, last_line, next_line, byte, monkeypatch, file,
+                         communication):
+        def mock_next_line(last_line_, next_line_):
+            assert last_line_ == last_line
+            assert next_line_ == byte[0]
+            return next_line
+        monkeypatch.setattr(hardware_messages, 'next_line', mock_next_line)
+        communication.last_line = last_line
+        message = LineRequest(BytesIO(byte), communication)
+        assert_identify(message, ["is_line_request", "is_valid"])
+        assert message.line_number == next_line
+
+    def test_next_line_is_from_utils(self):
+        assert hardware_messages.next_line == next_line
+
+    def test_answer(self, communication, monkeypatch):
+        file = BytesIO(b'\x00')
+        next_line = MagicMock()
+        line_conf = MagicMock()
+        monkeypatch.setattr(hardware_messages, 'next_line', next_line)
+        monkeypatch.setattr(hardware_messages, 'LineConfiguration', line_conf)
+        message = LineRequest(file, communication)
+        assert message.has_answer()
+        answer = message.answer
+        assert answer == line_conf.return_value, "LineConfiguration expected"
+        line_conf.assert_called_once_with(file, communication,
+                                          next_line.return_value)
+        answer.send.assert_not_called()
+        message.send_answer()
+        answer.send.assert_called_once()
+        
+    def test_line_configuration_is_from_host_messages(self):
+        assert hardware_messages.LineConfiguration == LineConfiguration
+

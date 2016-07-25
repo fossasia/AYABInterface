@@ -1,5 +1,7 @@
 """This modue contains all the messages taht are received."""
 from abc import ABCMeta, abstractproperty
+from ..utils import next_line
+from .host_messages import LineConfiguration
 
 
 class Message(object):
@@ -9,7 +11,7 @@ class Message(object):
     def __init__(self, file, communication):
         """Create a new Message."""
         self._file = file
-        self.communication = communication
+        self._communication = communication
         self._init()
 
     def _init(self):
@@ -176,8 +178,8 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
 
     """A base class for msaages that have an answer."""
 
-    def wants_to_answer(self):
-        """Whether this message produces and answer message.
+    def has_answer(self):
+        """Whether this message produces an answer message.
 
         :rtype: bool
         :returns: :obj:`True`
@@ -188,8 +190,9 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
     def answer(self):
         """The message to answer.
 
-        :rtype: AYABInterface.conmmunication.sent_messages.SentMessage
+        :rtype: AYABInterface.conmmunication.host_messages.SentMessage
         """
+        
 
     def send_answer(self):
         """Send the answer via the communication."""
@@ -272,8 +275,8 @@ class LineRequest(MessageWithAnswer):
 
     def _init(self):
         """Read the line number."""
-        self._line_number = self._file.read(1)
-        # TODO: compute real line number with overflow
+        self._line_number = next_line(self._communication.last_line, 
+                                      self._file.read(1)[0])
 
     @property
     def line_number(self):
@@ -282,8 +285,12 @@ class LineRequest(MessageWithAnswer):
 
     @property
     def answer(self):
-        """Message to inform about the upcoming line."""
-        #  TODO: LineConfiguration
+        """Message to inform about the upcoming line.
+        
+        :rtype: AYABInterface.communication.host_messages.LineConfiguration
+        """
+        return LineConfiguration(self._file, self._communication, 
+                                 self.line_number)
 
 
 class StateIndication(Message):
@@ -311,6 +318,14 @@ class StateIndication(Message):
         self._carriage_position = self._file.read(1)
 
 
+class Debug(Message):
+    
+    """This message contains debug output from the controller.
+    
+    .. seealso:: :ref:`debug`
+    """
+
+
 _message_types = {}
 for message_type in list(globals().values()):
     message_id = getattr(message_type, "MESSAGE_ID", None)
@@ -325,6 +340,6 @@ def read_message_type(file):
     return _message_types.get(message_number, UnknownMessage)
 
 __all__ = ["read_message_type", "StateIndication", "LineRequest",
-           "ConfigurationTest", "ConfigurationInformation",
+           "ConfigurationTest", "ConfigurationInformation", "Debug",
            "ConfigurationStart", "ConfigurationSuccess", "MessageWithAnswer",
            "UnknownMessage", "Message", "ConnectionClosed"]
