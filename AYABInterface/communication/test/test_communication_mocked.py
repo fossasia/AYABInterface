@@ -5,7 +5,7 @@
 from AYABInterface.communication import Communication
 from pytest import fixture, raises
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, call
 from io import BytesIO
 
 
@@ -40,68 +40,123 @@ def send_message(file):
 def create_message():
     return MagicMock()
 
+    
+@fixture
+def get_needle_positions():
+    return MagicMock()
+    
+
+    
+@fixture
+def machine():
+    return MagicMock()
+    
 
 @fixture
-def communication(file, on_message_received, monkeypatch, create_message):
+def communication(file, on_message_received, monkeypatch, create_message,
+                   get_needle_positions, machine):
     monkeypatch.setattr(Communication, '_read_message_type', create_message)
-    return Communication(file, MagicMock(),
+    return Communication(file, get_needle_positions, machine, 
                          on_message_received=[on_message_received])
 
 
-def test_before_start_no_message_was_received(communication, create_message):
-    create_message.assert_not_called()
+class TestReceiveMessages(object):
 
+    """Test the receive_message, start and stop methods.
+    
+    .. seealso:: 
+        :meth:`AYABInterface.communication.Commmunication.receive_message`,
+        :meth:`AYABInterface.communication.Commmunication.start`,
+        :meth:`AYABInterface.communication.Commmunication.stop`
+        
+    """
 
-@fixture
-def started_communication(communication):
-    communication.start()
-    return communication
+    def test_before_start_no_message_was_received(self, communication, create_message):
+        create_message.assert_not_called()
 
+    @fixture
+    def started_communication(self, communication):
+        communication.start()
+        return communication
 
-def test_after_start_no_message_was_received(
-        started_communication, create_message):
-    create_message.assert_not_called()
+    def test_after_start_no_message_was_received(
+            self, started_communication, create_message):
+        create_message.assert_not_called()
 
+    def test_receiving_message_before_start_is_forbidden(self, communication):
+        with raises(AssertionError):
+            communication.receive_message()
 
-def test_receiving_message_before_start_is_forbidden(communication):
-    with raises(AssertionError):
-        communication.receive_message()
+    def test_receiving_message_after_stop_is_forbidden(
+            self, started_communication):
+        started_communication.stop()
+        with raises(AssertionError):
+            started_communication.receive_message()
 
+    @fixture
+    def message(self, create_message):
+        message_type = create_message.return_value
+        return message_type.return_value
 
-def test_receiving_message_after_stop_is_forbidden(started_communication):
-    started_communication.stop()
-    with raises(AssertionError):
+    def test_can_receive_message(
+            self, started_communication, create_message, file, messages):
         started_communication.receive_message()
+        message_type = create_message.return_value
+        create_message.assert_called_once_with(file)
+        message_type.assert_called_once_with(file, started_communication)
+        assert messages == [message_type.return_value]
+
+    def test_message_answers(self, started_communication, message):
+        started_communication.receive_message()
+        assert message.wants_to_answer.return_value
+        message.send_answer.assert_called_once_with()
+
+    def test_message_does_not_answer(
+            self, started_communication, create_message, message):
+        message.wants_to_answer.return_value = False
+        started_communication.receive_message()
+        message.send_answer.assert_not_called()
+
+    def test_stop_notifies_with_close_message(self, started_communication,
+                                              messages):
+        started_communication.stop()
+        assert messages[0].is_connection_closed()
 
 
-@fixture
-def message(create_message):
-    message_type = create_message.return_value
-    return message_type.return_value
+class TestGetLineBytes(object):
+
+    """Test the get_needle_position_bytes method.
+    
+    .. seealso:: 
+        :meth:`AYABInterface.communication.Commmunication.get_line_bytes`
+    """
+
+    @pytest.mark.parametrize("line", [1, -123, 10000])
+    def test_get_line(self, communication, get_needle_positions, line,
+                      machine):
+        line_bytes = communication.get_needle_position_bytes(line)
+        get_needle_positions.assert_called_with(line)
+        machine.needle_positions_to_bytes.assert_called_with(
+            get_needle_positions.return_value)
+        assert line_bytes == machine.needle_positions_to_bytes.return_value
+
+    @pytest.mark.parametrize("line", [4, -89])
+    def test_line_is_cached(self, communication, get_needle_positions,
+                            line, machine):
+        communication.get_needle_position_bytes(line)
+        cached_value = machine.needle_positions_to_bytes.return_value
+        machine.needle_positions_to_bytes.return_value = None
+        line_bytes = communication.get_needle_position_bytes(line)
+        assert line_bytes == cached_value
+
+    @pytest.mark.parametrize("line", [55])
+    @pytest.mark.parametrize("added", [-1, 1, 12, -2])
+    def test_cache_works_only_for_specific_line(self, communication,
+            get_needle_positions, line, machine, added):
+        communication.get_needle_position_bytes(line)
+        machine.needle_positions_to_bytes.return_value = None
+        line_bytes = communication.get_needle_position_bytes(line + added)
+        assert line_bytes is None
 
 
-def test_can_receive_message(
-        started_communication, create_message, file, messages):
-    started_communication.receive_message()
-    message_type = create_message.return_value
-    create_message.assert_called_once_with(file)
-    message_type.assert_called_once_with(file, started_communication)
-    assert messages == [message_type.return_value]
 
-
-def test_message_answers(started_communication, message):
-    started_communication.receive_message()
-    assert message.wants_to_answer.return_value
-    message.send_answer.assert_called_once_with()
-
-
-def test_message_does_not_answer(
-        started_communication, create_message, message):
-    message.wants_to_answer.return_value = False
-    started_communication.receive_message()
-    message.send_answer.assert_not_called()
-
-
-def test_stop_notifies_with_close_message(started_communication, messages):
-    started_communication.stop()
-    assert messages[0].is_connection_closed()

@@ -144,7 +144,8 @@ We choose the line closest to the last line. This is trivial for (3).
 In case two lines are equally distant from the last line, we choose the
 smaller line.
 
-This is computed by the function :func:`AYABInterface.utils.next_line`.
+This is computed by the function :func:`AYABInterface.utils.next_line` which
+is tested and can be seen as a reference implementation for other languages.
 
 - Python: :class:`~AYABInterface.communication.hardware_messages.LineRequest`
 - Arduino: `Knitter::reqLine <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/knitter.cpp#L366>`__

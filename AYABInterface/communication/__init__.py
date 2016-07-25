@@ -180,7 +180,8 @@ class Communication(object):
 
     """This class comunicates with the AYAB shield."""
 
-    def __init__(self, file, get_line, on_message_received=[]):
+    def __init__(self, file, get_needle_positions, machine,
+                 on_message_received=[]):
         """Create a new Communication object.
 
         :param file: a file-like object with read and write methods for the
@@ -188,10 +189,21 @@ class Communication(object):
           :class:`serial.Serial` or a :meth:`socket.socket.makefile`.
         """
         self._file = file
-        self._get_line = get_line
+        self._get_needle_positions = get_needle_positions
         self._on_message_received = on_message_received
+        self._machine = machine
         self._started = False
         self._stopped = False
+        self._last_requested_line = (None, None)
+
+    def get_needle_position_bytes(self, line_number):
+        """Get the bytes representing needle positions."""
+        if self._last_requested_line[0] == line_number:
+            return self._last_requested_line[1]
+        needle_positions = self._get_needle_positions(line_number)
+        bytes_ = self._machine.needle_positions_to_bytes(needle_positions)
+        self._last_requested_line = (line_number, bytes_)
+        return bytes_
 
     def start(self):
         """Start the communication about a content.
