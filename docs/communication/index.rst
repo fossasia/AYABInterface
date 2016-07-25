@@ -19,32 +19,47 @@ Sequence Chart
 .. image:: ../_static/sequence-chart.png
    :alt: sequence diagram for the communication between host and controller
 
+.. _message-identifier-format:
+   
 Message Identifier Format
 -------------------------
 
-Message identifier format
+Messages start with a byte that identifies their type. This byte is called
+"id" or "message id" in the following document. This table lists all the bits
+of this byte and assigns their purpose:
 
-0b"**AB**rr **CCCC**"
++-----+-------+--------------------+------------------------------------------+
+| Bit | Value |        Name        |         Description and Values           |
++=====+=======+====================+==========================================+
+|     |       |                    | - 0 = the message is from the host       |
+|  7  |  128  | message source     | - 1 = the message is from the controller |
+|     |       |                    |                                          |
++-----+-------+--------------------+------------------------------------------+
+|     |       |                    | - 0 = the message is a request           |
+|  6  |   64  | message type       | - 1 = the message is a confirmation      |
+|     |       |                    |   of a request                           |
++-----+-------+--------------------+------------------------------------------+
+|  5  |   32  |                    |                                          |
++-----+-------+ reserved           | must be zero                             |
+|  4  |   16  |                    |                                          |
++-----+-------+--------------------+------------------------------------------+
+|  3  |    8  |                    |                                          |
++-----+-------+                    | These are the values that identify the   |
+|  2  |    4  |                    | message.                                 |
++-----+-------+ message identifier |                                          |
+|  1  |    2  |                    | .. seealso::                             |
++-----+-------+                    |    :ref:`message-definitions-v4`         |
+|  0  |    1  |                    |                                          |
++-----+-------+--------------------+------------------------------------------+
 
-======= ===================== =====================
-  Bit        Description             Values
-======= ===================== =====================
-A       message source
-                              - 0 = host
-                              - 1 = hardware
-B	    message type
-                              - 0 = request
-                              - 1 = confirm
-r	    reserved
-
-CCCC	message identifier
-======= ===================== =====================
+.. _message-definitions-v4:
 
 Message definitions (API v4)
 ----------------------------
 
-The length is the total length with id and parameters. Note that the two
-characters ``\r\n`` following the message are not included in the length.
+The length is the total length with :ref:`id <message-identifier-format>`
+and parameters. Note that the two characters ``\r\n`` following the message are
+not included in the length.
 
 ========== ========== ==== ====== =============================================
   source      name     id  length        parameters
