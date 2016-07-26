@@ -236,7 +236,7 @@ class Communication(object):
         
         :param int line_number: the number of the line
         :rtype: bytes
-        :return: a cnfLine message as defined in :ref:`cnfLine`
+        :return: a cnfLine message as defined in :ref:`cnfLine` 
         """
 
     def start(self):

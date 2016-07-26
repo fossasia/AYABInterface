@@ -192,7 +192,7 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
 
         :rtype: AYABInterface.conmmunication.host_messages.SentMessage
         """
-        
+
 
     def send_answer(self):
         """Send the answer via the communication."""
@@ -275,7 +275,7 @@ class LineRequest(MessageWithAnswer):
 
     def _init(self):
         """Read the line number."""
-        self._line_number = next_line(self._communication.last_line, 
+        self._line_number = next_line(self._communication.last_line,
                                       self._file.read(1)[0])
 
     @property
@@ -286,17 +286,17 @@ class LineRequest(MessageWithAnswer):
     @property
     def answer(self):
         """Message to inform about the upcoming line.
-        
+
         :rtype: AYABInterface.communication.host_messages.LineConfiguration
         """
-        return LineConfiguration(self._file, self._communication, 
+        return LineConfiguration(self._file, self._communication,
                                  self.line_number)
 
 
 class StateIndication(Message):
 
     """This message shows the state of the controller.
-    
+
     .. seealso:: :ref:`indstate`
     """
 
@@ -319,9 +319,9 @@ class StateIndication(Message):
 
 
 class Debug(Message):
-    
+
     """This message contains debug output from the controller.
-    
+
     .. seealso:: :ref:`debug`
     """
 

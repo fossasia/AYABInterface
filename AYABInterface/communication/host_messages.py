@@ -19,14 +19,14 @@ class Message(object):
 
     def content_bytes(self):
         """The message content as bytes.
-        
+
         :rtype: bytes
         """
         return b''
 
     def as_bytes(self):
         """The message represented as bytes.
-        
+
         :rtype: bytes
         """
         return bytes([self.MESSAGE_ID]) + self.content_bytes()
@@ -36,12 +36,12 @@ class Message(object):
         self._file.write(self.as_bytes())
 
 
-def _start_needle_error_message(needle):
+def _left_end_needle_error_message(needle):
     return "Start needle is {0} but 0 <= {0} <= 198 was expected.".format(
         repr(needle))
 
 
-def _stop_needle_error_message(needle):
+def _right_end_needle_error_message(needle):
     return "Stop needle is {0} but 1 <= {0} <= 199 was expected.".format(
         repr(needle))
 
@@ -55,49 +55,49 @@ class RequestStart(Message):
 
     MESSAGE_ID = 0x01  #: the first byte to identify this message
 
-    def init(self, start_needle, stop_needle):
+    def init(self, left_end_needle, right_end_needle):
         """Initialize the RequestStart with start and stop needle.
-        
+
         :raises TypeError: if the arguments are not integers
         :raises ValueError: if the values do not match the
           :ref:`specification <m4-01>`
         """
-        if not isinstance(start_needle, int):
+        if not isinstance(left_end_needle, int):
 
-            raise TypeError(_start_needle_error_message(start_needle))
-        if start_needle < 0 or start_needle > 198:
-            raise ValueError(_start_needle_error_message(start_needle))
-        if not isinstance(stop_needle, int):
-            raise TypeError(_stop_needle_error_message(stop_needle))
-        if stop_needle < 1 or stop_needle > 199:
-            raise ValueError(_stop_needle_error_message(stop_needle))
-        self._start_needle = start_needle
-        self._stop_needle = stop_needle
-        
+            raise TypeError(_left_end_needle_error_message(left_end_needle))
+        if left_end_needle < 0 or left_end_needle > 198:
+            raise ValueError(_left_end_needle_error_message(left_end_needle))
+        if not isinstance(right_end_needle, int):
+            raise TypeError(_right_end_needle_error_message(right_end_needle))
+        if right_end_needle < 1 or right_end_needle > 199:
+            raise ValueError(_right_end_needle_error_message(right_end_needle))
+        self._left_end_needle = left_end_needle
+        self._right_end_needle = right_end_needle
+
     @property
-    def start_needle(self):
+    def left_end_needle(self):
         """The needle to start knitting with.
-        
+
         :rtype: int
         :return: value where ``0 <= value <= 198``
         """
-        return self._start_needle
+        return self._left_end_needle
 
     @property
-    def stop_needle(self):
+    def right_end_needle(self):
         """The needle to start knitting with.
-        
+
         :rtype: int
         :return: value where ``1 <= value <= 199``
         """
-        return self._stop_needle
+        return self._right_end_needle
 
     def content_bytes(self):
         """Return the start and stop needle.
-        
+
         :rtype: bytes
         """
-        return bytes([self._start_needle, self._stop_needle])
+        return bytes([self._left_end_needle, self._right_end_needle])
 
 
 class LineConfiguration(Message):

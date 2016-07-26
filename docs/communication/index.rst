@@ -2,7 +2,7 @@ Communication Specification
 ===========================
 
 This document specifies the communication between the host and a controller
-with the 
+with the
 `AYAB firmware <https://github.com/AllYarnsAreBeautiful/ayab-firmware>`_.
 
 Serial Communication
@@ -10,7 +10,7 @@ Serial Communication
 
 115200 baud
 
-Line Ending: ``\n\r`` (10 13)  
+Line Ending: ``\n\r`` (10 13)
 Each message ends with a Line Ending.
 
 Sequence Chart
@@ -20,7 +20,7 @@ Sequence Chart
    :alt: sequence diagram for the communication between host and controller
 
 .. _message-identifier-format:
-   
+
 Message Identifier Format
 -------------------------
 
@@ -66,17 +66,19 @@ not included in the length.
 ========== ========== ==== ====== =============================================
 host       .. _m4-01: 0x01 3      ``0xaa 0xbb``
 
-           reqStart_              - ``aa`` = startNeedle (Range: 0..198)
-                                  - ``bb`` = stopNeedle  (Range: 1..199)
+           reqStart_              - ``aa`` = left end needle (Range: 0..198)
+                                  - ``bb`` = right end needle (Range: 1..199)
+
+                                  Start and
 hardware   .. _m4-C1: 0xC1 2      ``0x0a``
 
            cnfStart_              - ``a`` = success (0 = false, 1 = true)
 hardware   .. _m4-82: 0x82 2      ``0xaa``
 
-           reqLine_               - ``aa`` = lineNumber (Range: 0..255)
+           reqLine_               - ``aa`` = line number (Range: 0..255)
 host       .. _m4-42: 0x42 29     ``0xaa 0xbb[24, 23, 22, ... 1, 0] 0xcc 0xdd``
 
-           cnfLine_               - ``aa`` = lineNumber (Range: 0..255)
+           cnfLine_               - ``aa`` = line number (Range: 0..255)
                                   - ``bb[24 to 0]`` = binary pixel data
                                   - ``cc`` = flags (bit 0: lastLine)
                                   - ``dd`` = CRC8 Checksum
@@ -85,7 +87,7 @@ host       .. _m4-03: 0x03 1
            reqInfo_
 hardware   .. _m4-C3: 0xC3 4      ``0xaa 0xbb 0xcc``
 
-           cnfInfo_               - ``aa`` = Version identifier
+           cnfInfo_               - ``aa`` = Version Identifier
                                   - ``bb`` = Major Version
                                   - ``cc`` = Minor Version
 hardware   .. _m4-84: 0x84 2      ``0x0a``
@@ -207,7 +209,7 @@ In the following table, you can see the mapping of bytes to needles.
 +--------+-------------------------------+-------------------------------+-----+-------------------------------+-------------------------------+
 | Byte   |               1               |               2               |     |              24               |               25              |
 +--------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+-----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-| Bit    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | ... | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 
+| Bit    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | ... | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
 +--------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+-----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 | Needle | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                         ...                                                         |198|199|
 +--------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+-----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+

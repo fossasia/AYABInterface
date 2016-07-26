@@ -23,26 +23,26 @@ def communication():
 class TestReqStart(object):
 
     """Test the reqStart message.
-    
+
     .. seealso::
       :class:`AYABInterface.communication.hardware_messages.RequestStart`,
       :ref:`reqstart`
     """
-    
+
     VALID_START_NEEDLES = [0, 4, 29, 198, 120]
     VALID_STOP_NEEDLES = [1, 4, 29, 199, 120]
-    
-    @pytest.mark.parametrize("start_needle", VALID_START_NEEDLES)
-    @pytest.mark.parametrize("stop_needle", VALID_STOP_NEEDLES)
+
+    @pytest.mark.parametrize("left_end_needle", VALID_START_NEEDLES)
+    @pytest.mark.parametrize("right_end_needle", VALID_STOP_NEEDLES)
     def test_initialize_with_correct_arguments(
-            self, start_needle, stop_needle, file, communication):
-        content_bytes = bytes([start_needle, stop_needle])
+            self, left_end_needle, right_end_needle, file, communication):
+        content_bytes = bytes([left_end_needle, right_end_needle])
         first_byte = 0x01
         all_bytes = bytes([first_byte]) + content_bytes
-        message = RequestStart(file, communication, start_needle, stop_needle)
+        message = RequestStart(file, communication, left_end_needle, right_end_needle)
         assert message.MESSAGE_ID == first_byte
-        assert message.start_needle == start_needle
-        assert message.stop_needle == stop_needle
+        assert message.left_end_needle == left_end_needle
+        assert message.right_end_needle == right_end_needle
         assert message.content_bytes() == content_bytes
         assert message.as_bytes() == all_bytes
         message.send()
@@ -51,41 +51,41 @@ class TestReqStart(object):
     TYPE_ERRORS = [None, "asd", object()]
     INVALID_START_NEEDLES = [-1, -4, 199, 200, 123123123] + TYPE_ERRORS
     INVALID_STOP_NEEDLES = [0, -1234, -29, 200, 821737382193, -1] + TYPE_ERRORS
-    
-    @pytest.mark.parametrize("start_needle", INVALID_START_NEEDLES)
-    @pytest.mark.parametrize("stop_needle", VALID_STOP_NEEDLES)
-    def test_invalid_start_needle(
-            self, start_needle, stop_needle, file, communication):
-        error_type = (ValueError if type(start_needle) == int else TypeError)
+
+    @pytest.mark.parametrize("left_end_needle", INVALID_START_NEEDLES)
+    @pytest.mark.parametrize("right_end_needle", VALID_STOP_NEEDLES)
+    def test_invalid_left_end_needle(
+            self, left_end_needle, right_end_needle, file, communication):
+        error_type = (ValueError if type(left_end_needle) == int else TypeError)
         with raises(error_type) as error:
-            RequestStart(file, communication, start_needle, stop_needle)
+            RequestStart(file, communication, left_end_needle, right_end_needle)
         message = "Start needle is {0} but 0 <= {0} <= 198 was expected."\
-            "".format(repr(start_needle))
+            "".format(repr(left_end_needle))
         assert error.value.args[0] == message
-    
-    @pytest.mark.parametrize("start_needle", VALID_START_NEEDLES)
-    @pytest.mark.parametrize("stop_needle", INVALID_STOP_NEEDLES)
-    def test_invalid_stop_needle(
-            self, start_needle, stop_needle, file, communication):
-        error_type = (ValueError if type(stop_needle) == int else TypeError)
+
+    @pytest.mark.parametrize("left_end_needle", VALID_START_NEEDLES)
+    @pytest.mark.parametrize("right_end_needle", INVALID_STOP_NEEDLES)
+    def test_invalid_right_end_needle(
+            self, left_end_needle, right_end_needle, file, communication):
+        error_type = (ValueError if type(right_end_needle) == int else TypeError)
         with raises(error_type) as error:
-            RequestStart(file, communication, start_needle, stop_needle)
+            RequestStart(file, communication, left_end_needle, right_end_needle)
         message = "Stop needle is {0} but 1 <= {0} <= 199 was expected."\
-            "".format(repr(stop_needle))
+            "".format(repr(right_end_needle))
         assert error.value.args[0] == message
-    
-    
+
+
 class TestLineConfiguration(object):
 
     """Test the LineConfiguration.
-    
+
     .. seealso::
       :class:`AYABInterface.communication.hardware_messages.LineConfiguration`,
       :ref:`cnfline`
     """
-    
+
     MESSAGE_ID = 0x42
-    
+
     @pytest.mark.parametrize("line_number", [-12, -1, 0, 1, 5])
     @pytest.mark.parametrize("line_bytes", [b'123123', b'0' * 24])
     @pytest.mark.parametrize("last_line", [True, False])
@@ -99,8 +99,7 @@ class TestLineConfiguration(object):
             line_number)
         cnfLine.send()
         assert file.getvalue() == bytes([self.MESSAGE_ID]) + line_bytes
-    
+
     def test_first_byte(self):
         assert LineConfiguration.MESSAGE_ID == self.MESSAGE_ID
-    
-    
+

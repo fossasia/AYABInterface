@@ -79,34 +79,34 @@ class TestUnknownMessage(object):
 class TestSuccessMessage(object):
 
     """Test success messages.
-    
+
     .. seealso::
       :class:`AYABInterface.communication.hardware_messages.SuccessMessage`
     """
-    
+
     message_type = ConfigurationSuccess
     identifiers = []
     success = b'\x01'
     failure = b'\x00'
-    
+
     def test_success(self, communication):
         message = self.message_type(BytesIO(self.success), communication)
         assert_identify(message, self.identifiers + ["is_success", "is_valid"])
-        
+
     def test_failure(self, communication):
         message = self.message_type(BytesIO(self.failure), communication)
         assert_identify(message, self.identifiers + ["is_valid"])
-        
+
     @pytest.mark.parametrize("byte", [2, 20, 220, 255])
     def test_invalid(self, communication, byte):
         message = self.message_type(BytesIO(bytes([byte])), communication)
         assert_identify(message, self.identifiers)
-        
+
 
 class TestConfigurationStart(TestSuccessMessage):
 
     """Test the ConfigurationStart.
-    
+
     .. seealso::
       :class:`AYABInterface.communication.hardware_messages.ConfigurationStart`
     """
@@ -118,7 +118,7 @@ class TestConfigurationStart(TestSuccessMessage):
 class TestLineRequest(object):
 
     """Test the LineRequest.
-    
+
     .. seealso::
       :class:`AYABInterface.communication.hardware_messages.LineRequest`
     """
@@ -156,7 +156,7 @@ class TestLineRequest(object):
         answer.send.assert_not_called()
         message.send_answer()
         answer.send.assert_called_once()
-        
+
     def test_line_configuration_is_from_host_messages(self):
         assert hardware_messages.LineConfiguration == LineConfiguration
 
