@@ -34,9 +34,9 @@ class TestNumberOfColors(object):
 
 
 class TestNextLine(object):
-    
+
     """Test the next_line function.
-    
+
     The behaviour of :func:`AYABInterface.utils.next_line`
     is specified in :ref:`reqline`.
     """

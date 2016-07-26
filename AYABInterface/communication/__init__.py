@@ -195,31 +195,31 @@ class Communication(object):
         self._started = False
         self._stopped = False
         self._last_requested_line = (None, None)
-        
+
     @property
     def machine(self):
         """The machine type to communicate with.
-        
+
         :rtype: AYABInterface.machines.Machine
         """
-        
+
     def get_needle_positions(self, line_number):
         """The needle positions for a line with a number.
-        
+
         :param int line_number: the number of the line
         :rtype: list
-        :return: the needle positions for a specific line specified by 
+        :return: the needle positions for a specific line specified by
           :paramref:`line_number`
         """
 
     def get_needle_position_bytes(self, line_number):
         """Get the bytes representing needle positions or None.
-        
+
         :param int line_number: the line number to take the bytes from
         :rtype: bytes
         :return: the bytes that represent the message or :obj:`None` if no
           data is there for the line.
-        
+
         Depending on the :attr:`machine`, the length and result may vary.
         """
         if self._last_requested_line[0] == line_number:
@@ -230,13 +230,13 @@ class Communication(object):
         bytes_ = self._machine.needle_positions_to_bytes(needle_positions)
         self._last_requested_line = (line_number, bytes_)
         return bytes_
-        
+
     def get_line_configuration_message(self, line_number):
         """Return the cnfLine content without id for the line.
-        
+
         :param int line_number: the number of the line
         :rtype: bytes
-        :return: a cnfLine message as defined in :ref:`cnfLine` 
+        :return: a cnfLine message as defined in :ref:`cnfLine`
         """
 
     def start(self):

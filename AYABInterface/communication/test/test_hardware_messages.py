@@ -159,4 +159,3 @@ class TestLineRequest(object):
 
     def test_line_configuration_is_from_host_messages(self):
         assert hardware_messages.LineConfiguration == LineConfiguration
-

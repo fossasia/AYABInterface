@@ -39,7 +39,8 @@ class TestReqStart(object):
         content_bytes = bytes([left_end_needle, right_end_needle])
         first_byte = 0x01
         all_bytes = bytes([first_byte]) + content_bytes
-        message = RequestStart(file, communication, left_end_needle, right_end_needle)
+        message = RequestStart(file, communication, left_end_needle,
+                               right_end_needle)
         assert message.MESSAGE_ID == first_byte
         assert message.left_end_needle == left_end_needle
         assert message.right_end_needle == right_end_needle
@@ -56,9 +57,11 @@ class TestReqStart(object):
     @pytest.mark.parametrize("right_end_needle", VALID_STOP_NEEDLES)
     def test_invalid_left_end_needle(
             self, left_end_needle, right_end_needle, file, communication):
-        error_type = (ValueError if type(left_end_needle) == int else TypeError)
+        error_type = (ValueError if type(left_end_needle) == int
+                      else TypeError)
         with raises(error_type) as error:
-            RequestStart(file, communication, left_end_needle, right_end_needle)
+            RequestStart(file, communication, left_end_needle,
+                         right_end_needle)
         message = "Start needle is {0} but 0 <= {0} <= 198 was expected."\
             "".format(repr(left_end_needle))
         assert error.value.args[0] == message
@@ -67,9 +70,11 @@ class TestReqStart(object):
     @pytest.mark.parametrize("right_end_needle", INVALID_STOP_NEEDLES)
     def test_invalid_right_end_needle(
             self, left_end_needle, right_end_needle, file, communication):
-        error_type = (ValueError if type(right_end_needle) == int else TypeError)
+        error_type = (ValueError if type(right_end_needle) == int
+                      else TypeError)
         with raises(error_type) as error:
-            RequestStart(file, communication, left_end_needle, right_end_needle)
+            RequestStart(file, communication, left_end_needle,
+                         right_end_needle)
         message = "Stop needle is {0} but 1 <= {0} <= 199 was expected."\
             "".format(repr(right_end_needle))
         assert error.value.args[0] == message
@@ -102,4 +107,3 @@ class TestLineConfiguration(object):
 
     def test_first_byte(self):
         assert LineConfiguration.MESSAGE_ID == self.MESSAGE_ID
-

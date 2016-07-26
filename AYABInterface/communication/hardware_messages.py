@@ -193,7 +193,6 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
         :rtype: AYABInterface.conmmunication.host_messages.SentMessage
         """
 
-
     def send_answer(self):
         """Send the answer via the communication."""
         self.answer.send()

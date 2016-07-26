@@ -40,38 +40,38 @@ def send_message(file):
 def create_message():
     return MagicMock()
 
-    
+
 @fixture
 def get_needle_positions():
     return MagicMock()
-    
 
-    
+
 @fixture
 def machine():
     return MagicMock()
-    
+
 
 @fixture
 def communication(file, on_message_received, monkeypatch, create_message,
-                   get_needle_positions, machine):
+                  get_needle_positions, machine):
     monkeypatch.setattr(Communication, '_read_message_type', create_message)
-    return Communication(file, get_needle_positions, machine, 
+    return Communication(file, get_needle_positions, machine,
                          on_message_received=[on_message_received])
 
 
 class TestReceiveMessages(object):
 
     """Test the receive_message, start and stop methods.
-    
-    .. seealso:: 
+
+    .. seealso::
         :meth:`AYABInterface.communication.Commmunication.receive_message`,
         :meth:`AYABInterface.communication.Commmunication.start`,
         :meth:`AYABInterface.communication.Commmunication.stop`
-        
+
     """
 
-    def test_before_start_no_message_was_received(self, communication, create_message):
+    def test_before_start_no_message_was_received(
+            self, communication, create_message):
         create_message.assert_not_called()
 
     @fixture
@@ -126,8 +126,8 @@ class TestReceiveMessages(object):
 class TestGetLineBytes(object):
 
     """Test the get_needle_position_bytes method.
-    
-    .. seealso:: 
+
+    .. seealso::
         :meth:`AYABInterface.communication.Commmunication.get_line_bytes`
     """
 
@@ -151,8 +151,8 @@ class TestGetLineBytes(object):
 
     @pytest.mark.parametrize("line", [55, 4])
     @pytest.mark.parametrize("added", [-1, 1, 12, -2])
-    def test_cache_works_only_for_specific_line(self, communication,
-            get_needle_positions, line, machine, added):
+    def test_cache_works_only_for_specific_line(
+            self, communication, get_needle_positions, line, machine, added):
         communication.get_needle_position_bytes(line)
         machine.needle_positions_to_bytes.return_value = None
         line_bytes = communication.get_needle_position_bytes(line + added)
@@ -160,10 +160,7 @@ class TestGetLineBytes(object):
 
     @pytest.mark.parametrize("line", [55, 4])
     def test_line_is_not_known(self, communication,
-            get_needle_positions, machine, line):
+                               get_needle_positions, machine, line):
         get_needle_positions.return_value = None
         assert communication.get_needle_position_bytes(line) is None
         machine.needle_positions_to_bytes.assert_not_called()
-
-    
-
