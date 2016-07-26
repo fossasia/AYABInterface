@@ -155,7 +155,7 @@ class TestLineRequest(object):
                                           next_line.return_value)
         answer.send.assert_not_called()
         message.send_answer()
-        answer.send.assert_called_once()
+        answer.send.assert_called_once_with()
 
     def test_line_configuration_is_from_host_messages(self):
         assert hardware_messages.LineConfiguration == LineConfiguration
