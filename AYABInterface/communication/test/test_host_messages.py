@@ -3,7 +3,8 @@
 They are all in the module :mod:`AYABInterface.communication.host_messages`.
 """
 import pytest
-from AYABInterface.communication.host_messages import RequestStart
+from AYABInterface.communication.host_messages import RequestStart, \
+    LineConfiguration
 from pytest import raises, fixture
 from io import BytesIO
 from unittest.mock import MagicMock
@@ -39,7 +40,7 @@ class TestReqStart(object):
         first_byte = 0x01
         all_bytes = bytes([first_byte]) + content_bytes
         message = RequestStart(file, communication, start_needle, stop_needle)
-        assert message.FIRST_BYTE == first_byte
+        assert message.MESSAGE_ID == first_byte
         assert message.start_needle == start_needle
         assert message.stop_needle == stop_needle
         assert message.content_bytes() == content_bytes
@@ -73,4 +74,32 @@ class TestReqStart(object):
             "".format(repr(stop_needle))
         assert error.value.args[0] == message
     
+    
+class TestLineConfiguration(object):
+
+    """Test the LineConfiguration.
+    
+    .. seealso::
+      :class:`AYABInterface.communication.hardware_messages.LineConfiguration`,
+      :ref:`cnfline`
+    """
+    
+    MESSAGE_ID = 0x42
+    
+    @pytest.mark.parametrize("line_number", [-12, -1, 0, 1, 5])
+    @pytest.mark.parametrize("line_bytes", [b'123123', b'0' * 24])
+    @pytest.mark.parametrize("last_line", [True, False])
+    def test_bytes(self, line_number, communication, file, line_bytes,
+                   last_line):
+        communication.get_line_configuration_message.return_value = line_bytes
+        cnfLine = LineConfiguration(file, communication, line_number)
+        bytes_ = cnfLine.content_bytes()
+        assert bytes_ == line_bytes
+        communication.get_line_configuration_message.assert_called_with(
+            line_number)
+        cnfLine.send()
+        assert file.getvalue() == bytes([self.MESSAGE_ID]) + line_bytes
+    
+    def test_first_byte(self):
+        assert LineConfiguration.MESSAGE_ID == self.MESSAGE_ID
     

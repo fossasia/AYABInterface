@@ -9,13 +9,13 @@ class Message(object):
         """Create a new Request object"""
         self._file = file
         self._communication = communication
-        assert self.FIRST_BYTE is not None
+        assert self.MESSAGE_ID is not None
         self.init(*args, **kw)
 
     def init(self):
         """Override this method."""
 
-    FIRST_BYTE = None  #: the first byte to identify this message
+    MESSAGE_ID = None  #: the first byte to identify this message
 
     def content_bytes(self):
         """The message content as bytes.
@@ -29,7 +29,7 @@ class Message(object):
         
         :rtype: bytes
         """
-        return bytes([self.FIRST_BYTE]) + self.content_bytes()
+        return bytes([self.MESSAGE_ID]) + self.content_bytes()
 
     def send(self):
         """Send this message to the controller."""
@@ -53,7 +53,7 @@ class RequestStart(Message):
     .. seealso:: :ref:`reqstart`
     """
 
-    FIRST_BYTE = 0x01  #: the first byte to identify this message
+    MESSAGE_ID = 0x01  #: the first byte to identify this message
 
     def init(self, start_needle, stop_needle):
         """Initialize the RequestStart with start and stop needle.
@@ -107,7 +107,7 @@ class LineConfiguration(Message):
     .. seealso:: :ref:`cnfline`
     """
 
-    FIRST_BYTE = 0x42  #: the first byte to identify this message
+    MESSAGE_ID = 0x42  #: the first byte to identify this message
 
     def init(self, line_number):
         """Initialize the RequestStart with the line number."""
@@ -125,7 +125,7 @@ class InformationRequest(Message):
       <AYABInterface.communication.hardware_messages.ConfigurationInformation>`
     """
 
-    FIRST_BYTE = 0x03  #: the first byte to identify this message
+    MESSAGE_ID = 0x03  #: the first byte to identify this message
 
 
 __all__ = ["Message", "RequestStart", "LineConfiguration",

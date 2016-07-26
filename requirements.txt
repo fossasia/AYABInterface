@@ -5,6 +5,7 @@
 #    pip-compile --output-file requirements.txt requirements.in
 #
 
+crc8==0.0.3
 
 # The following packages are commented out because they are
 # considered to be unsafe in a requirements file:

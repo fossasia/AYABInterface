@@ -149,7 +149,7 @@ class TestGetLineBytes(object):
         line_bytes = communication.get_needle_position_bytes(line)
         assert line_bytes == cached_value
 
-    @pytest.mark.parametrize("line", [55])
+    @pytest.mark.parametrize("line", [55, 4])
     @pytest.mark.parametrize("added", [-1, 1, 12, -2])
     def test_cache_works_only_for_specific_line(self, communication,
             get_needle_positions, line, machine, added):
@@ -158,5 +158,10 @@ class TestGetLineBytes(object):
         line_bytes = communication.get_needle_position_bytes(line + added)
         assert line_bytes is None
 
-
+    @pytest.mark.parametrize("line", [55, 4])
+    def test_line_is_not_known(self, communication,
+            get_needle_positions, machine, line):
+        get_needle_positions.return_value = None
+        assert communication.get_needle_position_bytes(line) is None
+        machine.needle_positions_to_bytes.assert_not_called()
 

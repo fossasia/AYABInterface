@@ -201,6 +201,8 @@ class Communication(object):
         if self._last_requested_line[0] == line_number:
             return self._last_requested_line[1]
         needle_positions = self._get_needle_positions(line_number)
+        if needle_positions is None:
+            return None
         bytes_ = self._machine.needle_positions_to_bytes(needle_positions)
         self._last_requested_line = (line_number, bytes_)
         return bytes_

@@ -23,11 +23,11 @@ AYABInterface
 
 .. image:: https://badge.fury.io/py/AYABInterface.svg
    :target: https://pypi.python.org/pypi/AYABInterface
-   :alt: Issue Count
+   :alt: Python Package Version on Pypi
    
 .. image:: https://img.shields.io/pypi/dm/AYABInterface.svg
    :target: https://pypi.python.org/pypi/AYABInterface#downloads
-   :alt: Downloads from pypi   
+   :alt: Downloads from Pypi   
 
 .. image:: https://readthedocs.org/projects/ayabinterface/badge/?version=latest
    :target: http://ayabinterface.readthedocs.io/en/latest/?badge=latest
