@@ -103,3 +103,4 @@ class TestLineConfiguration(object):
     def test_first_byte(self):
         assert LineConfiguration.MESSAGE_ID == self.MESSAGE_ID
     
+    

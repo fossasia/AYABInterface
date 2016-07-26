@@ -111,9 +111,12 @@ class LineConfiguration(Message):
 
     def init(self, line_number):
         """Initialize the RequestStart with the line number."""
+        self._line_number = line_number
 
     def content_bytes(self):
         """Return the start and stop needle."""
+        return self._communication.get_line_configuration_message(
+            self._line_number)
 
 
 class InformationRequest(Message):

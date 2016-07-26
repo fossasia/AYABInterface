@@ -165,3 +165,5 @@ class TestGetLineBytes(object):
         assert communication.get_needle_position_bytes(line) is None
         machine.needle_positions_to_bytes.assert_not_called()
 
+    
+
