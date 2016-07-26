@@ -161,6 +161,57 @@ The ``cnfLine`` Message
 
 The host answers `The reqLine Message`_ with a line configuration.
 
+.. _byte-cnfline-v4:
+
+This table shows the message content without the first byte that identifies the
+message:
+
++------+---------------+------------------------------------------------------+
+| Byte |     Name      |                     Description                      |
++======+===============+======================================================+
+|      |               | These are the lowest 8 bit of the line. They must    |
+|  0   | line number   | match the line number in :ref:`reqLine`.             |
+|      |               |                                                      |
++------+---------------+------------------------------------------------------+
+|  1   |               | Each bit of the bytes represents a needle position.  |
++------+               |                                                      |
+|  2   |               | - 0 = "B"                                            |
++------+               | - 1 = "D"                                            |
+| ...  | needle        |                                                      |
++------+ positions     | For the excact mapping of bits to needles see the    |
+|  24  |               | :ref:`table below <bit-needle-position-mapping-v4>`. |
++------+               |                                                      |
+|  25  |               |                                                      |
++------+---------------+------------------------------------------------------+
+|      |               | Bits: ``0000000L``                                   |
+|  26  | flags         |                                                      |
+|      |               | - ``L`` - "LastLine" (0 = false, 1 = true)           |
++------+---------------+------------------------------------------------------+
+|      |               | This checksum is computed from bytes 0 to 26, \      |
+|  27  | crc8 checksum | including byte 26. The controller may use this       |
+|      |               | checksum to check the result and if the checksum     |
+|      |               | does not match, it can send :ref:`reqLine` anew.     |
++------+---------------+------------------------------------------------------+
+
+.. _bit-needle-position-mapping-v4:
+
+In the following table, you can see the mapping of bytes to needles.
+
+.. note::
+  - The **Needles** are counted from the leftmost needle on the machine.
+  - The **Needle** count starts with ``0``.
+  - The **Byte** numbering is taken from :ref:`the table above <byte-cnfline-v4>`.
+  - The **Bit** numbering is consistent with :ref:`message-identifier-format`.
+    The highest bit has the number 7 and the lowest bit has number 0.
+
++--------+-------------------------------+-------------------------------+-----+-------------------------------+-------------------------------+
+| Byte   |               1               |               2               |     |              24               |               25              |
++--------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+-----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| Bit    | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | ... | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | 
++--------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+-----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| Needle | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                         ...                                                         |198|199|
++--------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+-----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
 - Python: :class:`~AYABInterface.communication.host_messages.LineConfiguration`
 - Arduino: `h_cnfLine <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/ayab.ino#L80>`__
 - table: :ref:`cnfLine <m4-42>`
