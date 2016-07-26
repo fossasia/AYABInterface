@@ -178,7 +178,7 @@ message:
 |  2   |               | - 0 = "B"                                            |
 +------+               | - 1 = "D"                                            |
 | ...  | needle        |                                                      |
-+------+ positions     | For the excact mapping of bits to needles see the    |
++------+ positions     | For the exact mapping of bits to needles see the     |
 |  24  |               | :ref:`table below <bit-needle-position-mapping-v4>`. |
 +------+               |                                                      |
 |  25  |               |                                                      |
