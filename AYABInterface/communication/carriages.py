@@ -103,4 +103,4 @@ def id_to_carriage_type(carriage_id):
 _id_to_carriage = {0: NullCarriage, 1: KnitCarriage, 2: HoleCarriage}
 
 __all__ = ["NullCarriage", "KnitCarriage", "HoleCarriage", "UnknownCarriage",
-           "id_to_carriage_type"]
+           "id_to_carriage_type", "Carriage"]
