@@ -7,7 +7,8 @@ from distutils.core import Command
 import subprocess
 
 PACKAGE_NAME = "AYABInterface"
-PACKAGE_NAMES = ["AYABInterface"]
+PACKAGE_NAMES = ["AYABInterface", "AYABInterface.convert",
+                 "AYABInterface.communication"]
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, HERE)  # for package import
