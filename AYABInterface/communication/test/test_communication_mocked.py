@@ -27,16 +27,6 @@ def file():
 
 
 @fixture
-def send_message(file):
-    """Write message bytes to the file."""
-    def send_message_(bytes_):
-        position = file.tell()
-        file.write(bytes_)
-        file.seek(position)
-    return send_message_
-
-
-@fixture
 def create_message():
     return MagicMock()
 
@@ -167,5 +157,5 @@ class TestGetLineBytes(object):
 
     @pytest.mark.parametrize("api_version,truth", [(4, True), (3, False),
                                                    (-2, False)])
-    def test_line_is_not_known(self, communication, api_version, truth):
+    def test_sopport_api_version(self, communication, api_version, truth):
         assert communication.api_version_is_supported(api_version) == truth
