@@ -19,6 +19,14 @@ Sequence Chart
 .. image:: ../_static/sequence-chart.png
    :alt: sequence diagram for the communication between host and controller
 
+The host waits for a **indState(true)** message before requesting to start the knitting.
+On startup, the Arduino continuously checks for the initialization of the machine (carriage passed left hall sensor).
+When this happens, it sends an **indState(true)** to tell the host that the machine is ready to knit.
+After receiving this message, the host sends a **reqStart** message, which is immediately confirmed with a **cnfStart** message.
+When **reqStart** was successful, the Arduino begins to poll the host for line data with **reqLine**, the host answers with **cnfLine**.
+This reqLine/cnfLine happens each time the carriage moves passed the borders given by the Start/StopNeedle parameters in **reqStart**.
+When the host does not have any more lines to send, it marks the last line with the *lastLine* flag in its last **cnfLine** message.
+
 .. _message-identifier-format:
 
 Message Identifier Format
@@ -90,12 +98,26 @@ hardware   .. _m4-C3: 0xC3 4      ``0xaa 0xbb 0xcc``
            cnfInfo_               - ``aa`` = Version Identifier
                                   - ``bb`` = Major Version
                                   - ``cc`` = Minor Version
-hardware   .. _m4-84: 0x84 2      ``0x0a``
+hardware   .. _m4-84: 0x84 8      ``0x0a 0xBB 0xbb 0xCC 0xcc 0xdd 0xee``
 
-           indState_              - a = initialized (0 = false, 1 = true)
-hardware   .. _m4-FF: 0xFF var    a debug string
+           indState_              - ``a`` = ready (0 = false, 1 = true)
+                                  - ``BBbb`` = :class:`int` left hall sensor value
+                                  - ``CCcc`` = :class:`int` right hall sensor value
+                                  - ``dd`` = the carriage
 
-           debug_
+                                    - ``0`` = no carriage detected
+                                    - ``1`` = knit carriage "Strickschlitten"
+                                    - ``2`` = hole carriage "Lochmusterschlitten"
+                                  - ``ee`` = the needle number currently in progress
+hardware   .. _m4-23: 0x23 var    A debug string. The id is the character ``#``.
+                                  The length is variable and can be determined
+           debug_                 by the end ``\r\n'``.
+host       .. _m4-04: 0x04 1      put the controller into test mode
+
+           reqTest_
+host       .. _m4-C4: 0xC4 2      ``0x0a``
+
+           cnfTest_               - ``a`` = success (0 = false, 1 = true)
 ========== ========== ==== ====== =============================================
 
 
@@ -107,7 +129,7 @@ The ``reqStart`` Message
 
 The host starts the knitting process.
 
-- Python: :class:`RequestStart <AYABInterface.communication.host_messages.RequestStart>`
+- Python: :class:`StartRequest <AYABInterface.communication.host_messages.StartRequest>`
 - Arduino: `h_reqStart <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/ayab.ino#L57>`__
 - table: :ref:`reqStart <m4-01>`
 - requests answer: :ref:`cnfstart`
@@ -121,10 +143,10 @@ The ``cnfStart`` Message
 
 The controller indicates the success of :ref:`reqstart`.
 
-- Python: :class:`~AYABInterface.communication.hardware_messages.ConfigurationStart`
+- Python: :class:`~AYABInterface.communication.hardware_messages.StartConfirmation`
 - Arduino: `h_reqStart <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/ayab.ino#L74>`__
 - table: :ref:`reqStart <m4-C1>`
-- answers: `The reqStart Message`_
+- answers: :ref:`reqStart`
 - direction: controller → host
 
 
@@ -152,7 +174,7 @@ is tested and can be seen as a reference implementation for other languages.
 - Python: :class:`~AYABInterface.communication.hardware_messages.LineRequest`
 - Arduino: `Knitter::reqLine <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/knitter.cpp#L366>`__
 - table: :ref:`reqLine <m4-82>`
-- requests answer: `The cnfLine Message`_
+- requests answer: :ref:`cnfLine`
 - direction: controller → host
 
 
@@ -161,7 +183,7 @@ is tested and can be seen as a reference implementation for other languages.
 The ``cnfLine`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The host answers `The reqLine Message`_ with a line configuration.
+The host answers :ref:`reqLine` with a line configuration.
 
 .. _byte-cnfline-v4:
 
@@ -214,10 +236,10 @@ In the following table, you can see the mapping of bytes to needles.
 | Needle | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |                         ...                                                         |198|199|
 +--------+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+-----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
 
-- Python: :class:`~AYABInterface.communication.host_messages.LineConfiguration`
+- Python: :class:`~AYABInterface.communication.host_messages.LineConfirmation`
 - Arduino: `h_cnfLine <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/ayab.ino#L80>`__
 - table: :ref:`cnfLine <m4-42>`
-- answers: `The reqLine Message`_
+- answers: :ref:`reqLine`
 - direction: host → controller
 
 
@@ -231,7 +253,7 @@ The host initializes the handshake.
 - Python: :class:`~AYABInterface.communication.host_messages.InformationRequest`
 - Arduino: `h_reqInfo <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/ayab.ino#L110>`__
 - table: :ref:`reqInfo <m4-03>`
-- requests answer: `The cnfInfo Message`_
+- requests answer: :ref:`cnfInfo`
 - direction: host → controller
 
 
@@ -240,12 +262,12 @@ The host initializes the handshake.
 The ``cnfInfo`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The controller answers `The reqInfo Message`_ with the API version.
+The controller answers :ref:`reqinfo` with the API version.
 
-- Python: :class:`~AYABInterface.communication.hardware_messages.ConfigurationInformation`
+- Python: :class:`~AYABInterface.communication.hardware_messages.InformationConfirmation`
 - Arduino: `h_reqInfo <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/ayab.ino#L112>`__
 - table: :ref:`cnfInfo <m4-C3>`
-- answers: `The reqInfo Message`_
+- answers: :ref:`reqinfo`
 - direction: controller → host
 
 
@@ -254,7 +276,13 @@ The controller answers `The reqInfo Message`_ with the API version.
 The ``indState`` Message
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO: When is this sent?
+This is sent when the controller indicates its state.
+When ``ready`` it is
+
+- ``1``, then this is the first state indication. The machine is now
+  ready to knit
+- ``0``, the controller is in test mode. This message is sent periodically.
+  :ref:`reqTest` switches this on.
 
 - Python: :class:`~AYABInterface.communication.hardware_messages.StateIndication`
 - Arduino: `Knitter::indState <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/knitter.cpp#L375>`__
@@ -267,11 +295,43 @@ TODO: When is this sent?
 The ``debug`` Message
 ~~~~~~~~~~~~~~~~~~~~~
 
-TODO: How to parse this message?
+This message ends with a ``\r\n`` like evey message.
+It contains debug information from the controller.
 
 - Python: :class:`~AYABInterface.communication.hardware_messages.Debug`
 - Arduino: `DEBUG_PRINT <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/debug.h#L32>`__
-- table: :ref:`debug <m4-FF>`
+- table: :ref:`debug <m4-23>`
+- direction: controller → host
+
+
+.. _reqtest:
+
+The ``reqTest`` Message
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This message puts the controller in a test mode instead of a knitting mode.
+
+
+- Python: :class:`~AYABInterface.communication.host_messages.TestRequest`
+- Arduino: `h_reqTest <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/ayab.ino#L119>`__
+- table: :ref:`reqTest <m4-04>`
+- requests answer: :ref:`cnfTest`
+- direction: host → controller
+
+
+.. _cnftest:
+
+The ``cnfTest`` Message
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This messsage confirms whether the controller is in the test mode.
+If success is indicated, the controller sends :ref:`indstate` messages
+periodically, containing the sensor and position values.
+
+- Python: :class:`~AYABInterface.communication.hardware_messages.TestConfirmation`
+- Arduino: `h_reqTest <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/ayab.ino#L119>`__
+- table: :ref:`cnfTest <m4-C4>`
+- answers: :ref:`reqTest`
 - direction: controller → host
 
 
@@ -287,3 +347,5 @@ References
   - the :mod:`host messages module
     <AYABInterface.communication.host_messages>`
     for messages sent by the host
+  - `a discussion about the specification
+    <https://github.com/AllYarnsAreBeautiful/ayab-desktop/issues/17>`__

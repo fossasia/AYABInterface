@@ -267,5 +267,16 @@ class Communication(object):
         self._stopped = True
         self._message_received(ConnectionClosed(self._file, self))
 
+    def api_version_is_supported(self, api_version):
+        """Return whether an api version is supported by this class.
+
+        :rtype: bool
+        :return: if the :paramref:`api version <api_version>` is supported
+        :param int api_version: the api version
+
+        Currently supported api versions: ``4``
+        """
+        return api_version == 4
+
 
 __all__ = ["Communication", "Content"]

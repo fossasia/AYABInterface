@@ -1,7 +1,10 @@
 """This modue contains all the messages taht are received."""
 from abc import ABCMeta, abstractproperty
 from ..utils import next_line
-from .host_messages import LineConfiguration
+from .host_messages import LineConfirmation
+from collections import namedtuple
+from .carriages import id_to_carriage_type
+import struct
 
 
 class Message(object):
@@ -13,13 +16,24 @@ class Message(object):
         self._file = file
         self._communication = communication
         self._init()
+        self._read_end_of_message()
 
     def _init(self):
         """Initialize the message.
 
         Override this method to configure your message.
         This pattern is called template method.
+        Reading from the file should be done here and nowhere else.
         """
+
+    def _read_end_of_message(self):
+        """Read the b"\\r\\n" at the end of the message."""
+        read = self._file.read
+        last = read(1)
+        current = read(1)
+        while last != b'\r' and current not in b'\n':
+            last = current
+            current = read(1)
 
     def is_valid(self):
         """Whether the message is valid.
@@ -29,40 +43,24 @@ class Message(object):
         """
         return True
 
-    def is_configutation_start(self):
-        """Whether this is a ConfigurationStart message.
+    def is_start_confirmation(self):
+        """Whether this is a StartConfirmation message.
 
         :rtype: bool
         :returns: :obj:`False`
         """
         return False
 
-    def is_configuration_information(self):
-        """Whether this is a ConfigurationInformation message.
+    def is_information_confirmation(self):
+        """Whether this is a InformationConfirmation message.
 
         :rtype: bool
         :returns: :obj:`False`
         """
         return False
 
-    def is_configuration_test(self):
-        """Whether this is a ConfigurationTest message.
-
-        :rtype: bool
-        :returns: :obj:`False`
-        """
-        return False
-
-    def is_initialization_indication(self):
-        """Whether this is a InitializationIndication message.
-
-        :rtype: bool
-        :returns: :obj:`False`
-        """
-        return False
-
-    def is_line_request(self):
-        """Whether this is a LineRequest message.
+    def is_test_confirmation(self):
+        """Whether this is a TestConfirmation message.
 
         :rtype: bool
         :returns: :obj:`False`
@@ -71,6 +69,14 @@ class Message(object):
 
     def is_state_indication(self):
         """Whether this is a StateIndication message.
+
+        :rtype: bool
+        :returns: :obj:`False`
+        """
+        return False
+
+    def is_line_request(self):
+        """Whether this is a LineRequest message.
 
         :rtype: bool
         :returns: :obj:`False`
@@ -93,6 +99,14 @@ class Message(object):
         """
         return False
 
+    def is_debug(self):
+        """Whether this is a Debug message.
+
+        :rtype: bool
+        :returns: :obj:`False`
+        """
+        return False
+
     def wants_to_answer(self):
         """Whether this message produces and answer message.
 
@@ -102,7 +116,7 @@ class Message(object):
         return False
 
 
-class ConfigurationSuccess(Message):
+class SuccessConfirmation(Message):
 
     """Base class for massages of success and failure."""
 
@@ -122,7 +136,7 @@ class ConfigurationSuccess(Message):
         return self._success == b"\x01"
 
 
-class ConfigurationStart(ConfigurationSuccess):
+class StartConfirmation(SuccessConfirmation):
 
     """This marks the success or failure of a reqStart message.
 
@@ -131,8 +145,8 @@ class ConfigurationStart(ConfigurationSuccess):
 
     MESSAGE_ID = 0xc1  #: The first byte that indicates this message
 
-    def is_configutation_start(self):
-        """Whether this is a ConfigurationStart message.
+    def is_start_confirmation(self):
+        """Whether this is a StartConfirmation message.
 
         :rtype: bool
         :returns: :obj:`True`
@@ -198,7 +212,10 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
         self.answer.send()
 
 
-class ConfigurationInformation(Message):
+FirmwareVersion = namedtuple("FirmwareVersion", ["major", "minor"])
+
+
+class InformationConfirmation(Message):
 
     """This message is the answer in the initial handshake.
 
@@ -211,8 +228,8 @@ class ConfigurationInformation(Message):
 
     MESSAGE_ID = 0xc3  #: The first byte that indicates this message
 
-    def is_configuration_information(self):
-        """Whether this is a ConfigurationInformation message.
+    def is_information_confirmation(self):
+        """Whether this is a InformationConfirmation message.
 
         :rtype: bool
         :returns: :obj:`True`
@@ -221,7 +238,8 @@ class ConfigurationInformation(Message):
 
     def _init(self):
         """Read the success byte."""
-        self._api_version = self._file.read(1)
+        self._api_version = self._file.read(1)[0]
+        self._firmware_version = FirmwareVersion(*self._file.read(2))
 
     @property
     def api_version(self):
@@ -231,22 +249,44 @@ class ConfigurationInformation(Message):
         """
         return self._api_version
 
-    def is_correct_api_version(self):
-        """Whether this is the same API version as of the communication.
+    def api_version_is_supported(self):
+        """Whether the communication object supports this API version.
 
         :rtype: bool
+
+        .. seealso::
+          :meth:`Communication.api_version_is_supported
+          <AYABInterface.communication.Communication.api_version_is_supported>`
         """
-        return self.api_version == self.communication.api_version
+        return self._communication.api_version_is_supported(self._api_version)
+
+    @property
+    def firmware_version(self):
+        """The firmware version of the controller.
+
+        :rtype: FirmwareVersion
+
+        .. code:: python
+
+            minor_version = int()
+            mayor_version = int()
+
+            assert message.firmware_version == (mayor_version, minor_version)
+            assert message.firmware_version.major == mayor_version
+            assert message.firmware_version.minor == minor_version
+
+        """
+        return self._firmware_version
 
 
-class ConfigurationTest(ConfigurationSuccess):
+class TestConfirmation(SuccessConfirmation):
 
     """This message is sent at/when"""  # TODO
 
     MESSAGE_ID = 0xc4  #: The first byte that indicates this message
 
-    def is_configuration_test(self):
-        """Whether this is a ConfigurationTest message.
+    def is_test_confirmation(self):
+        """Whether this is a TestConfirmation message.
 
         :rtype: bool
         :returns: :obj:`True`
@@ -286,10 +326,10 @@ class LineRequest(MessageWithAnswer):
     def answer(self):
         """Message to inform about the upcoming line.
 
-        :rtype: AYABInterface.communication.host_messages.LineConfiguration
+        :rtype: AYABInterface.communication.host_messages.LineConfirmation
         """
-        return LineConfiguration(self._file, self._communication,
-                                 self.line_number)
+        return LineConfirmation(self._file, self._communication,
+                                self.line_number)
 
 
 class StateIndication(Message):
@@ -301,8 +341,8 @@ class StateIndication(Message):
 
     MESSAGE_ID = 0x84  #: The first byte that indicates this message
 
-    def is_configuration_information(self):
-        """Whether this is a ConfigurationInformation message.
+    def is_state_indication(self):
+        """Whether this is a InformationConfirmation message.
 
         :rtype: bool
         :returns: :obj:`True`
@@ -311,10 +351,53 @@ class StateIndication(Message):
 
     def _init(self):
         """Read the success byte."""
+        self._ready = self._file.read(1)
         self._hall_left = self._file.read(2)
         self._hall_right = self._file.read(2)
-        self._carriage_type = self._file.read(1)
-        self._carriage_position = self._file.read(1)
+        self._carriage_type = self._file.read(1)[0]
+        self._carriage_position = self._file.read(1)[0]
+
+    def is_valid(self):
+        """Whether this messages matches the specification."""
+        return self._ready == b'\x00' or self._ready == b'\x01'
+
+    def is_ready_to_knit(self):
+        """Whether this message indicates that the controller can knit now."""
+        return self._ready == b'\x01'
+
+    @property
+    def left_hall_sensor_value(self):
+        """The value of the left hall sensor.
+
+        :rtype: int
+        """
+        return struct.unpack(">H", self._hall_left)[0]
+
+    @property
+    def right_hall_sensor_value(self):
+        """The value of the left hall sensor.
+
+        :rtype: int
+        """
+        return struct.unpack(">H", self._hall_right)[0]
+
+    @property
+    def carriage(self):
+        """The carriage which is reported.
+
+        :rtype: AYABInterface.communication.carriages.Carriage
+        :return: the carriage with information about its position
+        """
+        carriage_type = id_to_carriage_type(self._carriage_type)
+        return carriage_type(self._carriage_position)
+
+    @property
+    def current_needle(self):
+        """The current needle position.
+
+        :rtype: int
+        """
+        return self._carriage_position
 
 
 class Debug(Message):
@@ -323,6 +406,38 @@ class Debug(Message):
 
     .. seealso:: :ref:`debug`
     """
+
+    MESSAGE_ID = 0x23
+
+    def is_debug(self):
+        """Whether this is a Debug message.
+
+        :rtype: bool
+        :returns: :obj:`False`
+        """
+        return True
+
+    def _read_end_of_message(self):
+        """Read the b"\\r\\n" at the end of the message."""
+        read_values = []
+        read = self._file.read
+        last = read(1)
+        current = read(1)
+        while last != b'\r' and current not in b'\n':
+            read_values.append(last)
+            last = current
+            current = read(1)
+        self._bytes = b''.join(read_values)
+
+    @property
+    def bytes(self):
+        """The debug message as bytes.
+
+        :rtype: bytes
+        :return: the debug message as bytes without the ``b'\\r\\n'`` at
+          the end
+        """
+        return self._bytes
 
 
 _message_types = {}
@@ -339,6 +454,6 @@ def read_message_type(file):
     return _message_types.get(message_number, UnknownMessage)
 
 __all__ = ["read_message_type", "StateIndication", "LineRequest",
-           "ConfigurationTest", "ConfigurationInformation", "Debug",
-           "ConfigurationStart", "ConfigurationSuccess", "MessageWithAnswer",
-           "UnknownMessage", "Message", "ConnectionClosed"]
+           "TestConfirmation", "InformationConfirmation", "Debug",
+           "StartConfirmation", "SuccessConfirmation", "MessageWithAnswer",
+           "UnknownMessage", "Message", "ConnectionClosed", "FirmwareVersion"]

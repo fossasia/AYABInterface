@@ -34,6 +34,7 @@ class Message(object):
     def send(self):
         """Send this message to the controller."""
         self._file.write(self.as_bytes())
+        self._file.write(b'\r\n')
 
 
 def _left_end_needle_error_message(needle):
@@ -46,7 +47,7 @@ def _right_end_needle_error_message(needle):
         repr(needle))
 
 
-class RequestStart(Message):
+class StartRequest(Message):
 
     """This is the start of the conversation.
 
@@ -56,7 +57,7 @@ class RequestStart(Message):
     MESSAGE_ID = 0x01  #: the first byte to identify this message
 
     def init(self, left_end_needle, right_end_needle):
-        """Initialize the RequestStart with start and stop needle.
+        """Initialize the StartRequest with start and stop needle.
 
         :raises TypeError: if the arguments are not integers
         :raises ValueError: if the values do not match the
@@ -100,7 +101,7 @@ class RequestStart(Message):
         return bytes([self._left_end_needle, self._right_end_needle])
 
 
-class LineConfiguration(Message):
+class LineConfirmation(Message):
 
     """This message send the data to configure a line.
 
@@ -110,7 +111,7 @@ class LineConfiguration(Message):
     MESSAGE_ID = 0x42  #: the first byte to identify this message
 
     def init(self, line_number):
-        """Initialize the RequestStart with the line number."""
+        """Initialize the StartRequest with the line number."""
         self._line_number = line_number
 
     def content_bytes(self):
@@ -124,12 +125,23 @@ class InformationRequest(Message):
     """Start the initial handshake.
 
     .. seealso:: :ref:`reqinfo`,
-      :class:`ConfigurationInformation
-      <AYABInterface.communication.hardware_messages.ConfigurationInformation>`
+      :class:`InformationConfirmation
+      <AYABInterface.communication.hardware_messages.InformationConfirmation>`
     """
 
     MESSAGE_ID = 0x03  #: the first byte to identify this message
 
 
-__all__ = ["Message", "RequestStart", "LineConfiguration",
-           "InformationRequest"]
+class TestRequest(Message):
+
+    """Start the test mode of the controller.
+
+    .. seealso:: :ref:`reqtest`,
+      :class:`InformationConfirmation
+      <AYABInterface.communication.hardware_messages.TestConfirmation>`
+    """
+
+    MESSAGE_ID = 0x04  #: the first byte to identify this message
+
+__all__ = ["Message", "StartRequest", "LineConfirmation",
+           "InformationRequest", "TestRequest"]

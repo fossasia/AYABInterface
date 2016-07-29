@@ -3,8 +3,8 @@
 They are all in the module :mod:`AYABInterface.communication.host_messages`.
 """
 import pytest
-from AYABInterface.communication.host_messages import RequestStart, \
-    LineConfiguration
+from AYABInterface.communication.host_messages import StartRequest, \
+    LineConfirmation, InformationRequest, TestRequest
 from pytest import raises, fixture
 from io import BytesIO
 from unittest.mock import MagicMock
@@ -25,7 +25,7 @@ class TestReqStart(object):
     """Test the reqStart message.
 
     .. seealso::
-      :class:`AYABInterface.communication.hardware_messages.RequestStart`,
+      :class:`AYABInterface.communication.host_messages.StartRequest`,
       :ref:`reqstart`
     """
 
@@ -39,7 +39,7 @@ class TestReqStart(object):
         content_bytes = bytes([left_end_needle, right_end_needle])
         first_byte = 0x01
         all_bytes = bytes([first_byte]) + content_bytes
-        message = RequestStart(file, communication, left_end_needle,
+        message = StartRequest(file, communication, left_end_needle,
                                right_end_needle)
         assert message.MESSAGE_ID == first_byte
         assert message.left_end_needle == left_end_needle
@@ -47,7 +47,7 @@ class TestReqStart(object):
         assert message.content_bytes() == content_bytes
         assert message.as_bytes() == all_bytes
         message.send()
-        assert file.getvalue() == all_bytes
+        assert file.getvalue() == all_bytes + b'\r\n'
 
     TYPE_ERRORS = [None, "asd", object()]
     INVALID_START_NEEDLES = [-1, -4, 199, 200, 123123123] + TYPE_ERRORS
@@ -60,7 +60,7 @@ class TestReqStart(object):
         error_type = (ValueError if type(left_end_needle) == int
                       else TypeError)
         with raises(error_type) as error:
-            RequestStart(file, communication, left_end_needle,
+            StartRequest(file, communication, left_end_needle,
                          right_end_needle)
         message = "Start needle is {0} but 0 <= {0} <= 198 was expected."\
             "".format(repr(left_end_needle))
@@ -73,19 +73,19 @@ class TestReqStart(object):
         error_type = (ValueError if type(right_end_needle) == int
                       else TypeError)
         with raises(error_type) as error:
-            RequestStart(file, communication, left_end_needle,
+            StartRequest(file, communication, left_end_needle,
                          right_end_needle)
         message = "Stop needle is {0} but 1 <= {0} <= 199 was expected."\
             "".format(repr(right_end_needle))
         assert error.value.args[0] == message
 
 
-class TestLineConfiguration(object):
+class TestLineConfirmation(object):
 
-    """Test the LineConfiguration.
+    """Test the LineConfirmation.
 
     .. seealso::
-      :class:`AYABInterface.communication.hardware_messages.LineConfiguration`,
+      :class:`AYABInterface.communication.host_messages.LineConfirmation`,
       :ref:`cnfline`
     """
 
@@ -97,13 +97,62 @@ class TestLineConfiguration(object):
     def test_bytes(self, line_number, communication, file, line_bytes,
                    last_line):
         communication.get_line_configuration_message.return_value = line_bytes
-        cnfLine = LineConfiguration(file, communication, line_number)
+        cnfLine = LineConfirmation(file, communication, line_number)
         bytes_ = cnfLine.content_bytes()
         assert bytes_ == line_bytes
         communication.get_line_configuration_message.assert_called_with(
             line_number)
         cnfLine.send()
-        assert file.getvalue() == bytes([self.MESSAGE_ID]) + line_bytes
+        sent_bytes = bytes([self.MESSAGE_ID]) + line_bytes + b'\r\n'
+        assert file.getvalue() == sent_bytes
 
     def test_first_byte(self):
-        assert LineConfiguration.MESSAGE_ID == self.MESSAGE_ID
+        assert LineConfirmation.MESSAGE_ID == self.MESSAGE_ID
+
+
+class NoContentTest(object):
+
+    """Base class for testing empty messages."""
+
+    MESSAGE_ID = None
+    message_class = None
+
+    @fixture
+    def message(self, file, communication):
+        return self.message_class(file, communication)
+
+    def test_the_message_id(self, message):
+        assert message.MESSAGE_ID == self.MESSAGE_ID
+
+    def test_no_content(self, message):
+        assert message.content_bytes() == b""
+
+    def test_send_the_message(self, message, file):
+        message.send()
+        assert file.getvalue() == bytes([self.MESSAGE_ID]) + b"\r\n"
+
+
+class TestInformationRequest(NoContentTest):
+
+    """Test the InformationRequest.
+
+    .. seealso::
+      :class:`AYABInterface.communication.host_messages.InformationRequest`,
+      :ref:`reqstart`
+    """
+
+    MESSAGE_ID = 0x03
+    message_class = InformationRequest
+
+
+class TestTestRequest(NoContentTest):
+
+    """Test the TestRequest.
+
+    .. seealso::
+      :class:`AYABInterface.communication.host_messages.TestRequest`,
+      :ref:`reqtest`
+    """
+
+    MESSAGE_ID = 0x04
+    message_class = TestRequest

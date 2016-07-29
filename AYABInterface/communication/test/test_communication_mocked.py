@@ -164,3 +164,8 @@ class TestGetLineBytes(object):
         get_needle_positions.return_value = None
         assert communication.get_needle_position_bytes(line) is None
         machine.needle_positions_to_bytes.assert_not_called()
+
+    @pytest.mark.parametrize("api_version,truth", [(4, True), (3, False),
+                                                   (-2, False)])
+    def test_line_is_not_known(self, communication, api_version, truth):
+        assert communication.api_version_is_supported(api_version) == truth
