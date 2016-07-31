@@ -172,5 +172,10 @@ class TestKnittingLine(TestKnittingStarted):
     def test_line_number(self, state):
         assert state.line_number == self.line_number
 
-
+    @pytest.mark.parametrize("result", [True, False])
+    def test_last_line(self, state, communication, result):
+        communication.is_last_line.return_value = result
+        assert state.is_knitting_last_line() == result
+        communication.is_last_line.assert_called_once_with(self.line_number)
+        
     

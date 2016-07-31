@@ -504,12 +504,12 @@ class KnittingLine(State):
         """
         return True
         
-    def is_knittin_last_line(self):
+    def is_knitting_last_line(self):
         """Whether the line currently knit is the last line.
         
         :rtype: bool
         """
-        return False
+        return self._communication.is_last_line(self._line_number) is True
 
     @property
     def line_number(self):

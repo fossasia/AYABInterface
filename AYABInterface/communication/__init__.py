@@ -211,6 +211,14 @@ class Communication(object):
         :return: the needle positions for a specific line specified by
           :paramref:`line_number`
         """
+    
+    def is_last_line(self, line_number):
+        """Whether the line number is has no further lines.
+        
+        :rtype: bool
+        :return: is the next line above the line number are not specified
+        """
+        return self._get_needle_positions(line_number + 1) is None
 
     def get_needle_position_bytes(self, line_number):
         """Get the bytes representing needle positions or None.

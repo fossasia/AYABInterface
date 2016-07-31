@@ -176,3 +176,17 @@ class TestSend(object):
         req_class = Mock()
         communication.send(req_class, 1)
         req_class.return_value.send.assert_called_once_with()
+
+class TestLastLine(object):
+    
+    """Test the is_last_line test."""
+    
+    @pytest.mark.parametrize("number", [1, 4, 8])
+    @pytest.mark.parametrize("line,truth", [([], False), (None, True)])
+    def test_last_line(self, communication, get_needle_positions, number,
+                       line, truth):
+        get_needle_positions.return_value = line
+        assert communication.is_last_line(number) == truth
+        get_needle_positions.assert_called_once_with(number + 1)
+        
+
