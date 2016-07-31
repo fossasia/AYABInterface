@@ -62,3 +62,14 @@ class MessageTest(object):
 class TestEmptyConnection(MessageTest):
 
     """Test what happens if no bytes are received."""
+
+
+class TestEmptyConnectionWithDebugMessages(MessageTest):
+    
+    """Insert debug messages."""
+    
+    input = b'#debug!\r\n#debug\r\n'  #: the input
+    #: the tests to perform between receiving messages
+    states = ["is_initial_handshake"] * 3
+
+
