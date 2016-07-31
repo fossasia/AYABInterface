@@ -192,23 +192,6 @@ class TestLineRequest(object):
     def test_next_line_is_from_utils(self):
         assert hardware_messages.next_line == next_line
 
-    def test_answer(self, communication, monkeypatch):
-        file = Message(b'\x00\r\n')
-        next_line = MagicMock()
-        line_conf = MagicMock()
-        monkeypatch.setattr(hardware_messages, 'next_line', next_line)
-        monkeypatch.setattr(hardware_messages, 'LineConfirmation', line_conf)
-        message = LineRequest(file, communication)
-        file.assert_is_read()
-        assert message.has_answer()
-        answer = message.answer
-        assert answer == line_conf.return_value, "LineConfirmation expected"
-        line_conf.assert_called_once_with(file, communication,
-                                          next_line.return_value)
-        answer.send.assert_not_called()
-        message.send_answer()
-        answer.send.assert_called_once_with()
-
     def test_line_configuration_is_from_host_messages(self):
         assert hardware_messages.LineConfirmation == LineConfirmation
 

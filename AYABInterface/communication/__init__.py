@@ -4,6 +4,7 @@ Requirement: Make objects from binary stuff.
 """
 from abc import ABCMeta, abstractmethod, abstractproperty
 from .hardware_messages import read_message_type, ConnectionClosed
+from .states import WaitingForStart
 
 
 class Content(object, metaclass=ABCMeta):
@@ -192,9 +193,8 @@ class Communication(object):
         self._get_needle_positions = get_needle_positions
         self._on_message_received = on_message_received
         self._machine = machine
-        self._started = False
-        self._stopped = False
         self._last_requested_line = (None, None)
+        self._state = WaitingForStart(self)
 
     @property
     def machine(self):
@@ -252,27 +252,26 @@ class Communication(object):
 
         :param Content content: the content of the communication.
         """
-        self._started = True
+        self._state.communication_started()
 
     _read_message_type = staticmethod(read_message_type)
 
     def _message_received(self, message):
         """Notify the observers about the received message."""
+        self._state.receive_message(message)
         for callable in self._on_message_received:
             callable(message)
 
     def receive_message(self):
         """Receive a message from the file."""
-        assert self._started and not self._stopped
+        assert not self._state.is_waiting_for_start() and \
+            not self._state.is_connection_closed()
         message_type = self._read_message_type(self._file)
         message = message_type(self._file, self)
-        if message.wants_to_answer():
-            message.send_answer()
         self._message_received(message)
 
     def stop(self):
         """Stop the communication with the shield."""
-        self._stopped = True
         self._message_received(ConnectionClosed(self._file, self))
 
     def api_version_is_supported(self, api_version):
@@ -297,5 +296,20 @@ class Communication(object):
         message = host_message_class(self._file, self, *args)
         message.send()
 
-
+    @property
+    def state(self):
+        """The state this object is in.
+        
+        :return: the state this communication object is in.
+        :rtype: AYABInterface.communication.states.State
+        """
+        return self._state
+    
+    @state.setter
+    def state(self, new_state):
+        """Set the state."""
+        self._state.exit()
+        self._state = new_state
+        self._state.enter()
+        
 __all__ = ["Communication", "Content"]

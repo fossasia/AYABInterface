@@ -207,30 +207,6 @@ class UnknownMessage(FixedSizeMessage):
     def received_by(self, visitor):
         """Call visitor.receive_unkown."""
         visitor.receive_unknown(self)
-        
-
-class MessageWithAnswer(FixedSizeMessage):
-
-    """A base class for msaages that have an answer."""
-
-    def has_answer(self):
-        """Whether this message produces an answer message.
-
-        :rtype: bool
-        :returns: :obj:`True`
-        """
-        return True
-
-    @abstractproperty
-    def answer(self):
-        """The message to answer.
-
-        :rtype: AYABInterface.conmmunication.host_messages.SentMessage
-        """
-
-    def send_answer(self):
-        """Send the answer via the communication."""
-        self.answer.send()
 
 
 FirmwareVersion = namedtuple("FirmwareVersion", ["major", "minor"])
@@ -323,7 +299,7 @@ class TestConfirmation(SuccessConfirmation):
         visitor.receive_test_confirmation(self)
 
 
-class LineRequest(MessageWithAnswer):
+class LineRequest(FixedSizeMessage):
 
     """The controller requests a line.
 
@@ -350,15 +326,6 @@ class LineRequest(MessageWithAnswer):
     def line_number(self):
         """The line number that was requested."""
         return self._line_number
-
-    @property
-    def answer(self):
-        """Message to inform about the upcoming line.
-
-        :rtype: AYABInterface.communication.host_messages.LineConfirmation
-        """
-        return LineConfirmation(self._file, self._communication,
-                                self.line_number)
 
     def received_by(self, visitor):
         """Call visitor.receive_line_request."""

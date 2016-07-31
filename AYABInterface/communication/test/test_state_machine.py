@@ -6,6 +6,7 @@ from pytest import fixture
 from unittest.mock import Mock
 from test_assertions import assert_identify
 import pytest
+from AYABInterface.communication.host_messages import LineConfirmation
 
 
 class StateTest(object):
@@ -178,4 +179,7 @@ class TestKnittingLine(TestKnittingStarted):
         assert state.is_knitting_last_line() == result
         communication.is_last_line.assert_called_once_with(self.line_number)
         
-    
+    def test_enter_sends_line_configuration(self, state, communication):
+        state.enter()
+        communication.send.assert_called_once_with(LineConfirmation,
+                                                   self.line_number)

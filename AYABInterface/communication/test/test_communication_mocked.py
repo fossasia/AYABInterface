@@ -91,22 +91,12 @@ class TestReceiveMessages(object):
 
     def test_can_receive_message(
             self, started_communication, create_message, file, messages):
+        print(started_communication.state)
         started_communication.receive_message()
         message_type = create_message.return_value
         create_message.assert_called_once_with(file)
         message_type.assert_called_once_with(file, started_communication)
         assert messages == [message_type.return_value]
-
-    def test_message_answers(self, started_communication, message):
-        started_communication.receive_message()
-        assert message.wants_to_answer.return_value
-        message.send_answer.assert_called_once_with()
-
-    def test_message_does_not_answer(
-            self, started_communication, create_message, message):
-        message.wants_to_answer.return_value = False
-        started_communication.receive_message()
-        message.send_answer.assert_not_called()
 
     def test_stop_notifies_with_close_message(self, started_communication,
                                               messages):
@@ -189,4 +179,32 @@ class TestLastLine(object):
         assert communication.is_last_line(number) == truth
         get_needle_positions.assert_called_once_with(number + 1)
         
+
+class TestState(object):
+    
+    def test_set_state_and_enter_is_called(self, communication):
+        state = Mock()
+        communication.state = state
+        state.enter.assert_called_once_with()
+        state.exit.assert_not_called()
+    
+    def test_when_leaving_exit_is_called(self, communication):
+        state = Mock()
+        communication.state = state
+        communication.state = Mock()
+        state.exit.assert_called_once_with()
+
+    def test_first_state(self, communication):
+        assert communication.state.is_waiting_for_start()
+
+    def test_received_message_goes_to_state(self, communication):
+        message = Mock()
+        communication.state = state = Mock()
+        communication._message_received(message)
+        state.receive_message.assert_called_once_with(message)
+    
+    def test_start(self, communication):
+        communication.state = state = Mock()
+        communication.start()
+        state.communication_started.assert_called_once_with()
 

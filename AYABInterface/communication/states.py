@@ -1,5 +1,5 @@
 """This module contains the state machine for the communication class."""
-from .host_messages import InformationRequest
+from .host_messages import InformationRequest, LineConfirmation
 
 
 class State(object):
@@ -164,9 +164,8 @@ class State(object):
         """
         return False
 
-    def started(self):
+    def communication_started(self):
         """Call when the communication starts."""
-
    
     def is_waiting_for_start(self):
         """Whether this state is waiting for the start.
@@ -293,7 +292,7 @@ class WaitingForStart(State):
         :return: :obj:`True`
         """
         return True
-        
+           
 
 class InitialHandshake(State):
 
@@ -478,7 +477,6 @@ class KnittingStarted(State):
         return True
         
 
-
 class KnittingLine(State):
     
     """The machine is currently knitting a line."""
@@ -487,6 +485,15 @@ class KnittingLine(State):
         """The machine is knitting a line."""
         super().__init__(communication)
         self._line_number = line_number
+    
+    def enter(self):
+        """Send a LineConfirmation to the controller.
+        
+        When this state is entered, a
+        :class:`AYABInterface.communication.host_messages.LineConfirmation`
+        is sent to the controller.
+        """
+        self._communication.send(LineConfirmation, self._line_number)
 
     def is_knitting(self):
         """The machine ready to knit or knitting.
