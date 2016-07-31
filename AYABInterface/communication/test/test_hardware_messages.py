@@ -2,11 +2,12 @@
 from AYABInterface.communication.host_messages import LineConfirmation
 from AYABInterface.communication.hardware_messages import read_message_type, \
     UnknownMessage, SuccessConfirmation, StartConfirmation, LineRequest, \
-    InformationConfirmation, TestConfirmation, StateIndication, Debug
+    InformationConfirmation, TestConfirmation, StateIndication, Debug, \
+    ConnectionClosed
 import pytest
 from io import BytesIO
 from pytest import fixture
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from AYABInterface.utils import next_line
 import AYABInterface.communication.hardware_messages as hardware_messages
 from test_assertions import assert_identify
@@ -77,6 +78,17 @@ def communication():
     """The communication object."""
     return MagicMock()
 
+PATCH_RECEIVED = "AYABInterface.communication.hardware_messages."\
+    "FixedSizeMessage.read_end_of_message"    
+
+
+def assert_received_by(message_class, method_name):
+    visitor = MagicMock()
+    message = MagicMock()
+    message_class.received_by(message, visitor)
+    method = getattr(visitor, method_name)
+    method.assert_called_once_with(message)
+
 
 class TestUnknownMessage(object):
 
@@ -95,6 +107,9 @@ class TestUnknownMessage(object):
         assert_identify(message, ["is_unknown"])
         file.assert_bytes_read(index)
 
+    def test_received_by(self):
+        assert_received_by(UnknownMessage, "receive_unknown")
+
 
 class TestSuccessMessage(object):
 
@@ -108,6 +123,7 @@ class TestSuccessMessage(object):
     identifiers = []
     success = b'\x01\r\n'
     failure = b'\x00\r\n'
+    receive_method = None
 
     def test_success(self, communication):
         file = Message(self.success)
@@ -128,7 +144,13 @@ class TestSuccessMessage(object):
         assert_identify(message, self.identifiers)
         file.assert_is_read()
 
+    def test_received_by(self):
+        if self.receive_method is None:
+            assert type(self) == TestSuccessMessage, "Set receive_method!"
+        else:
+            assert_received_by(self.message_type, self.receive_method)
 
+        
 class TestStartConfirmation(TestSuccessMessage):
 
     """Test the StartConfirmation.
@@ -139,6 +161,7 @@ class TestStartConfirmation(TestSuccessMessage):
 
     message_type = StartConfirmation
     identifiers = ["is_start_confirmation"]
+    receive_method = "receive_start_confirmation"
 
 
 class TestLineRequest(object):
@@ -189,6 +212,9 @@ class TestLineRequest(object):
     def test_line_configuration_is_from_host_messages(self):
         assert hardware_messages.LineConfirmation == LineConfirmation
 
+    def test_received_by(self):
+        assert_received_by(LineRequest, "receive_line_request")
+
 
 class TestInformationConfirmation(object):
 
@@ -213,6 +239,10 @@ class TestInformationConfirmation(object):
         assert message.api_version_is_supported() == api_version
         configuration.api_version_is_supported.assert_called_once_with(
             bytes[0])
+
+    def test_received_by(self):
+        assert_received_by(InformationConfirmation,
+                           "receive_information_confirmation")
 
 
 class TestStateIndication(object):
@@ -249,6 +279,12 @@ class TestStateIndication(object):
         assert message.current_needle == needle
         assert message.carriage.needle_position == needle
 
+    def test_received_by(self):
+        assert_received_by(StateIndication, "receive_state_indication")
+
+PATCH_RECEIVED_DEBUG = "AYABInterface.communication.hardware_messages.Debug." \
+    "_init"    
+
 
 class TestDebugMessage(object):
 
@@ -258,14 +294,20 @@ class TestDebugMessage(object):
       <AYABInterface.communication.hardware_messages.StateIndication>`
     """
 
-    @pytest.mark.parametrize("bytes,length", [
-        (b"\r\n", 0), (b"asd\r\n", 3), (b"asdasd\r\nasd\r\n", 6)])
-    def test_debug_message(self, bytes, length, configuration):
+    @pytest.mark.parametrize("bytes,length,bytes_read", [
+        (b"\r\n", 0, 2), (b"asd\r\n", 3, 5), (b"asdasd\r\nasd\r\n", 6, 8),
+        (b"a\rb\nc\n\rd\r\ne", 8, 10), (b'asd', 3, 3), (b'\r', 0, 1),
+        (b'a', 1, 1)])
+    def test_debug_message(self, bytes, length, configuration, bytes_read):
         file = Message(bytes)
         message = Debug(file, configuration)
-        file.assert_bytes_read(length + 2)
+        file.assert_bytes_read(bytes_read)
         assert_identify(message, ["is_valid", "is_debug"])
         assert message.bytes == bytes[:length]
+
+    def test_received_by(self):
+        with patch(PATCH_RECEIVED_DEBUG, lambda _: b""):
+            assert_received_by(Debug, "receive_debug")
 
 
 class TestTestConfirmation(TestSuccessMessage):
@@ -278,9 +320,30 @@ class TestTestConfirmation(TestSuccessMessage):
 
     message_type = TestConfirmation
     identifiers = ["is_test_confirmation"]
+    receive_method = "receive_test_confirmation"
 
 
 class TestIncompleteRead(object):
 
     def test_todo(self):
         pytest.skip()
+
+
+class TestConnectionClosed(object):
+
+    """Test the TestConfirmation.
+
+    .. seealso::
+      :class:`AYABInterface.communication.hardware_messages.ConnectionClosed`
+    """
+    
+    @fixture
+    def message(self):
+        return ConnectionClosed()
+    
+    def test_test(self):
+        message = ConnectionClosed(MagicMock(), MagicMock())
+        assert message.is_connection_closed()
+
+    def test_received_by(self):
+        assert_received_by(ConnectionClosed, "receive_connection_closed")

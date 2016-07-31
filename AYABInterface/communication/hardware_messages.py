@@ -16,7 +16,6 @@ class Message(object):
         self._file = file
         self._communication = communication
         self._init()
-        self._read_end_of_message()
 
     def _init(self):
         """Initialize the message.
@@ -25,15 +24,6 @@ class Message(object):
         This pattern is called template method.
         Reading from the file should be done here and nowhere else.
         """
-
-    def _read_end_of_message(self):
-        """Read the b"\\r\\n" at the end of the message."""
-        read = self._file.read
-        last = read(1)
-        current = read(1)
-        while last != b'\r' and current not in b'\n':
-            last = current
-            current = read(1)
 
     def is_valid(self):
         """Whether the message is valid.
@@ -116,7 +106,27 @@ class Message(object):
         return False
 
 
-class SuccessConfirmation(Message):
+class FixedSizeMessage(Message):
+
+    """This is a message of fixed size."""
+    
+    def __init__(self, file, communication):
+        """Create a new Message."""
+        super().__init__(file, communication)
+        self.read_end_of_message()
+
+    def read_end_of_message(self):
+        """Read the b"\\r\\n" at the end of the message."""
+        read = self._file.read
+        last = read(1)
+        current = read(1)
+        while last != b'' and current != b'' and not \
+                (last == b'\r' and current == b'\n'):
+            last = current
+            current = read(1)
+
+
+class SuccessConfirmation(FixedSizeMessage):
 
     """Base class for massages of success and failure."""
 
@@ -152,6 +162,10 @@ class StartConfirmation(SuccessConfirmation):
         :returns: :obj:`True`
         """
         return True
+        
+    def received_by(self, visitor):
+        """Call visitor.receive_state_confirmation."""
+        visitor.receive_start_confirmation(self)
 
 
 class ConnectionClosed(Message):
@@ -165,9 +179,12 @@ class ConnectionClosed(Message):
         :returns: :obj:`True`
         """
         return True
-
-
-class UnknownMessage(Message):
+        
+    def received_by(self, visitor):
+        """Call visitor.receive_connection_closed."""
+        visitor.receive_connection_closed(self)
+        
+class UnknownMessage(FixedSizeMessage):
 
     """This is a special message for unknown message types."""
 
@@ -186,9 +203,13 @@ class UnknownMessage(Message):
         :return: :obj:`False`
         """
         return False
+        
+    def received_by(self, visitor):
+        """Call visitor.receive_unkown."""
+        visitor.receive_unknown(self)
+        
 
-
-class MessageWithAnswer(Message, metaclass=ABCMeta):
+class MessageWithAnswer(FixedSizeMessage):
 
     """A base class for msaages that have an answer."""
 
@@ -215,7 +236,7 @@ class MessageWithAnswer(Message, metaclass=ABCMeta):
 FirmwareVersion = namedtuple("FirmwareVersion", ["major", "minor"])
 
 
-class InformationConfirmation(Message):
+class InformationConfirmation(FixedSizeMessage):
 
     """This message is the answer in the initial handshake.
 
@@ -278,6 +299,10 @@ class InformationConfirmation(Message):
         """
         return self._firmware_version
 
+    def received_by(self, visitor):
+        """Call visitor.receive_information_confirmation."""
+        visitor.receive_information_confirmation(self)
+
 
 class TestConfirmation(SuccessConfirmation):
 
@@ -292,6 +317,10 @@ class TestConfirmation(SuccessConfirmation):
         :returns: :obj:`True`
         """
         return True
+
+    def received_by(self, visitor):
+        """Call visitor.test_information_confirmation."""
+        visitor.receive_test_confirmation(self)
 
 
 class LineRequest(MessageWithAnswer):
@@ -331,8 +360,12 @@ class LineRequest(MessageWithAnswer):
         return LineConfirmation(self._file, self._communication,
                                 self.line_number)
 
+    def received_by(self, visitor):
+        """Call visitor.receive_line_request."""
+        visitor.receive_line_request(self)
 
-class StateIndication(Message):
+
+class StateIndication(FixedSizeMessage):
 
     """This message shows the state of the controller.
 
@@ -399,6 +432,10 @@ class StateIndication(Message):
         """
         return self._carriage_position
 
+    def received_by(self, visitor):
+        """Call visitor.receive_state_indication."""
+        visitor.receive_state_indication(self)
+
 
 class Debug(Message):
 
@@ -417,16 +454,19 @@ class Debug(Message):
         """
         return True
 
-    def _read_end_of_message(self):
+    def _init(self):
         """Read the b"\\r\\n" at the end of the message."""
         read_values = []
         read = self._file.read
         last = read(1)
         current = read(1)
-        while last != b'\r' and current not in b'\n':
+        while last != b'' and current != b'' and not \
+                (last == b'\r' and current == b'\n'):
             read_values.append(last)
             last = current
             current = read(1)
+        if current == b'' and last != b'\r':
+            read_values.append(last)
         self._bytes = b''.join(read_values)
 
     @property
@@ -438,6 +478,10 @@ class Debug(Message):
           the end
         """
         return self._bytes
+
+    def received_by(self, visitor):
+        """Call visitor.receive_debug."""
+        visitor.receive_debug(self)
 
 
 _message_types = {}
@@ -456,4 +500,5 @@ def read_message_type(file):
 __all__ = ["read_message_type", "StateIndication", "LineRequest",
            "TestConfirmation", "InformationConfirmation", "Debug",
            "StartConfirmation", "SuccessConfirmation", "MessageWithAnswer",
-           "UnknownMessage", "Message", "ConnectionClosed", "FirmwareVersion"]
+           "UnknownMessage", "Message", "ConnectionClosed", "FirmwareVersion",
+           "FixedSizeMessage"]

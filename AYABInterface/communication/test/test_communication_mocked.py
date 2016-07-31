@@ -3,9 +3,10 @@
 .. seealso:: :class:`AYABInterface.communication.Communication`
 """
 from AYABInterface.communication import Communication
+import AYABInterface.communication as communication_module
 from pytest import fixture, raises
 import pytest
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock, call, Mock
 from io import BytesIO
 
 
@@ -159,3 +160,19 @@ class TestGetLineBytes(object):
                                                    (-2, False)])
     def test_sopport_api_version(self, communication, api_version, truth):
         assert communication.api_version_is_supported(api_version) == truth
+
+        
+class TestSend(object):
+
+    """Test the send method."""
+    
+    @pytest.mark.parametrize("args", [(), (3,), ("asd", "as", "a"), (2, 2)])
+    def test_initialized_with_arguments(self, communication, file, args):
+        req_class = Mock()
+        communication.send(req_class, *args)
+        req_class.assert_called_once_with(file, communication, *args)
+    
+    def test_sent(self, communication):
+        req_class = Mock()
+        communication.send(req_class, 1)
+        req_class.return_value.send.assert_called_once_with()
