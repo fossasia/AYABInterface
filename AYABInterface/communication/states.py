@@ -1,4 +1,10 @@
-"""This module contains the state machine for the communication class."""
+"""This module contains the state machine for the communication class.
+
+.. image:: ../../../_static/CommunicationStateDiagram.svg
+   :target: ../../../_static/CommunicationStateDiagram.svg
+   :alt: State Disgram for the Communication class.
+
+"""
 from .host_messages import InformationRequest, LineConfirmation
 
 
@@ -79,6 +85,7 @@ class State(object):
         :param message: a :class:`Debug
           <AYABInterface.communication.hardware_messages.Debug>`
           message
+        
         This logs the debug message.
         """
         
@@ -429,7 +436,10 @@ class StartingToKnit(State):
         :rtype: bool
         :return: :obj:`False`
         """
-        return True    
+        return True
+    
+    def enter(self):
+        """Send a StartRequest."""
 
 
 class StartingFailed(FinalState):
@@ -541,4 +551,4 @@ class KnittingLine(State):
 __all__ = ["State", "ConnectionClosed", "WaitingForStart",
            "InitialHandshake", "UnsupportedApiVersion",
            "InitializingMachine", "StartingToKnit", "StartingFailed",
-           "KnittingStarted", "KnittingLine"]
+           "KnittingStarted", "KnittingLine", "FinalState"]

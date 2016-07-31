@@ -469,6 +469,6 @@ def read_message_type(file):
 
 __all__ = ["read_message_type", "StateIndication", "LineRequest",
            "TestConfirmation", "InformationConfirmation", "Debug",
-           "StartConfirmation", "SuccessConfirmation", "MessageWithAnswer",
+           "StartConfirmation", "SuccessConfirmation",
            "UnknownMessage", "Message", "ConnectionClosed", "FirmwareVersion",
            "FixedSizeMessage"]

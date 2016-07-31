@@ -6,7 +6,8 @@ from pytest import fixture
 from unittest.mock import Mock
 from test_assertions import assert_identify
 import pytest
-from AYABInterface.communication.host_messages import LineConfirmation
+from AYABInterface.communication.host_messages import LineConfirmation, \
+    StartRequest, InformationRequest
 
 
 class StateTest(object):
@@ -81,10 +82,7 @@ class TestInitialHandshake(StateTest):
     
     def test_enter_and_send_information_request(self, state, communication):
         state.enter()
-        send = communication.send
-        assert send.call_count == 1
-        assert len(send.call_args) == 2
-        assert send.call_args[0][0].MESSAGE_ID == 0x03
+        communication.send.assert_called_once_with(InformationRequest)
         
     def test_positive_response(self, state, message, communication):
         message.api_version_is_supported.return_value = True
@@ -137,6 +135,11 @@ class TestStartingToKnit(StateTest):
         state.receive_start_confirmation(message)
         assert communication.state.is_starting_failed()
 
+    def test_enter_sends_start_confirmation(self, state, communication):
+        state.enter()
+        communication.send.assert_called_once_with(
+            StartRequest, communication.left_end_needle,
+            communication.right_end_needle)
         
 class TestStartingFailed(StateTest):
     

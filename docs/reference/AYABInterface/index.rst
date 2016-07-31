@@ -7,7 +7,6 @@ The ``AYABInterface`` Module Reference
    init
    actions
    carriages
-   communication
    configuration
    interface
    machines

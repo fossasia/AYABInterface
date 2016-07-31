@@ -311,5 +311,9 @@ class Communication(object):
         self._state.exit()
         self._state = new_state
         self._state.enter()
+
+    @property
+    def left_end_needle(self):
+        """The left end needle of the needle positions."""
         
 __all__ = ["Communication", "Content"]

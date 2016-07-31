@@ -8,5 +8,4 @@
    :show-inheritance:
    :members:
    :special-members:
-   :noindex:
 
