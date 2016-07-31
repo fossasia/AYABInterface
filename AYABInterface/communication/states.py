@@ -355,7 +355,7 @@ class UnsupportedApiVersion(FinalState):
         """Whether the API version of communcation and controller do not match.
         
         :rtype: bool
-        :return: :obj:`False`
+        :return: :obj:`True`
         """
         return True    
         
@@ -399,7 +399,7 @@ class InitializingMachine(State):
         """Whether the machine is currently being initialized.
         
         :rtype: bool
-        :return: :obj:`False`
+        :return: :obj:`True`
         """
         return True    
 
@@ -436,7 +436,7 @@ class StartingToKnit(State):
         """The machine initialized and knitting starts.
         
         :rtype: bool
-        :return: :obj:`False`
+        :return: :obj:`True`
         """
         return True
     
