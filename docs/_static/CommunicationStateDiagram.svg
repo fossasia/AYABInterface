@@ -17,7 +17,7 @@
    inkscape:version="0.91 r13725"
    sodipodi:docname="CommunicationStateDiagram.svg">
   <script
-     id="script8105">//
+     id="functions">//
 //     link_to_state()
 //     link_to_message()
 //     link_to_communication()
@@ -34,6 +34,13 @@ function link_to_message(name) {
 function link_to_communication(method) {
 	document.location = &quot;../reference/AYABInterface/communication/init.html#AYABInterface.communication.Communication.&quot; + method;
 }</script>
+  <style
+     type="text/css"
+     id="style4">
+text {
+    cursor: pointer;
+}
+    </style>
   <title
      id="title4517">Communication States</title>
   <defs
@@ -219,8 +226,8 @@ function link_to_communication(method) {
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="225.06393"
-     inkscape:cy="335.70926"
+     inkscape:cx="156.87863"
+     inkscape:cy="194.28791"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -244,6 +251,8 @@ function link_to_communication(method) {
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <dc:title>Communication States</dc:title>
+        <cc:license
+           rdf:resource="LGPLv3" />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -384,7 +393,8 @@ function link_to_communication(method) {
        x="392.76349"
        y="371.0004"
        id="text3360"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       onclick="link_to_state(&quot;StartingFailed&quot;)"><tspan
          sodipodi:role="line"
          id="tspan3362"
          x="392.76349"

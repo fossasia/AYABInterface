@@ -1,7 +1,9 @@
 """This module contains the state machine for the communication class.
 
+Click on this image to go to the states from the diagram:
+
 .. image:: ../../../_static/CommunicationStateDiagram.svg
-   :target: ../../../_static/CommunicationStateDiagram.svg
+   :target: ../../../_static/CommunicationStateDiagram.html
    :alt: State Disgram for the Communication class.
 
 """
