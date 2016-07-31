@@ -27,6 +27,9 @@ When **reqStart** was successful, the Arduino begins to poll the host for line d
 This reqLine/cnfLine happens each time the carriage moves passed the borders given by the Start/StopNeedle parameters in **reqStart**.
 When the host does not have any more lines to send, it marks the last line with the *lastLine* flag in its last **cnfLine** message.
 
+To see an example implementation, see the :mod:`states of the communication
+module <AYABInterface.communication.states>`.
+
 .. _message-identifier-format:
 
 Message Identifier Format
