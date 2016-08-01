@@ -327,8 +327,9 @@ class LineRequest(FixedSizeMessage):
 
     def _init(self):
         """Read the line number."""
-        self._line_number = next_line(self._communication.last_line,
-                                      self._file.read(1)[0])
+        self._line_number = next_line(
+            self._communication.last_requested_line_number,
+            self._file.read(1)[0])
 
     @property
     def line_number(self):

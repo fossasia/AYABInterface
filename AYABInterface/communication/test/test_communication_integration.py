@@ -16,7 +16,7 @@ class Connection(object):
         self.write = self.writer.write
 
 
-class MessageTest(object):
+class CommunicationTest(object):
 
     """Run a set of messages."""
 
@@ -26,8 +26,12 @@ class MessageTest(object):
     states = ["is_initial_handshake"]
     lines = ["B" * 200]  #: the lines to get
     machine = KH910  #: the machine type
-
-    def get_line(self, line_numer):
+    lines_requested = None
+    
+    def get_line(self, line_number):
+        if self.lines_requested is None:
+            self.lines_requested = []
+        self.lines_requested.append(line_number)
         if 0 <= line_number < len(self.lines):
             return self.lines[line_number]
         return None
@@ -65,14 +69,14 @@ class MessageTest(object):
         pass
 
 
-class TestEmptyConnection(MessageTest):
+class TestEmptyConnection(CommunicationTest):
 
     """Test what happens if no bytes are received."""
 
     output = b'\x03\r\n'  #: the output
 
 
-class TestEmptyConnectionWithDebugMessages(MessageTest):
+class TestEmptyConnectionWithDebugMessages(CommunicationTest):
 
     """Insert debug messages."""
 
@@ -82,7 +86,7 @@ class TestEmptyConnectionWithDebugMessages(MessageTest):
     states = ["is_initial_handshake"] * 3
 
 
-class TestUnsupportedAPIVersion(MessageTest):
+class TestUnsupportedAPIVersion(CommunicationTest):
 
     """Insert debug messages."""
 
@@ -97,7 +101,7 @@ class TestUnsupportedAPIVersion(MessageTest):
         assert communication.controller.firmware_version == (0, 1)
 
 
-class TestStartingFailed(MessageTest):
+class TestStartingFailed(CommunicationTest):
 
     """Go into the StartingFailed state."""
 
@@ -119,3 +123,37 @@ class TestStartingFailed(MessageTest):
     def after_test_run(self, communication):
         assert communication.right_end_needle == 199
         assert communication.left_end_needle == 0
+
+
+class TestKnitSomeLines(CommunicationTest):
+
+    """Test that we knit some lines."""
+
+    #: the lines to get
+    lines = ["B" * 200] * 301
+    lines[100] = "BBBBBBBCCBBBBBBBCCCCBBBBCBCBCBCB" + "B" * 168
+    line_100 = b'\x80\x01\x0f\xaa' + b'\00' * 21 + b'\x00' + b'\x28'
+    
+    #: the input
+    input = (b'\xc3\x04\x03\xcc\r\n' +  # cnfInfo
+             b'\x84\x00BbCcde\r\n' +    # indState(false)
+             b'\x84\x01BbCcde\r\n' +    # indState(true)
+             b'\xc1\x01\r\n' +          # cnfStart(true)
+             b'\x82\x64\r\n' +          # reqLine(100)
+             b'\x82\xc8\r\n' +          # reqLine(200)
+             b'\x82\x2c\r\n' +          # reqLine(300)
+             b'\x82\x90\r\n' +          # reqLine(400)
+             b'')
+    #: the output
+    output = (b'\x03\r\n' +                               # reqInfo
+              b'\x01\x00\xc7\r\n' +                       # reqStart
+              b'\x42\x64' + line_100 +                    # cnfLine(100)
+              b'\x42\xc8' + b'\x00' * 27 +                # cnfLine(200)
+              b'\x42\x2c' + b'\x00' * 25 + b'\x01\x00' +  # cnfLine(300)
+              b'')
+    #: the tests to perform between receiving messages
+    states = ["is_initial_handshake", "is_initializing_machine",
+              "is_initializing_machine", "is_starting_to_knit",
+              "is_knitting_started", 100, 200, 300, 400]
+    
+    

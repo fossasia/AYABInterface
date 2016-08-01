@@ -146,11 +146,6 @@ class TestGetLineBytes(object):
         assert communication.get_needle_position_bytes(line) is None
         machine.needle_positions_to_bytes.assert_not_called()
 
-    @pytest.mark.parametrize("api_version,truth", [(4, True), (3, False),
-                                                   (-2, False)])
-    def test_sopport_api_version(self, communication, api_version, truth):
-        assert communication.api_version_is_supported(api_version) == truth
-
 
 class TestSend(object):
 
@@ -167,18 +162,16 @@ class TestSend(object):
         communication.send(req_class, 1)
         req_class.return_value.send.assert_called_once_with()
 
+class TestLastRequestedLine(object):
 
-class TestLastLine(object):
+    """Test the last_requested_line_number."""
 
-    """Test the is_last_line test."""
+    def test_last_line_requested_default(self, communication):
+        assert communication.last_requested_line_number == 0
 
-    @pytest.mark.parametrize("number", [1, 4, 8])
-    @pytest.mark.parametrize("line,truth", [([], False), (None, True)])
-    def test_last_line(self, communication, get_needle_positions, number,
-                       line, truth):
-        get_needle_positions.return_value = line
-        assert communication.is_last_line(number) == truth
-        get_needle_positions.assert_called_once_with(number + 1)
+    def test_set_the_last_line(self, communication):
+        communication.last_requested_line_number = 9
+        assert communication.last_requested_line_number == 9
 
 
 class TestState(object):
@@ -220,6 +213,11 @@ class TestController(object):
     def test_set_controller(self, communication):
         communication.controller = controller = Mock()
         assert communication.controller == controller
+
+    @pytest.mark.parametrize("api_version,truth", [(4, True), (3, False),
+                                                   (-2, False)])
+    def test_support_api_version(self, communication, api_version, truth):
+        assert communication.api_version_is_supported(api_version) == truth
 
 
 class TestNeedles(object):

@@ -187,7 +187,7 @@ class TestLineRequest(object):
             assert next_line_ == byte[0]
             return next_line
         monkeypatch.setattr(hardware_messages, 'next_line', mock_next_line)
-        communication.last_line = last_line
+        communication.last_requested_line_number = last_line
         file = Message(byte + b'\r\n')
         message = LineRequest(file, communication)
         assert_identify(message, ["is_line_request", "is_valid"])

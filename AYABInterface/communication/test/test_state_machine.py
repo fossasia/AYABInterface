@@ -186,3 +186,7 @@ class TestKnittingLine(TestKnittingStarted):
         state.enter()
         communication.send.assert_called_once_with(LineConfirmation,
                                                    self.line_number)
+
+    def test_enter_sets_last_line_requested(self, state, communication):
+        state.enter()
+        assert communication.number_of_last_line_requested == self.line_number

@@ -193,9 +193,9 @@ class Communication(object):
         self._get_needle_positions = get_needle_positions
         self._on_message_received = on_message_received
         self._machine = machine
-        self._last_requested_line = (None, None)
         self._state = WaitingForStart(self)
         self._controller = None
+        self._last_requested_line_number = 0
 
     @property
     def machine(self):
@@ -360,5 +360,19 @@ class Communication(object):
     @controller.setter
     def controller(self, value):
         self._controller = value
+
+    @property
+    def last_requested_line_number(self):
+        """The number of the last line that was requested.
+        
+        :rtype: int
+        :return: the last requested line number or ``0``
+        """
+        return self._last_requested_line_number
+    
+    @last_requested_line_number.setter
+    def last_requested_line_number(self, line_number):
+        """Set the last requested line number."""
+        self._last_requested_line_number = line_number
 
 __all__ = ["Communication", "Content"]
