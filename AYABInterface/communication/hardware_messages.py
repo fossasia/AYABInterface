@@ -1,7 +1,5 @@
 """This modue contains all the messages taht are received."""
-from abc import ABCMeta, abstractproperty
 from ..utils import next_line
-from .host_messages import LineConfirmation
 from collections import namedtuple
 from .carriages import id_to_carriage_type
 import struct
