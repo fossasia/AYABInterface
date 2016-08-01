@@ -11,8 +11,7 @@ class TestColorsToBinary(object):
         [[[1, 2, 1, 2]], [[([0, 1, 0, 1], (1, 2), True)]]],  # two colors
         [[[1, 2, 0, 2]], [[([0, 1, 1, 1], (1,), False),  # three colors
                            ([1, 0, 1, 0], (2,), False),
-                           ([1, 1, 0, 1], (0,), False)]]],
-        ])
+                           ([1, 1, 0, 1], (0,), False)]]]])
     def test_conversion(self, rows, expected_needles):
         needles = colors_to_needle_positions(rows)
         assert needles == expected_needles

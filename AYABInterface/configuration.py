@@ -88,7 +88,7 @@ class Configuration(object):
         left_end_needle = self._left_end_needle
         if left_end_needle < 0 or left_end_needle >= expected_needles:
             message = _END_NEEDLE_INVALID.format(
-                which="left", min=0, max=expected_needles-1,
+                which="left", min=0, max=expected_needles - 1,
                 got=left_end_needle)
             raise InvalidConfigurationException(message)
 
@@ -96,7 +96,7 @@ class Configuration(object):
         if right_end_needle <= left_end_needle or \
                 right_end_needle > expected_needles:
             message = _END_NEEDLE_INVALID.format(
-                which="right", min=left_end_needle+1, max=expected_needles,
+                which="right", min=left_end_needle + 1, max=expected_needles,
                 got=right_end_needle)
             raise InvalidConfigurationException(message)
 

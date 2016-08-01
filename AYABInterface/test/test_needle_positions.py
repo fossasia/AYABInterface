@@ -51,8 +51,8 @@ class TestInvalidInitialization(object):
         assert error.value.args[0] == message
 
     @pytest.mark.parametrize("pos_x,pos_y,value,positions", [
-         [3, 4, "D", ("A", "C", "F")], [4, 1, 3, ("a", "b")],
-         [0, 0, "asd", (1, 2, 3)], [7, 7, 77, ("a", "b")]])
+        [3, 4, "D", ("A", "C", "F")], [4, 1, 3, ("a", "b")],
+        [0, 0, "asd", (1, 2, 3)], [7, 7, 77, ("a", "b")]])
     def test_needle_positions(self, pos_x, pos_y, value, positions):
         """Test needle positions that are not allowed."""
         rows = [[positions[0]] * 8 for i in range(8)]
