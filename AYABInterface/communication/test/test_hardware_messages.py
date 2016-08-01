@@ -197,9 +197,6 @@ class TestLineRequest(object):
     def test_next_line_is_from_utils(self):
         assert hardware_messages.next_line == next_line
 
-    def test_line_configuration_is_from_host_messages(self):
-        assert hardware_messages.LineConfirmation == LineConfirmation
-
     def test_received_by(self):
         assert_received_by(LineRequest, "receive_line_request")
 
