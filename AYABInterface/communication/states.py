@@ -516,7 +516,7 @@ class KnittingLine(State):
         :class:`AYABInterface.communication.host_messages.LineConfirmation`
         is sent to the controller.
         Also, the :attr:`last line requested
-        <AYABInterface.communication.Communication.last_requested_line_number>
+        <AYABInterface.communication.Communication.last_requested_line_number>`
         is set.
         """
         self._communication.last_requested_line_number = self._line_number
