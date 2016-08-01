@@ -315,7 +315,12 @@ class Communication(object):
 
     @property
     def left_end_needle(self):
-        """The left end needle of the needle positions."""
+        """The left end needle of the needle positions.
+        
+        :rtype: int
+        :return: the :attr:`left end needle of the machine
+        <AYABInterface.machine.Machine.left_end_needle>`
+        """
         
     @property
     def right_end_needle(self):

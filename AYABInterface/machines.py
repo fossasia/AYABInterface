@@ -81,6 +81,24 @@ class Machine(object, metaclass=ABCMeta):
         :rtype: bool
         """
         return isinstance(self, KH270)
+    
+    @property
+    def left_end_needle(self):
+        """The index of the leftmost needle.
+        
+        :rtype: int
+        :return: ``0``
+        """
+        return 0
+    
+    @property
+    def right_end_needle(self):
+        """The index of the rightmost needle.
+        
+        :rtype: int
+        :return: :attr:`left_end_needle` + :attr:`number_of_needles` - ``1``
+        """
+        return self.left_end_needle + self.number_of_needles - 1
 
 
 class KH9XXSeries(Machine):

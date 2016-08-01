@@ -7,7 +7,7 @@ Click on this image to go to the states from the diagram:
    :alt: State Disgram for the Communication class.
 
 """
-from .host_messages import InformationRequest, LineConfirmation
+from .host_messages import InformationRequest, LineConfirmation, StartRequest
 
 
 class State(object):
@@ -240,6 +240,13 @@ class State(object):
         :return: :obj:`False`
         """
         return False
+        
+    def __repr__(self):
+        """This object as string.
+        
+        :rtype: str
+        """
+        return "<{}>".format(self.__class__.__name__)
 
 
 class FinalState(State):
@@ -444,7 +451,9 @@ class StartingToKnit(State):
     
     def enter(self):
         """Send a StartRequest."""
-
+        self._communication.send(StartRequest,
+                                 self._communication.left_end_needle,
+                                 self._communication.right_end_needle)
 
 class StartingFailed(FinalState):
     

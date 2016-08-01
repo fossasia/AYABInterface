@@ -256,7 +256,7 @@ The host initializes the handshake.
 - Python: :class:`~AYABInterface.communication.host_messages.InformationRequest`
 - Arduino: `h_reqInfo <https://github.com/AllYarnsAreBeautiful/ayab-firmware/blob/c236597c6fdc6d320f9f2db2ebeb17d64c438b64/ayab.ino#L110>`__
 - table: :ref:`reqInfo <m4-03>`
-- requests answer: :ref:`cnfInfo`
+- requests answer: :ref:`reqInfo`
 - direction: host → controller
 
 

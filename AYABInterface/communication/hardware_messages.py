@@ -105,6 +105,13 @@ class Message(object):
         """
         return False
 
+    def __repr__(self):
+        """This object as string.
+        
+        :rtype: str
+        """
+        return "<{}>".format(self.__class__.__name__)
+
 
 class FixedSizeMessage(Message):
 

@@ -86,7 +86,8 @@ class TestUnsupportedAPIVersion(MessageTest):
     
     """Insert debug messages."""
     
-    input = b'\xc3\x05\x00\x01'  #: the input
+    #: the input
+    input = b'\xc3\x05\x00\x01\r\n'  # cnfInfo
     output = b'\x03\r\n'  #: the output
     #: the tests to perform between receiving messages
     states = ["is_initial_handshake", "is_unsupported_api_version"]
@@ -96,5 +97,26 @@ class TestUnsupportedAPIVersion(MessageTest):
         assert communication.controller.firmware_version == (0, 1)
 
 
+class TestStartingFailed(MessageTest):
 
+    """Go into the StartingFailed state."""
+
+    #: the input
+    input = (b'\xc3\x04\x03\xcc\r\n' +  # cnfInfo
+             b'\x84\x00BbCcde\r\n' +    # indState(false)
+             b'\x84\x01BbCcde\r\n' +    # indState(true)
+             b'\xc1\x00\r\n'            # cnfStart(false) 
+             )
+    #: the output
+    output = (b'\x03\r\n' +        # reqInfo
+              b'\x01\x00\xc7\r\n'  # reqStart
+              )
+    #: the tests to perform between receiving messages
+    states = ["is_initial_handshake", "is_initializing_machine",
+              "is_initializing_machine", "is_starting_to_knit",
+              "is_starting_failed"]
+    
+    def after_test_run(self, communication):
+        assert communication.right_end_needle == 199
+        assert communication.left_end_needle == 0
 

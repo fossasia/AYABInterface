@@ -219,3 +219,12 @@ class TestController(object):
     def test_set_controller(self, communication):
         communication.controller = controller = Mock()
         assert communication.controller == controller
+
+
+class TestNeedles(object):
+
+    """tets the right and left end needles."""
+    
+    def test_default_needles_default_to_machine(self, communication, machine):
+        assert communication.left_end_needle == machine.left_end_needle
+        assert communication.right_end_needle == machine.right_end_needle
