@@ -49,6 +49,3 @@ class TestNeedlePositions(object):
         expected_output = result[:machine.number_of_needles // 8] + \
             b'\x00' * (25 - machine.number_of_needles // 8)
         assert output == expected_output
-        
-        
-    

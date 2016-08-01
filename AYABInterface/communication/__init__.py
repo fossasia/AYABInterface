@@ -202,7 +202,7 @@ class Communication(object):
     @property
     def needle_positions(self):
         """A cache for the needle positions.
-        
+
         :rtype: AYABInterface.communication.cache.NeedlePositionCache
         """
         return self._needle_positions_cache
@@ -323,12 +323,12 @@ class Communication(object):
     @property
     def last_requested_line_number(self):
         """The number of the last line that was requested.
-        
+
         :rtype: int
         :return: the last requested line number or ``0``
         """
         return self._last_requested_line_number
-    
+
     @last_requested_line_number.setter
     def last_requested_line_number(self, line_number):
         """Set the last requested line number."""

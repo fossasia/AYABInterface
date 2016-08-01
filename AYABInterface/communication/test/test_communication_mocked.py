@@ -119,6 +119,7 @@ class TestSend(object):
         communication.send(req_class, 1)
         req_class.return_value.send.assert_called_once_with()
 
+
 class TestLastRequestedLine(object):
 
     """Test the last_requested_line_number."""

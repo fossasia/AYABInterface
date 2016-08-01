@@ -5,7 +5,7 @@ from crc8 import crc8
 class NeedlePositionCache(object):
 
     """Convert and cache needle positions."""
-    
+
     def __init__(self, get_needle_positions, machine):
         """Create a new NeedlePositions object."""
         self._get = get_needle_positions
@@ -13,10 +13,10 @@ class NeedlePositionCache(object):
         self._get_cache = {}
         self._needle_position_bytes_cache = {}
         self._line_configuration_message_cache = {}
-    
+
     def get(self, line_number):
         """Return the needle positions or None.
-        
+
         :param int line_number: the number of the line
         :rtype: list
         :return: the needle positions for a specific line specified by
@@ -71,9 +71,10 @@ class NeedlePositionCache(object):
         line = self._line_configuration_message_cache[line_number]
         if line is None:
             # no need to cache a lot of empty lines
-            line = (bytes([line_number & 255]) + 
-                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' +
-                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01')
+            line = (bytes([line_number & 255]) +
+                    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' +
+                    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01')
             line += crc8(line).digest()
         return line
-    
+
+__all__ = ["NeedlePositionCache"]

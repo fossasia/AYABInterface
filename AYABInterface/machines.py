@@ -102,9 +102,9 @@ class Machine(object, metaclass=ABCMeta):
 
     def needle_positions_to_bytes(self, needle_positions):
         """Convert the needle positions to the wire format.
-        
+
         This conversion is used for :ref:`cnfline`.
-        
+
         :param needle_positions: an iterable over :attr:`needle_positions` of
           length :attr:`number_of_needles`
         :rtype: bytes

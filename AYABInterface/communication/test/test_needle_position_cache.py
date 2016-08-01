@@ -6,7 +6,7 @@ import pytest
 from pytest import fixture
 import crc8
 
-2
+
 @fixture
 def get_line():
     return Mock()
@@ -15,20 +15,20 @@ def get_line():
 @fixture
 def machine():
     return Mock()
-    
+
 
 @fixture
 def cache(get_line, machine):
     return NeedlePositionCache(get_line, machine)
-    
+
 
 class TestGet(object):
-    
+
     @pytest.mark.parametrize("line_number", [3, 5, 7])
     def test_get(self, line_number, get_line, cache):
         assert cache.get(line_number) == get_line.return_value
         get_line.assert_called_once_with(line_number)
-        
+
     def test_cache(self, get_line, cache):
         get_line.return_value = "a"
         a = cache.get(1)
@@ -42,7 +42,8 @@ class TestGet(object):
         assert a == c
         assert b == d
         get_line.assert_has_calls([call(1), call(2)])
-        
+
+
 class TestLastLine(object):
 
     """Test the is_last test."""
@@ -60,12 +61,6 @@ class TestLastLine(object):
         assert cache.get(1) is get_line.return_value
         get_line.return_value = []
         assert cache.is_last(0) == last
-#    @pytest.mark.parametrize("line_number", [1, 5])
-#    @pytest.mark.parametrize("line_number", [1, 5])
-#    def test_get_line_configuration_message(self, cache,
-#                                            get_line)
-
-
 
 
 class TestGetLineBytes(object):
@@ -111,7 +106,7 @@ class TestGetLineBytes(object):
 class TestLineConfigurationMessage(object):
 
     """Test get_line_configuration_message."""
-    
+
     @pytest.mark.parametrize("machine_bytes", [
         b'\x00' * 20, b'asdasdasdas', b'\x97'])
     @pytest.mark.parametrize("last_line", [True, False])

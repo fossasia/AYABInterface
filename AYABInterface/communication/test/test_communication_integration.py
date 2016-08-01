@@ -27,7 +27,7 @@ class CommunicationTest(object):
     lines = ["B" * 200]  #: the lines to get
     machine = KH910  #: the machine type
     lines_requested = None
-    
+
     def get_line(self, line_number):
         if self.lines_requested is None:
             self.lines_requested = []
@@ -135,7 +135,7 @@ class TestKnitSomeLines(CommunicationTest):
     lines = ["B" * 200] * 301
     lines[100] = "BBBBBBBDDBBBBBBBDDDDBBBBDBDBDBDB" + "B" * 168
     line_100 = b'\x80\x01\x0fU' + b'\00' * 21 + b'\x00' + b'\xd0'
-    
+
     #: the input
     input = (b'\xc3\x04\x03\xcc\r\n' +  # cnfInfo
              b'\x84\x00BbCcde\r\n' +    # indState(false)
@@ -150,13 +150,11 @@ class TestKnitSomeLines(CommunicationTest):
     output = (b'\x03\r\n' +                                   # reqInfo
               b'\x01\x00\xc7\r\n' +                           # reqStart
               b'\x42\x64' + line_100 + b'\r\n'                # cnfLine(100)
-              b'\x42\xc8' + b'\x00' * 26 + b'\x07\r\n'            # cnfLine(200)
+              b'\x42\xc8' + b'\x00' * 26 + b'\x07\r\n'        # cnfLine(200)
               b'\x42\x2c' + b'\x00' * 25 + b'\x01\xdd\r\n' +  # cnfLine(300)
-              b'\x42\x90' + b'\x00' * 25 + b'\x01\xb3\r\n' +  # cnfLine(300)
+              b'\x42\x90' + b'\x00' * 25 + b'\x01\xb3\r\n' +  # cnfLine(400)
               b'')
     #: the tests to perform between receiving messages
     states = ["is_initial_handshake", "is_initializing_machine",
               "is_initializing_machine", "is_starting_to_knit",
               "is_knitting_started", 100, 200, 300, 400]
-    
-    
