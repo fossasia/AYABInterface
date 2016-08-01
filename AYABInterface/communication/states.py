@@ -329,6 +329,8 @@ class InitialHandshake(State):
             self._next(InitializingMachine)
         else:
             self._next(UnsupportedApiVersion)
+        
+        self._communication.controller = message
 
     def is_before_knitting(self):
         """Whether the knitting should start soon.

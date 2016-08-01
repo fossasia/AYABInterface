@@ -10,10 +10,10 @@ class Connection(object):
     """A mocked connection."""
 
     def __init__(self, input):
-        self._reader = BytesIO(input)
-        self._writer = BytesIO()
-        self.read = self._reader.read
-        self.write = self._writer.write
+        self.reader = BytesIO(input)
+        self.writer = BytesIO()
+        self.read = self.reader.read
+        self.write = self.writer.write
 
 
 class MessageTest(object):
@@ -21,7 +21,7 @@ class MessageTest(object):
     """Run a set of messages."""
     
     input = b''  #: the input
-    output = b''   #: the output
+    output = b''  #: the output
     #: the tests to perform between receiving messages
     states = ["is_initial_handshake"]
     lines = ["B" * 200]  #: the lines to get
@@ -41,7 +41,7 @@ class MessageTest(object):
         return Communication(connection, self.get_line, self.machine(),
                              [lambda m: print("message:", m)])
     
-    def test_run(self, communication):
+    def test_run(self, communication, connection):
         print("state:", communication.state)
         assert communication.state.is_waiting_for_start()
         communication.start()
@@ -57,11 +57,19 @@ class MessageTest(object):
             communication.receive_message()
         print("state:", communication.state)
         assert communication.state.is_connection_closed()
+        assert connection.writer.getvalue() == self.output, "Output matches."
+        assert connection.reader.tell() == len(self.input), "All is read."
+        self.after_test_run(communication)
+    
+    def after_test_run(self, communication):
+        pass
 
 
 class TestEmptyConnection(MessageTest):
 
     """Test what happens if no bytes are received."""
+
+    output = b'\x03\r\n'  #: the output
 
 
 class TestEmptyConnectionWithDebugMessages(MessageTest):
@@ -69,8 +77,23 @@ class TestEmptyConnectionWithDebugMessages(MessageTest):
     """Insert debug messages."""
     
     input = b'#debug!\r\n#debug\r\n'  #: the input
+    output = b'\x03\r\n'  #: the output
     #: the tests to perform between receiving messages
     states = ["is_initial_handshake"] * 3
+
+
+class TestUnsupportedAPIVersion(MessageTest):
+    
+    """Insert debug messages."""
+    
+    input = b'\xc3\x05\x00\x01'  #: the input
+    output = b'\x03\r\n'  #: the output
+    #: the tests to perform between receiving messages
+    states = ["is_initial_handshake", "is_unsupported_api_version"]
+    
+    def after_test_run(self, communication):
+        assert communication.controller.api_version == 5
+        assert communication.controller.firmware_version == (0, 1)
 
 
 

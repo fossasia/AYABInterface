@@ -98,9 +98,9 @@ host       .. _m4-03: 0x03 1
            reqInfo_
 hardware   .. _m4-C3: 0xC3 4      ``0xaa 0xbb 0xcc``
 
-           cnfInfo_               - ``aa`` = Version Identifier
-                                  - ``bb`` = Major Version
-                                  - ``cc`` = Minor Version
+           cnfInfo_               - ``aa`` = API Version Identifier
+                                  - ``bb`` = Firmware Major Version
+                                  - ``cc`` = Firmware Minor Version
 hardware   .. _m4-84: 0x84 8      ``0x0a 0xBB 0xbb 0xCC 0xcc 0xdd 0xee``
 
            indState_              - ``a`` = ready (0 = false, 1 = true)

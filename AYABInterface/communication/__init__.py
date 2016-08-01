@@ -195,6 +195,7 @@ class Communication(object):
         self._machine = machine
         self._last_requested_line = (None, None)
         self._state = WaitingForStart(self)
+        self._controller = None
 
     @property
     def machine(self):
@@ -316,4 +317,36 @@ class Communication(object):
     def left_end_needle(self):
         """The left end needle of the needle positions."""
         
+    @property
+    def right_end_needle(self):
+        """The left end needle of the needle positions."""
+        
+    @property
+    def controller(self):
+        """Information about the controller.
+        
+        If no information about the controller is received, the return value
+        is :obj:`None`.
+        
+        If information about the controller is known after :ref:`cnfinfo` was
+        received, you can access these values:
+        
+        .. code:: python
+        
+            >>> communication.controller.firmware_version
+            (5, 2)
+            >>> communication.controller.firmware_version.major
+            5
+            >>> communication.controller.firmware_version.minor
+            2
+            >>> communication.controller.api_version
+            4
+        
+        """
+        return self._controller
+    
+    @controller.setter
+    def controller(self, value):
+        self._controller = value
+
 __all__ = ["Communication", "Content"]
