@@ -61,7 +61,9 @@ class CommunicationTest(object):
             communication.receive_message()
         print("state:", communication.state)
         assert communication.state.is_connection_closed()
-        assert connection.writer.getvalue() == self.output, "Output matches."
+        output = connection.writer.getvalue().split(b'\r\n')
+        expected_output = self.output.split(b'\r\n')
+        assert output == expected_output, (len(output), len(expected_output))
         assert connection.reader.tell() == len(self.input), "All is read."
         self.after_test_run(communication)
 
@@ -131,8 +133,8 @@ class TestKnitSomeLines(CommunicationTest):
 
     #: the lines to get
     lines = ["B" * 200] * 301
-    lines[100] = "BBBBBBBCCBBBBBBBCCCCBBBBCBCBCBCB" + "B" * 168
-    line_100 = b'\x80\x01\x0f\xaa' + b'\00' * 21 + b'\x00' + b'\x28'
+    lines[100] = "BBBBBBBDDBBBBBBBDDDDBBBBDBDBDBDB" + "B" * 168
+    line_100 = b'\x80\x01\x0fU' + b'\00' * 21 + b'\x00' + b'\xd0'
     
     #: the input
     input = (b'\xc3\x04\x03\xcc\r\n' +  # cnfInfo
@@ -145,11 +147,12 @@ class TestKnitSomeLines(CommunicationTest):
              b'\x82\x90\r\n' +          # reqLine(400)
              b'')
     #: the output
-    output = (b'\x03\r\n' +                               # reqInfo
-              b'\x01\x00\xc7\r\n' +                       # reqStart
-              b'\x42\x64' + line_100 +                    # cnfLine(100)
-              b'\x42\xc8' + b'\x00' * 27 +                # cnfLine(200)
-              b'\x42\x2c' + b'\x00' * 25 + b'\x01\x00' +  # cnfLine(300)
+    output = (b'\x03\r\n' +                                   # reqInfo
+              b'\x01\x00\xc7\r\n' +                           # reqStart
+              b'\x42\x64' + line_100 + b'\r\n'                # cnfLine(100)
+              b'\x42\xc8' + b'\x00' * 26 + b'\x07\r\n'            # cnfLine(200)
+              b'\x42\x2c' + b'\x00' * 25 + b'\x01\xdd\r\n' +  # cnfLine(300)
+              b'\x42\x90' + b'\x00' * 25 + b'\x01\xb3\r\n' +  # cnfLine(300)
               b'')
     #: the tests to perform between receiving messages
     states = ["is_initial_handshake", "is_initializing_machine",

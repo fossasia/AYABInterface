@@ -115,18 +115,20 @@ class TestLineConfigurationMessage(object):
     @pytest.mark.parametrize("machine_bytes", [
         b'\x00' * 20, b'asdasdasdas', b'\x97'])
     @pytest.mark.parametrize("last_line", [True, False])
+    @pytest.mark.parametrize("line_number", [0, 1, 267, -33])
     def test_get_normal_line(self, cache, machine, machine_bytes, last_line,
-                             get_line):
+                             get_line, line_number):
         if last_line:
             get_line.return_value = None
-            assert cache.get(1) is None
+            assert cache.get(line_number + 1) is None
         get_line.return_value = []
-        is_last = cache.is_last(0)
-        assert is_last == last_line, (cache.get(0), cache.get(1)) 
+        is_last = cache.is_last(line_number)
+        assert is_last == last_line
         machine.needle_positions_to_bytes.return_value = machine_bytes
-        expected_line_bytes = machine_bytes + bytes([last_line])
+        expected_line_bytes = bytes([line_number & 255]) + \
+            machine_bytes + bytes([last_line])
         expected_line_bytes += crc8.crc8(expected_line_bytes).digest()
-        line_bytes = cache.get_line_configuration_message(0)
+        line_bytes = cache.get_line_configuration_message(line_number)
         assert line_bytes == expected_line_bytes
 
     @pytest.mark.parametrize("line", [1, 4, 88])
@@ -137,3 +139,12 @@ class TestLineConfigurationMessage(object):
         monkeypatch.setattr(needle_position_cache, "crc8", Mock())
         cached_line_bytes = cache.get_line_configuration_message(line)
         assert line_bytes == cached_line_bytes
+
+    @pytest.mark.parametrize("line_number", [111, 1111, 0, -12])
+    def test_get_nonexistent_line(self, cache, get_line, line_number):
+        get_line.return_value = None
+        empty_last_line = bytes([line_number & 255]) + \
+            b"\x00" * 25 + b'\x01'  # last line flag
+        empty_last_line += crc8.crc8(empty_last_line).digest()
+        line = cache.get_line_configuration_message(line_number)
+        assert line == empty_last_line

@@ -332,6 +332,7 @@ class Communication(object):
     @last_requested_line_number.setter
     def last_requested_line_number(self, line_number):
         """Set the last requested line number."""
+        print("set last_requested_line_number:", line_number)
         self._last_requested_line_number = line_number
 
 __all__ = ["Communication", "Content"]

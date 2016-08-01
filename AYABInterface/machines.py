@@ -110,7 +110,6 @@ class Machine(object, metaclass=ABCMeta):
         :rtype: bytes
         """
         bit = self.needle_positions
-        print("bit:", bit)
         assert len(bit) == 2
         max_length = len(needle_positions)
         assert max_length == self.number_of_needles
@@ -122,7 +121,6 @@ class Machine(object, metaclass=ABCMeta):
                 if index >= max_length:
                     break
                 needle_position = needle_positions[index]
-                print("pos:", needle_position)
                 if bit.index(needle_position) == 1:
                     byte |= 1 << bit_index
             result.append(byte)

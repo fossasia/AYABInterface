@@ -189,4 +189,4 @@ class TestKnittingLine(TestKnittingStarted):
 
     def test_enter_sets_last_line_requested(self, state, communication):
         state.enter()
-        assert communication.number_of_last_line_requested == self.line_number
+        assert communication.last_requested_line_number == self.line_number

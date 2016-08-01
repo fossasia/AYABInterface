@@ -519,7 +519,7 @@ class KnittingLine(State):
         <AYABInterface.communication.Communication.last_requested_line_number>
         is set.
         """
-        self._communication.number_of_last_line_requested = self._line_number
+        self._communication.last_requested_line_number = self._line_number
         self._communication.send(LineConfirmation, self._line_number)
 
     def is_knitting(self):

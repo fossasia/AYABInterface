@@ -63,8 +63,17 @@ class NeedlePositionCache(object):
         if line_number not in self._line_configuration_message_cache:
             line_bytes = self.get_bytes(line_number)
             if line_bytes is not None:
+                line_bytes = bytes([line_number & 255]) + line_bytes
                 line_bytes += bytes([self.is_last(line_number)])
                 line_bytes += crc8(line_bytes).digest()
             self._line_configuration_message_cache[line_number] = line_bytes
-        return self._line_configuration_message_cache[line_number]
+            del line_bytes
+        line = self._line_configuration_message_cache[line_number]
+        if line is None:
+            # no need to cache a lot of empty lines
+            line = (bytes([line_number & 255]) + 
+                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' +
+                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01')
+            line += crc8(line).digest()
+        return line
     
