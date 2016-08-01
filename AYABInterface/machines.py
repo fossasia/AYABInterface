@@ -105,6 +105,7 @@ class KH9XXSeries(Machine):
 
     """The base class for the KH9XX series."""
 
+    @property
     def number_of_needles(self):
         """The number of needles on this machine.
 
@@ -113,6 +114,7 @@ class KH9XXSeries(Machine):
         """
         return 200
 
+    @property
     def needle_positions(self):
         """The different needle positions.
 
@@ -151,6 +153,7 @@ class CK35(Machine):
 
     """The machine type for the Brother CK-35."""
 
+    @property
     def number_of_needles(self):
         """The number of needles on this machine.
 
@@ -164,6 +167,7 @@ class KH270(Machine):
 
     """The machine type for the Brother KH-270."""
 
+    @property  
     def number_of_needles(self):
         """The number of needles on this machine.
 
