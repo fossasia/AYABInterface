@@ -151,26 +151,27 @@ class TestGetLineBytes(object):
     def test_sopport_api_version(self, communication, api_version, truth):
         assert communication.api_version_is_supported(api_version) == truth
 
-        
+
 class TestSend(object):
 
     """Test the send method."""
-    
+
     @pytest.mark.parametrize("args", [(), (3,), ("asd", "as", "a"), (2, 2)])
     def test_initialized_with_arguments(self, communication, file, args):
         req_class = Mock()
         communication.send(req_class, *args)
         req_class.assert_called_once_with(file, communication, *args)
-    
+
     def test_sent(self, communication):
         req_class = Mock()
         communication.send(req_class, 1)
         req_class.return_value.send.assert_called_once_with()
 
+
 class TestLastLine(object):
-    
+
     """Test the is_last_line test."""
-    
+
     @pytest.mark.parametrize("number", [1, 4, 8])
     @pytest.mark.parametrize("line,truth", [([], False), (None, True)])
     def test_last_line(self, communication, get_needle_positions, number,
@@ -178,16 +179,16 @@ class TestLastLine(object):
         get_needle_positions.return_value = line
         assert communication.is_last_line(number) == truth
         get_needle_positions.assert_called_once_with(number + 1)
-        
+
 
 class TestState(object):
-    
+
     def test_set_state_and_enter_is_called(self, communication):
         state = Mock()
         communication.state = state
         state.enter.assert_called_once_with()
         state.exit.assert_not_called()
-    
+
     def test_when_leaving_exit_is_called(self, communication):
         state = Mock()
         communication.state = state
@@ -202,7 +203,7 @@ class TestState(object):
         communication.state = state = Mock()
         communication._message_received(message)
         state.receive_message.assert_called_once_with(message)
-    
+
     def test_start(self, communication):
         communication.state = state = Mock()
         communication.start()
@@ -210,12 +211,12 @@ class TestState(object):
 
 
 class TestController(object):
-    
+
     """Test the controller attribute."""
-    
+
     def test_initial_value_is_None(self, communication):
         assert communication.controller is None
-    
+
     def test_set_controller(self, communication):
         communication.controller = controller = Mock()
         assert communication.controller == controller
@@ -224,7 +225,7 @@ class TestController(object):
 class TestNeedles(object):
 
     """tets the right and left end needles."""
-    
+
     def test_default_needles_default_to_machine(self, communication, machine):
         assert communication.left_end_needle == machine.left_end_needle
         assert communication.right_end_needle == machine.right_end_needle

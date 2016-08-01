@@ -107,7 +107,7 @@ class Message(object):
 
     def __repr__(self):
         """This object as string.
-        
+
         :rtype: str
         """
         return "<{}>".format(self.__class__.__name__)
@@ -116,7 +116,7 @@ class Message(object):
 class FixedSizeMessage(Message):
 
     """This is a message of fixed size."""
-    
+
     def __init__(self, file, communication):
         """Create a new Message."""
         super().__init__(file, communication)
@@ -169,7 +169,7 @@ class StartConfirmation(SuccessConfirmation):
         :returns: :obj:`True`
         """
         return True
-        
+
     def received_by(self, visitor):
         """Call visitor.receive_state_confirmation."""
         visitor.receive_start_confirmation(self)
@@ -186,11 +186,12 @@ class ConnectionClosed(Message):
         :returns: :obj:`True`
         """
         return True
-        
+
     def received_by(self, visitor):
         """Call visitor.receive_connection_closed."""
         visitor.receive_connection_closed(self)
-        
+
+
 class UnknownMessage(FixedSizeMessage):
 
     """This is a special message for unknown message types."""
@@ -210,7 +211,7 @@ class UnknownMessage(FixedSizeMessage):
         :return: :obj:`False`
         """
         return False
-        
+
     def received_by(self, visitor):
         """Call visitor.receive_unkown."""
         visitor.receive_unknown(self)

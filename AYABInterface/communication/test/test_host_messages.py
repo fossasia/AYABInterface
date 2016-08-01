@@ -9,6 +9,11 @@ from pytest import raises, fixture
 from io import BytesIO
 from unittest.mock import MagicMock
 
+# remove pytest warning
+#     cannot collect test class because it has a  __init__ constructor
+_TestRequest = TestRequest
+del TestRequest
+
 
 @fixture
 def file():
@@ -155,4 +160,4 @@ class TestTestRequest(NoContentTest):
     """
 
     MESSAGE_ID = 0x04
-    message_class = TestRequest
+    message_class = _TestRequest

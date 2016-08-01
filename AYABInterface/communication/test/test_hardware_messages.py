@@ -12,6 +12,11 @@ from AYABInterface.utils import next_line
 import AYABInterface.communication.hardware_messages as hardware_messages
 from test_assertions import assert_identify
 
+# remove pytest warning
+#     cannot collect test class because it has a  __init__ constructor
+_TestConfirmation = TestConfirmation
+del TestConfirmation
+
 
 @fixture
 def configuration():
@@ -56,7 +61,7 @@ class TestReadMessageFromFile(object):
 
     @pytest.mark.parametrize("byte,message_type", [
         (0xc1, StartConfirmation), (0xc3, InformationConfirmation),
-        (0xc4, TestConfirmation), (0x82, LineRequest),
+        (0xc4, _TestConfirmation), (0x82, LineRequest),
         (0x84, StateIndication), (0x23, Debug)])
     def test_read_message_from_file(self, byte, message_type):
         assert message_type.MESSAGE_ID == byte
@@ -79,7 +84,7 @@ def communication():
     return MagicMock()
 
 PATCH_RECEIVED = "AYABInterface.communication.hardware_messages."\
-    "FixedSizeMessage.read_end_of_message"    
+    "FixedSizeMessage.read_end_of_message"
 
 
 def assert_received_by(message_class, method_name):
@@ -150,7 +155,7 @@ class TestSuccessMessage(object):
         else:
             assert_received_by(self.message_type, self.receive_method)
 
-        
+
 class TestStartConfirmation(TestSuccessMessage):
 
     """Test the StartConfirmation.
@@ -266,7 +271,7 @@ class TestStateIndication(object):
         assert_received_by(StateIndication, "receive_state_indication")
 
 PATCH_RECEIVED_DEBUG = "AYABInterface.communication.hardware_messages.Debug." \
-    "_init"    
+    "_init"
 
 
 class TestDebugMessage(object):
@@ -301,7 +306,7 @@ class TestTestConfirmation(TestSuccessMessage):
       :class:`AYABInterface.communication.hardware_messages.TestConfirmation`
     """
 
-    message_type = TestConfirmation
+    message_type = _TestConfirmation
     identifiers = ["is_test_confirmation"]
     receive_method = "receive_test_confirmation"
 
@@ -319,11 +324,11 @@ class TestConnectionClosed(object):
     .. seealso::
       :class:`AYABInterface.communication.hardware_messages.ConnectionClosed`
     """
-    
+
     @fixture
     def message(self):
         return ConnectionClosed()
-    
+
     def test_test(self):
         message = ConnectionClosed(MagicMock(), MagicMock())
         assert message.is_connection_closed()

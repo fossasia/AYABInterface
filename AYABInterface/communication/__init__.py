@@ -212,10 +212,10 @@ class Communication(object):
         :return: the needle positions for a specific line specified by
           :paramref:`line_number`
         """
-    
+
     def is_last_line(self, line_number):
         """Whether the line number is has no further lines.
-        
+
         :rtype: bool
         :return: is the next line above the line number are not specified
         """
@@ -285,10 +285,10 @@ class Communication(object):
         Currently supported api versions: ``4``
         """
         return api_version == 4
-        
+
     def send(self, host_message_class, *args):
         """Send a host message.
-        
+
         :param type host_message_class: a subclass of
           :class:`AYABImterface.communication.host_messages.Message`
         :param args: additional arguments that shall be passed to the
@@ -300,12 +300,12 @@ class Communication(object):
     @property
     def state(self):
         """The state this object is in.
-        
+
         :return: the state this communication object is in.
         :rtype: AYABInterface.communication.states.State
         """
         return self._state
-    
+
     @state.setter
     def state(self, new_state):
         """Set the state."""
@@ -316,13 +316,13 @@ class Communication(object):
     @property
     def left_end_needle(self):
         """The left end needle of the needle positions.
-        
+
         :rtype: int
         :return: the :attr:`left end needle of the machine
           <AYABInterface.machine.Machine.left_end_needle>`
         """
         return self._machine.left_end_needle
-        
+
     @property
     def right_end_needle(self):
         """The left end needle of the needle positions.
@@ -332,19 +332,19 @@ class Communication(object):
           <AYABInterface.machine.Machine.right_end_needle>`
         """
         return self._machine.right_end_needle
-        
+
     @property
     def controller(self):
         """Information about the controller.
-        
+
         If no information about the controller is received, the return value
         is :obj:`None`.
-        
+
         If information about the controller is known after :ref:`cnfinfo` was
         received, you can access these values:
-        
+
         .. code:: python
-        
+
             >>> communication.controller.firmware_version
             (5, 2)
             >>> communication.controller.firmware_version.major
@@ -353,10 +353,10 @@ class Communication(object):
             2
             >>> communication.controller.api_version
             4
-        
+
         """
         return self._controller
-    
+
     @controller.setter
     def controller(self, value):
         self._controller = value

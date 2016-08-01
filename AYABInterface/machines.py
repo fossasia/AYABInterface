@@ -81,20 +81,20 @@ class Machine(object, metaclass=ABCMeta):
         :rtype: bool
         """
         return isinstance(self, KH270)
-    
+
     @property
     def left_end_needle(self):
         """The index of the leftmost needle.
-        
+
         :rtype: int
         :return: ``0``
         """
         return 0
-    
+
     @property
     def right_end_needle(self):
         """The index of the rightmost needle.
-        
+
         :rtype: int
         :return: :attr:`left_end_needle` + :attr:`number_of_needles` - ``1``
         """
@@ -167,7 +167,7 @@ class KH270(Machine):
 
     """The machine type for the Brother KH-270."""
 
-    @property  
+    @property
     def number_of_needles(self):
         """The number of needles on this machine.
 
