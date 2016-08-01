@@ -5,6 +5,7 @@ Requirement: Make objects from binary stuff.
 from abc import ABCMeta, abstractmethod, abstractproperty
 from .hardware_messages import read_message_type, ConnectionClosed
 from .states import WaitingForStart
+from .cache import NeedlePositionCache
 
 
 class Content(object, metaclass=ABCMeta):
@@ -190,63 +191,21 @@ class Communication(object):
           :class:`serial.Serial` or a :meth:`socket.socket.makefile`.
         """
         self._file = file
-        self._get_needle_positions = get_needle_positions
         self._on_message_received = on_message_received
         self._machine = machine
         self._state = WaitingForStart(self)
         self._controller = None
         self._last_requested_line_number = 0
+        self._needle_positions_cache = NeedlePositionCache(
+            get_needle_positions, self._machine)
 
     @property
-    def machine(self):
-        """The machine type to communicate with.
-
-        :rtype: AYABInterface.machines.Machine
+    def needle_positions(self):
+        """A cache for the needle positions.
+        
+        :rtype: AYABInterface.communication.cache.NeedlePositionCache
         """
-
-    def get_needle_positions(self, line_number):
-        """The needle positions for a line with a number.
-
-        :param int line_number: the number of the line
-        :rtype: list
-        :return: the needle positions for a specific line specified by
-          :paramref:`line_number`
-        """
-
-    def is_last_line(self, line_number):
-        """Whether the line number is has no further lines.
-
-        :rtype: bool
-        :return: is the next line above the line number are not specified
-        """
-        return self._get_needle_positions(line_number + 1) is None
-
-    def get_needle_position_bytes(self, line_number):
-        """Get the bytes representing needle positions or None.
-
-        :param int line_number: the line number to take the bytes from
-        :rtype: bytes
-        :return: the bytes that represent the message or :obj:`None` if no
-          data is there for the line.
-
-        Depending on the :attr:`machine`, the length and result may vary.
-        """
-        if self._last_requested_line[0] == line_number:
-            return self._last_requested_line[1]
-        needle_positions = self._get_needle_positions(line_number)
-        if needle_positions is None:
-            return None
-        bytes_ = self._machine.needle_positions_to_bytes(needle_positions)
-        self._last_requested_line = (line_number, bytes_)
-        return bytes_
-
-    def get_line_configuration_message(self, line_number):
-        """Return the cnfLine content without id for the line.
-
-        :param int line_number: the number of the line
-        :rtype: bytes
-        :return: a cnfLine message as defined in :ref:`cnfLine`
-        """
+        return self._needle_positions_cache
 
     def start(self):
         """Start the communication about a content.

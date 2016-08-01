@@ -116,8 +116,9 @@ class LineConfirmation(Message):
 
     def content_bytes(self):
         """Return the start and stop needle."""
-        return self._communication.get_line_configuration_message(
-            self._line_number)
+        get_message = \
+            self._communication.needle_positions.get_line_configuration_message
+        return get_message(self._line_number)
 
 
 class InformationRequest(Message):

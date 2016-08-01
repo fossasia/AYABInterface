@@ -1,6 +1,6 @@
 """Test the machines."""
 import pytest
-from AYABInterface.machines import Machine, KH910
+from AYABInterface.machines import Machine, KH910, KH270
 
 
 class XMachine(Machine):
@@ -33,3 +33,22 @@ class TestNeedleEnds(object):
 
     def test_left_end_needle(self):
         assert KH910().left_end_needle == 0
+
+
+class TestNeedlePositions(object):
+
+    @pytest.mark.parametrize("machine_class", [KH910, KH270])
+    @pytest.mark.parametrize("input,result", [
+        ("BBDDBBBDBDDBDDDD" * 13, b'\x8c\xf6' * 13),
+        ("B" * 200, b'\x00' * 25)])
+    def test_byte_conversion(self, machine_class, input, result):
+        machine = machine_class()
+        assert machine.needle_positions == ("B", "D")
+        input = input[:machine.number_of_needles]
+        output = machine.needle_positions_to_bytes(input)
+        expected_output = result[:machine.number_of_needles // 8] + \
+            b'\x00' * (25 - machine.number_of_needles // 8)
+        assert output == expected_output
+        
+        
+    

@@ -34,7 +34,7 @@ class NeedlePositionCache(object):
         """
         return self.get(line_number + 1) is None
 
-    def get_needle_position_bytes(self, line_number):
+    def get_bytes(self, line_number):
         """Get the bytes representing needle positions or None.
 
         :param int line_number: the line number to take the bytes from
@@ -61,7 +61,7 @@ class NeedlePositionCache(object):
         :return: a cnfLine message without id as defined in :ref:`cnfLine`
         """
         if line_number not in self._line_configuration_message_cache:
-            line_bytes = self.get_needle_position_bytes(line_number)
+            line_bytes = self.get_bytes(line_number)
             if line_bytes is not None:
                 line_bytes += bytes([self.is_last(line_number)])
                 line_bytes += crc8(line_bytes).digest()

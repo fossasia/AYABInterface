@@ -1,8 +1,6 @@
 """test the NeedlePositionCache."""
-from AYABInterface.communication.needle_position_cache import \
-    NeedlePositionCache
-import AYABInterface.communication.needle_position_cache as \
-    needle_position_cache
+from AYABInterface.communication.cache import NeedlePositionCache
+import AYABInterface.communication.cache as needle_position_cache
 from unittest.mock import Mock, call
 import pytest
 from pytest import fixture
@@ -72,7 +70,7 @@ class TestLastLine(object):
 
 class TestGetLineBytes(object):
 
-    """Test the get_needle_position_bytes method.
+    """Test the get_bytes method.
 
     .. seealso::
         :meth:`AYABInterface.cache.Commmunication.get_line_bytes`
@@ -80,7 +78,7 @@ class TestGetLineBytes(object):
 
     @pytest.mark.parametrize("line", [1, -123, 10000])
     def test_get_line(self, cache, get_line, line, machine):
-        line_bytes = cache.get_needle_position_bytes(line)
+        line_bytes = cache.get_bytes(line)
         get_line.assert_called_with(line)
         machine.needle_positions_to_bytes.assert_called_with(
             get_line.return_value)
@@ -88,25 +86,25 @@ class TestGetLineBytes(object):
 
     @pytest.mark.parametrize("line", [4, -89])
     def test_line_is_cached(self, cache, get_line, line, machine):
-        cache.get_needle_position_bytes(line)
+        cache.get_bytes(line)
         cached_value = machine.needle_positions_to_bytes.return_value
         machine.needle_positions_to_bytes.return_value = None
-        line_bytes = cache.get_needle_position_bytes(line)
+        line_bytes = cache.get_bytes(line)
         assert line_bytes == cached_value
 
     @pytest.mark.parametrize("line", [55, 4])
     @pytest.mark.parametrize("added", [-1, 1, 12, -2])
     def test_cache_works_only_for_specific_line(
             self, cache, get_line, line, machine, added):
-        cache.get_needle_position_bytes(line)
+        cache.get_bytes(line)
         machine.needle_positions_to_bytes.return_value = None
-        line_bytes = cache.get_needle_position_bytes(line + added)
+        line_bytes = cache.get_bytes(line + added)
         assert line_bytes is None
 
     @pytest.mark.parametrize("line", [55, 4])
     def test_line_is_not_known(self, cache, get_line, machine, line):
         get_line.return_value = None
-        assert cache.get_needle_position_bytes(line) is None
+        assert cache.get_bytes(line) is None
         machine.needle_positions_to_bytes.assert_not_called()
 
 

@@ -101,12 +101,13 @@ class TestLineConfirmation(object):
     @pytest.mark.parametrize("last_line", [True, False])
     def test_bytes(self, line_number, communication, file, line_bytes,
                    last_line):
-        communication.get_line_configuration_message.return_value = line_bytes
+        get_message = \
+            communication.needle_positions.get_line_configuration_message
+        get_message.return_value = line_bytes
         cnfLine = LineConfirmation(file, communication, line_number)
         bytes_ = cnfLine.content_bytes()
         assert bytes_ == line_bytes
-        communication.get_line_configuration_message.assert_called_with(
-            line_number)
+        get_message.assert_called_with(line_number)
         cnfLine.send()
         sent_bytes = bytes([self.MESSAGE_ID]) + line_bytes + b'\r\n'
         assert file.getvalue() == sent_bytes
