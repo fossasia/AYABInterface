@@ -208,3 +208,14 @@ class TestState(object):
         communication.start()
         state.communication_started.assert_called_once_with()
 
+
+class TestController(object):
+    
+    """Test the controller attribute."""
+    
+    def test_initial_value_is_None(self, communication):
+        assert communication.controller is None
+    
+    def test_set_controller(self, communication):
+        communication.controller = controller = Mock()
+        assert communication.controller == controller
