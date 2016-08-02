@@ -6,6 +6,10 @@ from .actions import SwitchOnMachine, \
     SwitchOffMachine
 from AYABInterface.carriages import KnitCarriage
 from AYABInterface.communication import Communication
+from itertools import chain
+
+
+cached_property = property
 
 
 class Interaction(object):
@@ -16,6 +20,14 @@ class Interaction(object):
         self._machine = machine
         self._communication = None
         self._rows = knitting_pattern.rows_in_knit_order()
+        
+    @cached_property
+    def left_end_needle(self):
+        return min(chain(*map(self._get_row_needles, range(len(self._rows)))))
+        
+    @cached_property
+    def right_end_needle(self):
+        return max(chain(*map(self._get_row_needles, range(len(self._rows)))))
         
     @property
     def communication(self):
@@ -34,10 +46,12 @@ class Interaction(object):
             raise ValueError("Already communicating.")
         self._communication = communication = Communication(
             file, self._get_needle_positions,
-            self._machine, [self._on_message_received])
+            self._machine, [self._on_message_received],
+            right_end_needle=self.right_end_needle,
+            left_end_needle=self.left_end_needle)
         return communication
 
-    @property
+    @cached_property
     def colors(self):
         colors = list()
         for instruction in self._rows[0].instructions:
@@ -74,7 +88,7 @@ class Interaction(object):
     def _on_message_received(self, message):
         """Call when a potential state change has occurred."""
     
-    @property
+    @cached_property
     def actions(self):
         """A list of actions to perform.
         

@@ -39,6 +39,12 @@ class InteractionTest(object):
                      for i in range(max_i)]
         expected_positions = self.needle_positions
         assert positions == expected_positions
+    
+    def test_left_end_needle(self, interaction):
+        assert interaction.left_end_needle == self.left_end_needle
+        
+    def test_right_end_needle(self, interaction):
+        assert interaction.right_end_needle == self.right_end_needle
             
 
 class TestOneColorBlockPattern(InteractionTest):
@@ -58,7 +64,8 @@ class TestOneColorBlockPattern(InteractionTest):
         MoveCarriageToTheLeft(KnitCarriage())]
     machine = KH910
     needle_positions = ["B" * 200] * 4
-    
+    left_end_needle = 98
+    right_end_needle = 101    
 
 class TestColoredBlockPattern(InteractionTest):
     
@@ -78,7 +85,8 @@ class TestColoredBlockPattern(InteractionTest):
     machine = KH910
     needle_positions = ["B" * (98 + i) + "D" + "B" * (101 - i)
                         for i in range(4)]
-
+    left_end_needle = 98
+    right_end_needle = 101
     
 class Test6x3Pattern(InteractionTest):
     
@@ -98,6 +106,8 @@ class Test6x3Pattern(InteractionTest):
     needle_positions = ["B" * 97 + "DDBBDD" + "B" * 97,
                         "B" * 97 + "BBBBBB" + "B" * 97,
                         "B" * 97 + "DDBBDD" + "B" * 97]
+    left_end_needle = 97
+    right_end_needle = 102
 
 
 class TestCreateCommunication(object):
@@ -125,7 +135,9 @@ class TestCreateCommunication(object):
         return Interaction(pattern, machine)
 
     @fixture
-    def communication(self, interaction, Communication, file):
+    def communication(self, interaction, Communication, file, monkeypatch):
+        monkeypatch.setattr(interaction.__class__, "right_end_needle", Mock())
+        monkeypatch.setattr(interaction.__class__, "left_end_needle", Mock())
         return interaction.communicate_through(file)
     
     def test_communication_creation(self, interaction, communication, machine, 
@@ -133,7 +145,9 @@ class TestCreateCommunication(object):
         assert communication == Communication.return_value
         Communication.assert_called_once_with(file,
             interaction._get_needle_positions, machine,
-            [interaction._on_message_received])
+            [interaction._on_message_received],
+            right_end_needle=interaction.right_end_needle,
+            left_end_needle=interaction.left_end_needle)
     
     def test_interaction_communication_attribute(self, interaction,
                                                  communication):

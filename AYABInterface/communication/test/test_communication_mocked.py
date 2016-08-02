@@ -185,3 +185,17 @@ class TestNeedles(object):
     def test_default_needles_default_to_machine(self, communication, machine):
         assert communication.left_end_needle == machine.left_end_needle
         assert communication.right_end_needle == machine.right_end_needle
+
+    @pytest.mark.parametrize("needle", [12, 23])
+    def test_change_left_end_needle(self, file, get_needle_positions, machine,
+                                    needle):
+        communication = Communication(file, get_needle_positions, machine,
+                                      left_end_needle=needle)
+        assert communication.left_end_needle == needle
+        
+    @pytest.mark.parametrize("needle", [12, 23])
+    def test_change_right_end_needle(self, file, get_needle_positions, machine,
+                                     needle):
+        communication = Communication(file, get_needle_positions, machine,
+                                      right_end_needle=needle)
+        assert communication.right_end_needle == needle

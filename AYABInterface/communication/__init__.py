@@ -183,12 +183,29 @@ class Communication(object):
     """This class comunicates with the AYAB shield."""
 
     def __init__(self, file, get_needle_positions, machine,
-                 on_message_received=[]):
+                 on_message_received=(), left_end_needle=None, 
+                 right_end_needle=None):
         """Create a new Communication object.
 
         :param file: a file-like object with read and write methods for the
           communication with the Arduino. This could be a
           :class:`serial.Serial` or a :meth:`socket.socket.makefile`.
+        :param get_needle_positions: a callable that takes an :class:`index
+          <int>` and returns :obj:`None` or an iterable over needle positions.
+        :param AYABInterface.machines.Machine machine: the machine to use for
+          knitting
+        :param list on_message_received: an iterable over callables that takes
+          a received :class:`message
+          <AYABInterface.communication.hardware_messages.Message>` whenever
+          it comes in. Since :attr:`state` changes only take place when a
+          message is received, this can be used as an state observer.
+        :param left_end_needle: A needle number on the machine.
+          Other needles that are on the left side of this needle are not used
+          for knitting. Their needle positions are not be set.
+        :param right_end_needle: A needle number on the machine.
+          Other needles that are on the right side of this needle are not used
+          for knitting. Their needle positions are not be set.
+          
         """
         self._file = file
         self._on_message_received = on_message_received
@@ -198,6 +215,12 @@ class Communication(object):
         self._last_requested_line_number = 0
         self._needle_positions_cache = NeedlePositionCache(
             get_needle_positions, self._machine)
+        self._left_end_needle = (
+            machine.left_end_needle
+            if left_end_needle is None else left_end_needle)
+        self._right_end_needle = (
+            machine.right_end_needle
+            if right_end_needle is None else right_end_needle)
 
     @property
     def needle_positions(self):
@@ -280,7 +303,7 @@ class Communication(object):
         :return: the :attr:`left end needle of the machine
           <AYABInterface.machine.Machine.left_end_needle>`
         """
-        return self._machine.left_end_needle
+        return self._left_end_needle
 
     @property
     def right_end_needle(self):
@@ -290,7 +313,7 @@ class Communication(object):
         :return: the :attr:`right end needle of the machine
           <AYABInterface.machine.Machine.right_end_needle>`
         """
-        return self._machine.right_end_needle
+        return self._right_end_needle
 
     @property
     def controller(self):
