@@ -20,13 +20,13 @@
         {
           "id" : 3,
           "instructions" : [
-            {"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"}
+            {"color":"orange"},{"color":"orange"},{"color":"blue"},{"color":"blue"},{"color":"orange"},{"color":"orange"}
             ]
         },
         {
           "id" : 2,
           "instructions" : [
-            {"color":"orange"},{"color":"orange"},{"color":"blue"},{"color":"blue"},{"color":"orange"},{"color":"orange"}
+            {"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"}
             ]
         }
       ],

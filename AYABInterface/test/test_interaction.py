@@ -9,16 +9,18 @@ from AYABInterface.actions import SwitchOnMachine, \
 from AYABInterface.carriages import KnitCarriage
 from unittest.mock import Mock
 from AYABInterface.machines import KH910
-from pytest import fixture
+from pytest import fixture, raises
+import AYABInterface.interaction as interaction
 
 
 class InteractionTest(object):
 
     """Test the interaction."""
     
-    pattern = None  #: the pattern to test with
-    actions = None  #: the actions to perdorm
-    machine = None  #: the machine type to use
+    pattern = None              #: the pattern to test with
+    actions = None              #: the actions to perdorm
+    machine = None              #: the machine type to use
+    needle_positions = None     #: the needle positions for the pattern
     
 
     @fixture
@@ -29,6 +31,15 @@ class InteractionTest(object):
     def test_pattern_interactions(self, interaction):
         assert interaction.actions == self.actions
     
+    def test_needle_positions(self, interaction):
+        assert interaction._get_needle_positions(-1) is None
+        max_i = len(self.needle_positions)
+        assert interaction._get_needle_positions(max_i) is None
+        positions = ["".join(interaction._get_needle_positions(i))
+                     for i in range(max_i)]
+        expected_positions = self.needle_positions
+        assert positions == expected_positions
+            
 
 class TestOneColorBlockPattern(InteractionTest):
 
@@ -46,6 +57,7 @@ class TestOneColorBlockPattern(InteractionTest):
         MoveCarriageToTheRight(KnitCarriage()),
         MoveCarriageToTheLeft(KnitCarriage())]
     machine = KH910
+    needle_positions = ["B" * 200] * 4
     
 
 class TestColoredBlockPattern(InteractionTest):
@@ -64,6 +76,8 @@ class TestColoredBlockPattern(InteractionTest):
         MoveCarriageToTheRight(KnitCarriage()),
         MoveCarriageToTheLeft(KnitCarriage())]
     machine = KH910
+    needle_positions = ["B" * (98 + i) + "D" + "B" * (101 - i)
+                        for i in range(4)]
 
     
 class Test6x3Pattern(InteractionTest):
@@ -81,7 +95,57 @@ class Test6x3Pattern(InteractionTest):
         MoveCarriageToTheLeft(KnitCarriage()),
         MoveCarriageToTheRight(KnitCarriage())]
     machine = KH910
+    needle_positions = ["B" * 97 + "DDBBDD" + "B" * 97,
+                        "B" * 97 + "BBBBBB" + "B" * 97,
+                        "B" * 97 + "DDBBDD" + "B" * 97]
 
 
+class TestCreateCommunication(object):
 
+    @fixture
+    def Communication(self, monkeypatch):
+        Communication = Mock()
+        monkeypatch.setattr(interaction, "Communication", Communication)
+        return Communication
+        
+    @fixture
+    def machine(self):
+        return KH910()
+        
+    @fixture
+    def pattern(self):
+        return Mock()        
+        
+    @fixture
+    def file(self):
+        return Mock()
+    
+    @fixture
+    def interaction(self, pattern, machine):
+        return Interaction(pattern, machine)
 
+    @fixture
+    def communication(self, interaction, Communication, file):
+        return interaction.communicate_through(file)
+    
+    def test_communication_creation(self, interaction, communication, machine, 
+                                    Communication, file):
+        assert communication == Communication.return_value
+        Communication.assert_called_once_with(file,
+            interaction._get_needle_positions, machine,
+            [interaction._on_message_received])
+    
+    def test_interaction_communication_attribute(self, interaction,
+                                                 communication):
+        assert interaction.communication == communication
+    
+    def test_can_not_communicate_while_communicating(self, interaction,
+                                                     communication):
+        with raises(ValueError) as error:
+            interaction.communicate_through(Mock())
+        message = "Already communicating."
+        assert error.value.args[0] == message
+            
+    def test_initial_comunication_is_None(self, interaction):
+        assert interaction.communication is None
+        

@@ -5,7 +5,8 @@ from .actions import SwitchOnMachine, \
     MoveNeedlesIntoPosition, SwitchCarriageToModeNl, SwitchCarriageToModeKc, \
     SwitchOffMachine
 from AYABInterface.carriages import KnitCarriage
-    
+from AYABInterface.communication import Communication
+
 
 class Interaction(object):
 
@@ -13,57 +14,107 @@ class Interaction(object):
     
     def __init__(self, knitting_pattern, machine):
         self._machine = machine
-        self._actions = []
+        self._communication = None
+        self._rows = knitting_pattern.rows_in_knit_order()
         
-        # determine the number of colors
+    @property
+    def communication(self):
+        """The communication with the controller.
+        
+        :rtype:AYABInterface.communication.Communication
+        """
+        return self._communication
+        
+    def communicate_through(self, file):
+        """Setup communication through a file.
+        
+        :rtype: AYABInterface.communication.Communication
+        """
+        if self._communication is not None:
+            raise ValueError("Already communicating.")
+        self._communication = communication = Communication(
+            file, self._get_needle_positions,
+            self._machine, [self._on_message_received])
+        return communication
+
+    @property
+    def colors(self):
         colors = list()
-        for instruction in knitting_pattern.rows.at(0).instructions:
+        for instruction in self._rows[0].instructions:
             color = instruction.color
             if color not in colors:
                 colors.append(color)
         assert len(colors) <= 2
+        colors.reverse()
+        return colors
         
-        # rows and colors
-        movements = (
-            MoveCarriageToTheRight(KnitCarriage()),
-            MoveCarriageToTheLeft(KnitCarriage()))
-        rows = knitting_pattern.rows_in_knit_order()
-        number_of_needles = rows[0].number_of_consumed_meshes
+    def _get_row_needles(self, row_index):
+        number_of_needles = self._rows[row_index].number_of_consumed_meshes
         start = int(self._machine.number_of_needles / 2 -
                     number_of_needles / 2)
-        first_needles = list(range(start, start + number_of_needles))
+        return list(range(start, start + number_of_needles))
         
-        # handle switches
-        if len(colors) == 1:
-            self._actions.extend([
-                SwitchOffMachine(),
-                SwitchCarriageToModeNl()])
-        else:
-            self._actions.extend([
-                SwitchCarriageToModeKc(),
-                SwitchOnMachine()])
-        
-        # move needles
-        self._actions.append(MoveNeedlesIntoPosition("B", first_needles))
-        self._actions.append(MoveCarriageOverLeftHallSensor())
-        
-        # use colors
-        if len(colors) == 1:
-            self._actions.append(PutColorInNutA(colors[0]))
-        if len(colors) == 2:
-            self._actions.append(PutColorInNutA(colors[1]))
-            self._actions.append(PutColorInNutB(colors[0]))
-        
-        # knit
-        for index, row in enumerate(rows):
-            self._actions.append(movements[index & 1])
-
+    def _get_needle_positions(self, row_index):
+        if row_index not in range(len(self._rows)):
+            return None
+        needle_positions = self._machine.needle_positions
+        needles = self._get_row_needles(row_index)
+        result = [needle_positions[0]] * self._machine.number_of_needles
+        colors = self.colors
+        row = self._rows[row_index]
+        consumed_meshes = row.consumed_meshes
+        for i, needle in enumerate(needles):
+            color = consumed_meshes[i].consuming_instruction.color
+            color_index = colors.index(color)
+            needle_position = needle_positions[color_index]
+            result[needle] = needle_position
+            print("row {} at {}\t{}\t{}".format(row.id, row_index, needle, needle_position))
+        return result
+                
+    def _on_message_received(self, message):
+        """Call when a potential state change has occurred."""
+    
     @property
     def actions(self):
         """A list of actions to perform.
         
         :return: a list of :class:`AYABInterface.actions.Action`
         """
-        return self._actions
-
-
+        actions = []
+        do = actions.append
+        
+        # determine the number of colors
+        colors = self.colors
+        
+        # rows and colors
+        movements = (
+            MoveCarriageToTheRight(KnitCarriage()),
+            MoveCarriageToTheLeft(KnitCarriage()))
+        rows = self._rows
+        first_needles = self._get_row_needles(0)
+        
+        # handle switches
+        if len(colors) == 1:
+            actions.extend([
+                SwitchOffMachine(),
+                SwitchCarriageToModeNl()])
+        else:
+            actions.extend([
+                SwitchCarriageToModeKc(),
+                SwitchOnMachine()])
+        
+        # move needles
+        do(MoveNeedlesIntoPosition("B", first_needles))
+        do(MoveCarriageOverLeftHallSensor())
+        
+        # use colors
+        if len(colors) == 1:
+            do(PutColorInNutA(colors[0]))
+        if len(colors) == 2:
+            do(PutColorInNutA(colors[0]))
+            do(PutColorInNutB(colors[1]))
+        
+        # knit
+        for index, row in enumerate(rows):
+            do(movements[index & 1])
+        return actions
