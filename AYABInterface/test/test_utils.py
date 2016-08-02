@@ -1,6 +1,7 @@
 """Test utility methods."""
 import pytest
-from AYABInterface.utils import sum_all, number_of_colors, next_line
+from AYABInterface.utils import sum_all, number_of_colors, next_line, \
+    camel_case_to_under_score
 
 
 class TestSumAll(object):
@@ -51,3 +52,14 @@ class TestNextLine(object):
     def test_valid_arguments(self, last_line, expected_next_lines):
         next_lines = [next_line(last_line, i) for i in range(256)]
         assert next_lines == expected_next_lines
+
+
+class TestCamelCase(object):
+
+    """Test the camel_case_to_under_score function."""
+    
+    @pytest.mark.parametrize("input,output", [
+        ("A", "a"), ("AA", "a_a"), ("ACalCal", "a_cal_cal"), ("NaN", "na_n")])
+    def test_conversion(self, input, output):
+        assert camel_case_to_under_score(input) == output
+    

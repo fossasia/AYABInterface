@@ -1,104 +1,82 @@
 """These are the actions that can be executed."""
+from .utils import camel_case_to_under_score
 
 
-class Action(object):
+_doc_base = """Test whether this is a {}.
 
-    """The base class for actions."""
+:rtype: bool
+:return: :obj:`{}`
+"""
 
-    def is_movement(self):
-        """Whether this is a move action.
+def _new_test(name, container, result, clsname):
+    def test(self):
+        return result
+    test.__name__ = name
+    test.__qualname__ = container.__qualname__ + "." + name
+    test.__doc__ = _doc_base.format(clsname, result)
+    setattr(container, name, test)
 
-        :rtype: bool
-        """
-        return isinstance(self, Movement)
+Action = None
 
-    def is_color_change(self):
-        """Whether this action requires colors to be changed.
+class ActionMetaClass(type):
 
-        :rtype: bool
-        """
-        return isinstance(self, ColorChange)
+    def __init__(cls, name, bases, attributes):
+        super().__init__(name, bases, attributes)
+        test_name = "is_" + camel_case_to_under_score(name)
+        if Action is not None:
+            _new_test(test_name, Action, False, cls.__name__)
+        _new_test(test_name, cls, True, cls.__name__)
 
-    def has_carriage(self):
-        """Whether this action is performed using a carriage."""
-        return isinstance(self, ActionOnCarriage)
-
-
-class ActionOnCarriage(Action):
-
-    """This is an action that requires a carriage."""
-
-    @property
-    def carriage(self):
-        """The carriage to move.
-
-        :rtype: AYABInterface.carriages.Carriage
-        """
-
-
-class Movement(ActionOnCarriage):
-
-    """The base class for movement actions with carriages."""
-
-    def is_initialization(self):
-        """Whether the carriage should be moved over the left turn mark.
-
-        :rtype: bool
-        """
-
-    def is_move_left(self):
-        """Whether the carriage should be moved to the left.
-
-        :rtype: bool
-        """
-
-    def is_move_right(self):
-        """Whether the carriage should be moved to the right.
-
-        :rtype: bool
-        """
-
-    def should_pass_turn_mark(self):
-        """Whether the carriage should be moved over the turn mark.
-
-        This can be required from time to time to prevent knitting mistakes
-        in counting.
-
-        :rtype: bool
-        """
+class Action(object, metaclass=ActionMetaClass):
+    
+    """A base class for actions."""
+    
+    def __init__(self, *arguments):
+        self._arguments = arguments
+    
+    def __hash__(self):
+        return hash(self.__class__) ^ hash(self._arguments)
+    
+    def __eq__(self, other):
+        return other == (self.__class__, self._arguments)
 
 
-class ColorChange(ActionOnCarriage):
+class SwithOnMachine(Action):
+    
+    """The user switches on the machine."""
+    
+class SwitchOffMachine(Action):
 
-    """The base action for changing colors."""
+    """The user switches off the machine."""
+    
+class MoveNeedlesIntoPosition(Action):
 
-    # TODO: Nut A and Nut B is very specific to the carriage.
-    # This should be in the carriage.
+    """The user moves needles into position."""
 
-    def changes_color_in_nut_a(self):
-        """Whether the color in nut A should be changed.
+class PutColorInNutB(Action):
 
-        :rtype: bool
-        """
+    """The user puts a color into nut B."""
 
-    @property
-    def color_in_nut_a(self):
-        """The new color in nut A.
+class PutColorInNutA(Action):
 
-        :rtype: int
-        """
+    """The user puts a color into nut A."""
 
-    def changes_color_in_nut_b(self):
-        """Whether the color in nut B should be changed.
+class MoveCarriageToTheRight(Action):
 
-        :rtype: bool
-        """
+    """The user moves the carriage to the right."""
 
-    @property
-    def color_in_nut_b(self):
-        """The new color in nut B.
+class MoveCarriageToTheLeft(Action):
 
-        :rtype: int
-        """
+    """The user moves the carriage to the left."""
 
-__all__ = ["Action", "ActionOnCarriage", "Movement", "ColorChange"]
+class MoveCarriageOverLeftHallSensor(Action):
+
+    """The user moves the carriage over the left hall sensor."""
+
+class SwitchCarriageToModeNl(Action):
+
+    """The user switches the mode of the carriage to NL."""
+
+class SwitchCarriageToModeKc(Action):
+
+    """The user switches the mode of the carriage to KC."""
