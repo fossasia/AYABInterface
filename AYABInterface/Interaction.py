@@ -17,6 +17,12 @@ class Interaction(object):
     """Interaction with the knitting pattern."""
     
     def __init__(self, knitting_pattern, machine):
+        """Create a new interaction object.
+        
+        :param knitting_pattern: a
+          :class:`~knittingpattern.KnittingPattern.KnittingPattern`
+        :param AYABInterface.machines.Machine machine: the machine to knit on
+        """
         self._machine = machine
         self._communication = None
         self._rows = knitting_pattern.rows_in_knit_order()
