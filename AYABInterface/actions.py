@@ -39,9 +39,13 @@ class Action(object, metaclass=ActionMetaClass):
     
     def __eq__(self, other):
         return other == (self.__class__, self._arguments)
+    
+    def __repr__(self):
+        """Return this object as string."""
+        return self.__class__.__name__ + repr(self._arguments)
 
 
-class SwithOnMachine(Action):
+class SwitchOnMachine(Action):
     
     """The user switches on the machine."""
     

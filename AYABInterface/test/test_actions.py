@@ -38,3 +38,4 @@ class TestCompareActions(object):
         assert not SimpleAction().is_other_action()
         assert OtherAction().is_other_action()
 
+

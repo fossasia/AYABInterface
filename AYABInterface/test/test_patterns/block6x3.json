@@ -1,0 +1,53 @@
+{
+  "type" : "knitting pattern",
+  "version" : "0.1",
+  "comment" : {
+    "content" : "6x3 meshes block",
+    "type" : "markdown"
+    },
+  "patterns" : [
+    {
+      "id" : "knit",
+      "name" : "knit 4x4",
+      "rows" : [
+        {
+          "id" : 1,
+          "instructions" : [
+            {"color":"orange"},{"color":"orange"},{"color":"blue"},{"color":"blue"},{"color":"orange"},{"color":"orange"}
+
+          ]
+        },
+        {
+          "id" : 3,
+          "instructions" : [
+            {"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"}
+            ]
+        },
+        {
+          "id" : 2,
+          "instructions" : [
+            {"color":"orange"},{"color":"orange"},{"color":"blue"},{"color":"blue"},{"color":"orange"},{"color":"orange"}
+            ]
+        }
+      ],
+      "connections" : [
+        {
+          "from" : {
+            "id" : 1
+          },
+          "to" : {
+            "id" : 2
+          }
+        },
+        {
+          "from" : {
+            "id" : 2
+          },
+          "to" : {
+            "id" : 3
+          }
+        }
+      ]
+    }
+  ]
+}
