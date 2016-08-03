@@ -18,6 +18,8 @@ class Machine(object, metaclass=ABCMeta):
 
     This is an abstract base class and some methods need to be overwritten.
     """
+    
+    NAME = None  #: the name of the machine
 
     @abstractproperty
     def number_of_needles(self):
@@ -129,6 +131,40 @@ class Machine(object, metaclass=ABCMeta):
         result.extend(b"\x00" * (25 - len(result)))
         return bytes(result)
 
+    @property
+    def name(self):
+        """The identifier of the machine."""
+        name = self.__class__.__name__
+        for i, character in enumerate(name):
+            if character.isdigit():
+                return name[:i] + "-" + name[i:]
+        return name
+        
+    @property
+    def _id(self):
+        """What this object is equal to."""
+        return (self.__class__, self.number_of_needles, self.needle_positions,
+                self.left_end_needle)
+
+    def __eq__(self, other):
+        """Equavalent of ``self == other``.
+        
+        :rtype: bool
+        :return: whether this object is equal to the other object
+        """
+        return other == self._id
+        
+    def __hash__(self):
+        """Return the hash of this object.
+        
+        .. seealso:: :func:`hash`
+        """
+        return hash(self._id)
+        
+    def __repr__(self):
+        """Return this object as a string."""
+        return "<Machine {}>".format(self.name)
+        
 
 class KH9XXSeries(Machine):
 
@@ -191,6 +227,14 @@ class CK35(Machine):
         """
         return 200
 
+    @property
+    def needle_positions(self):
+        """The different needle positions.
+
+        :rtype: tuple
+        :return: the needle positions are "B" and "D"
+        """
+        return ("B", "D")
 
 class KH270(Machine):
 
@@ -213,6 +257,15 @@ class KH270(Machine):
         :return: the needle positions are "B" and "D"
         """
         return ("B", "D")
+
+
+def get_machines():
+    """Return a list of all machines.
+    
+    :rtype: list
+    :return: a list of :class:`Machines <Machines>`
+    """
+    return [CK35(), KH900(), KH910(), KH930(), KH950(), KH965(), KH270()]
 
 __all__ = ["Machine", "KH9XXSeries", "CK35", "KH900", "KH910", "KH930",
            "KH950", "KH965", "KH270"]

@@ -1,5 +1,5 @@
 """test the different actions a user can perform."""
-from AYABInterface.actions import SwithOnMachine, \
+from AYABInterface.actions import SwitchOnMachine, \
     MoveCarriageOverLeftHallSensor, MoveCarriageToTheLeft, \
     MoveCarriageToTheRight, PutColorInNutA, PutColorInNutB, \
     MoveNeedlesIntoPosition, SwitchCarriageToModeNl, SwitchCarriageToModeKc, \

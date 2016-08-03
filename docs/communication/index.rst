@@ -5,6 +5,8 @@ This document specifies the communication between the host and a controller
 with the
 `AYAB firmware <https://github.com/AllYarnsAreBeautiful/ayab-firmware>`_.
 
+.. _serial-communication-specification:
+
 Serial Communication
 --------------------
 

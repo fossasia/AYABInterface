@@ -140,16 +140,6 @@ class State(object):
         """
         return False
 
-    def is_waiting_for_carriage_to_pass_the_left_turn_mark(self):
-        """Whether the carriage should be moved over the left turn mark.
-
-        This implies that :meth:`is_before_knitting` is :obj:`True`.
-
-        :rtype: bool
-        :return: :obj:`False`
-        """
-        return False
-
     def is_knitting(self):
         """Whether the machine ready to knit or knitting.
 

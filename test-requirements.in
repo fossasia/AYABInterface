@@ -3,6 +3,7 @@ pytest-cov
 pytest-flakes
 pylint
 pytest-pep8
+pytest-timeout
 codeclimate-test-reporter
 untangle
 sphinx

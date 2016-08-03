@@ -91,7 +91,6 @@ class TestReceiveMessages(object):
 
     def test_can_receive_message(
             self, started_communication, create_message, file, messages):
-        print(started_communication.state)
         started_communication.receive_message()
         message_type = create_message.return_value
         create_message.assert_called_once_with(file)
@@ -199,3 +198,77 @@ class TestNeedles(object):
         communication = Communication(file, get_needle_positions, machine,
                                       right_end_needle=needle)
         assert communication.right_end_needle == needle
+
+
+class TestParallelization(object):
+    
+    @fixture
+    def receive_message(self):
+        return Mock()
+    
+    @fixture
+    def communication(self, receive_message):
+        communication = Communication(Mock(), Mock(), Mock())
+        communication.receive_message = receive_message
+        return communication
+    
+    @pytest.mark.timeout(1)
+    def test_parallelize_calls_receive_message(self, communication):
+        try:
+            communication.start()
+            communication.parallelize(0)
+            assert communication._thread.is_alive()
+            while communication.receive_message.call_count < 10:
+                pass
+        finally:
+            communication.stop()
+        
+    @pytest.mark.timeout(1)
+    def test_parallelize_can_be_stopped(self, communication):
+        try:
+            communication.start()
+            communication.parallelize(0)
+            communication.stop()
+            while communication._thread.is_alive():
+                pass
+        finally:
+            communication.stop()
+    
+    @pytest.mark.timeout(1)
+    def test_parallelize_before_start_calls_start(self, communication):
+        try:
+            communication.start = start = Mock()
+            communication.parallelize(0)
+            while not communication.start.called:
+                pass
+        finally:
+            communication.stop()   
+            
+    @pytest.mark.timeout(1)
+    def test_parallelize_after_stop_is_ok(
+            self, communication):
+        try:
+            communication.start()
+            communication.stop()
+            communication.parallelize(0)
+            communication._thread.join()
+        finally:
+            communication.stop()   
+
+    def test_runs_in_parallel_is_false_on_start(self, communication):
+        assert not communication.runs_in_parallel()
+        
+    @pytest.mark.timeout(1)
+    def _test_still_running(self, communication):
+        try:
+            communication.start()
+            communication.parallelize(0)
+            assert communication.runs_in_parallel()
+            communication.stop()
+            communication._thread.join()
+            assert not communication.runs_in_parallel()
+        finally:
+            communication.stop()
+        
+        
+        

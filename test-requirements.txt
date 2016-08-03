@@ -36,3 +36,4 @@ sphinx-paramlinks==0.3.2
 sphinx-rtd-theme==0.1.9
 sphinx==1.4.4
 wrapt==1.10.8             # via astroid
+pytest-timeout==1.0.0

@@ -22,7 +22,23 @@ class Message(object):
         This pattern is called template method.
         Reading from the file should be done here and nowhere else.
         """
-
+        
+    def is_from_host(self):
+        """Whether this message is sent by the host.
+        
+        :rtype: bool
+        :return: :obj:`False`
+        """
+        return False
+        
+    def is_from_controller(self):
+        """Whether this message is sent by the controller.
+        
+        :rtype: bool
+        :return: :obj:`True`
+        """
+        return True
+        
     def is_valid(self):
         """Whether the message is valid.
 

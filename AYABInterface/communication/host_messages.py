@@ -11,6 +11,22 @@ class Message(object):
         self._communication = communication
         assert self.MESSAGE_ID is not None
         self.init(*args, **kw)
+        
+    def is_from_host(self):
+        """Whether this message is sent by the host.
+        
+        :rtype: bool
+        :return: :obj:`True`
+        """
+        return True
+        
+    def is_from_controller(self):
+        """Whether this message is sent by the controller.
+        
+        :rtype: bool
+        :return: :obj:`False`
+        """
+        return False
 
     def init(self):
         """Override this method."""
@@ -35,6 +51,14 @@ class Message(object):
         """Send this message to the controller."""
         self._file.write(self.as_bytes())
         self._file.write(b'\r\n')
+        
+    def __repr__(self):
+        """This message as string inclding the bytes.
+        
+        :rtype: str
+        """
+        return "<{} {}>".format(self.__class__.__name__,
+                                self.as_bytes() + b"\r\n")
 
 
 def _left_end_needle_error_message(needle):
