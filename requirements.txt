@@ -7,6 +7,7 @@
 
 crc8==0.0.3
 pyserial==3.1.1
+knittingpattern==0.1.15
 
 # The following packages are commented out because they are
 # considered to be unsafe in a requirements file:
