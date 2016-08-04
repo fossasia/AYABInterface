@@ -25,7 +25,7 @@ before_script:
 script:
 # test with pep8
 # add coverage for python 3.3 and above
-- py.test --cov=AYABInterface --pep8 --flakes
+- py.test --cov=AYABInterface --pep8 --flakes AYABInterface docs
 # test import form everywhere
 - ( cd / && python3 -c "import AYABInterface;print(\"imported\")" )
 # run tests from installation
