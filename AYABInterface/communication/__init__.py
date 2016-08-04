@@ -186,7 +186,7 @@ class Communication(object):
     """This class comunicates with the AYAB shield."""
 
     def __init__(self, file, get_needle_positions, machine,
-                 on_message_received=(), left_end_needle=None, 
+                 on_message_received=(), left_end_needle=None,
                  right_end_needle=None):
         """Create a new Communication object.
 
@@ -208,7 +208,7 @@ class Communication(object):
         :param right_end_needle: A needle number on the machine.
           Other needles that are on the right side of this needle are not used
           for knitting. Their needle positions are not be set.
-          
+
         """
         self._file = file
         self._on_message_received = on_message_received
@@ -253,10 +253,10 @@ class Communication(object):
             self._state.receive_message(message)
             for callable in chain(self._on_message_received, self._on_message):
                 callable(message)
-    
+
     def on_message(self, callable):
         """Add an observer to received messages.
-        
+
         :param callable: a callable that is called every time a
           :class:`AYABInterface.communication.host_messages.Message` is sent or
           a :class:`AYABInterface.communication.controller_messages.Message` is
@@ -271,20 +271,20 @@ class Communication(object):
             message_type = self._read_message_type(self._file)
             message = message_type(self._file, self)
             self._message_received(message)
-            
+
     def can_receive_messages(self):
         """Whether tihs communication is ready to receive messages.]
-        
+
         :rtype: bool
-        
+
         .. code:: python
-        
+
             assert not communication.can_receive_messages()
             communication.start()
             assert communication.can_receive_messages()
             communication.stop()
             assert not communication.can_receive_messages()
-            
+
         """
         with self.lock:
             return not self._state.is_waiting_for_start() and \
@@ -326,7 +326,7 @@ class Communication(object):
 
         :return: the state this communication object is in.
         :rtype: AYABInterface.communication.states.State
-        
+
         .. note:: When calling :meth:`parallelize` the state can change while
           you check it.
         """
@@ -335,7 +335,7 @@ class Communication(object):
     @property
     def lock(self):
         """The lock of the communication.
-        
+
         In case you :meth:`parallelize` the communication, you may want to use
         this :class:`lock <threading.RLock> to make shure the parallelization
         does not break your code.
@@ -414,16 +414,16 @@ class Communication(object):
 
     def parallelize(self, seconds_to_wait=2):
         """Start a parallel thread for receiving messages.
-        
+
         If :meth:`start` was no called before, start will be called in the
         thread.
         The thread calls :meth:`receive_message` until the :attr:`state`
         :meth:`~AYABInterface.communication.states.State.is_connection_closed`.
-        
+
         :param float seconds_to_wait: A time in seconds to wait with the
           parallel execution. This is useful to allow the controller time to
           initialize.
-        
+
         .. seealso:: :attr:`lock`, :meth:`runs_in_parallel`
         """
         with self.lock:
@@ -432,7 +432,7 @@ class Communication(object):
             thread.deamon = True
             thread.start()
             self._thread = thread
-    
+
     def _parallel_receive_loop(self, seconds_to_wait):
         """Run the receiving in parallel."""
         sleep(seconds_to_wait)
@@ -450,10 +450,10 @@ class Communication(object):
         finally:
             with self._lock:
                 self._number_of_threads_receiving_messages -= 1
-                
+
     def runs_in_parallel(self):
         """Whether the communication runs in parallel.
-        
+
         :rtype: bool
         :return: whether :meth:`parallelize` was called and the communication
           still receives messages and is not stopped

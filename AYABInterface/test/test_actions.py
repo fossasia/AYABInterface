@@ -16,7 +16,7 @@ class OtherAction(Action):
 
 
 class TestCompareActions(object):
-    
+
     @pytest.mark.parametrize("arguments", [(1, 2), ("asd", 12312)])
     @pytest.mark.parametrize("action_class", [SimpleAction, OtherAction])
     def test_equal(self, arguments, action_class):
@@ -31,11 +31,9 @@ class TestCompareActions(object):
         (OtherAction(3, 5), SimpleAction(3, 5))])
     def test_unequal(self, a, b):
         assert a != b
-        
+
     def test_tests(self):
         assert SimpleAction().is_simple_action()
         assert not OtherAction().is_simple_action()
         assert not SimpleAction().is_other_action()
         assert OtherAction().is_other_action()
-
-

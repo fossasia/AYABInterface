@@ -48,10 +48,10 @@ def next_line(last_line, next_line_8bit):
         return upper_line
     return line
 
-    
+
 def camel_case_to_under_score(camel_case_name):
     """Return the underscore name of a camel case name.
-    
+
     :param str camel_case_name: a name in camel case such as
       ``"ACamelCaseName"``
     :return: the name using underscores, e.g. ``"a_camel_case_name"``

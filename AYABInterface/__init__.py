@@ -31,7 +31,7 @@ def NeedlePositions(*args, **kw):
 
 def get_machines():
     """Return a list of all machines that can be used.
-    
+
     :rtype: list
     :return: a list of :class:`Machines <Machines>`
     """
@@ -41,7 +41,7 @@ def get_machines():
 
 def get_connections():
     """Return a list of all available serial connections.
-    
+
     :rtype: list
     :return: a list of :class:`AYABInterface.SerialPort`. All of the
       returned objects have a ``connect()`` method and a ``name`` attribute.

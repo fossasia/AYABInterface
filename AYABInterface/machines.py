@@ -18,7 +18,7 @@ class Machine(object, metaclass=ABCMeta):
 
     This is an abstract base class and some methods need to be overwritten.
     """
-    
+
     NAME = None  #: the name of the machine
 
     @abstractproperty
@@ -139,7 +139,7 @@ class Machine(object, metaclass=ABCMeta):
             if character.isdigit():
                 return name[:i] + "-" + name[i:]
         return name
-        
+
     @property
     def _id(self):
         """What this object is equal to."""
@@ -148,23 +148,23 @@ class Machine(object, metaclass=ABCMeta):
 
     def __eq__(self, other):
         """Equavalent of ``self == other``.
-        
+
         :rtype: bool
         :return: whether this object is equal to the other object
         """
         return other == self._id
-        
+
     def __hash__(self):
         """Return the hash of this object.
-        
+
         .. seealso:: :func:`hash`
         """
         return hash(self._id)
-        
+
     def __repr__(self):
         """Return this object as a string."""
         return "<Machine {}>".format(self.name)
-        
+
 
 class KH9XXSeries(Machine):
 
@@ -236,6 +236,7 @@ class CK35(Machine):
         """
         return ("B", "D")
 
+
 class KH270(Machine):
 
     """The machine type for the Brother KH-270."""
@@ -261,7 +262,7 @@ class KH270(Machine):
 
 def get_machines():
     """Return a list of all machines.
-    
+
     :rtype: list
     :return: a list of :class:`Machines <Machines>`
     """

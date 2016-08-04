@@ -10,7 +10,7 @@ try:
     from serial import Serial
 except:
     import sys
-    print("Install the serial module width '{} -m pip install PySerial'."\
+    print("Install the serial module width '{} -m pip install PySerial'."
           "".format(sys.executable))
 
 
@@ -21,7 +21,7 @@ def list_serial_port_strings():
         On unsupported or unknown platforms
     :returns:
         A list of the serial ports available on the system
-        
+
     .. seealso:: `The Stack Overflow answer
       <http://stackoverflow.com/a/14224477/1320237>`__
     """
@@ -48,7 +48,7 @@ def list_serial_port_strings():
 
 def list_serial_ports():
     """Return a list of all available serial ports.
-    
+
     :rtype: list
     :return: a list of :class:`serial ports <SerialPort>`
     """
@@ -58,40 +58,40 @@ def list_serial_ports():
 class SerialPort(object):
 
     """A class abstracting the port behavior."""
-    
+
     def __init__(self, port):
         """Create a new serial port instance.
-        
+
         :param str port: the port to connect to
-        
+
         .. note:: The baud rate is specified in
           :ref:`serial-communication-specification`
         """
         self._port = port
-        
+
     @property
     def name(self):
         """The name of the port for displaying.
-        
+
         :rtype: str
         """
         return self._port
-    
+
     def connect(self):
         """Return a connection to this port.
-        
+
         :rtype: serial.Serial
         """
         return Serial(self._port, 115200)
-    
+
     def __repr__(self):
         """Return this object as string.
-        
+
         :rtype: str
         """
         return "<{} \"{}\">".format(self.__class__.__name__,
-            repr(self._port)[1:-1])
-        
+                                    repr(self._port)[1:-1])
+
 __all__ = ["list_serial_ports_strings", "list_serial_ports", "SerialPort"]
 
 if __name__ == '__main__':

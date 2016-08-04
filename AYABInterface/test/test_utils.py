@@ -57,9 +57,8 @@ class TestNextLine(object):
 class TestCamelCase(object):
 
     """Test the camel_case_to_under_score function."""
-    
+
     @pytest.mark.parametrize("input,output", [
         ("A", "a"), ("AA", "a_a"), ("ACalCal", "a_cal_cal"), ("NaN", "na_n")])
     def test_conversion(self, input, output):
         assert camel_case_to_under_score(input) == output
-    

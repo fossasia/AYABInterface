@@ -3,6 +3,7 @@ import pytest
 from AYABInterface.machines import Machine, KH910, KH270, get_machines
 import AYABInterface
 
+
 class XMachine(Machine):
 
     def __init__(self, left_end_needle, number_of_needles):
@@ -21,11 +22,12 @@ class XMachine(Machine):
     def left_end_needle(self):
         return self._left_end_needle
 
-        
+
 class MachineN(Machine):
-    
+
     number_of_needles = None
     needle_positions = None
+
 
 class TestNeedleEnds(object):
 
@@ -59,38 +61,38 @@ class TestNeedlePositions(object):
 class TestName(object):
 
     """Test the name attribute."""
-    
+
     @pytest.mark.parametrize("machine,name", [
         (MachineN, "MachineN"), (KH910, "KH-910"),
         (KH270, "KH-270")])
     def test_id(self, machine, name):
         assert machine().name == name
 
-        
+
 class TestGetMachines(object):
 
     """Test get_machines."""
-    
+
     @pytest.mark.parametrize("get_machines", [
         get_machines, AYABInterface.get_machines])
     @pytest.mark.parametrize("machine", [KH910, KH270])
     def test_is_inside(self, machine, get_machines):
         assert machine() in get_machines()
-        
+
 
 class TestEquality(object):
-    
+
     """Test equality and hashing."""
-     
+
     @pytest.mark.parametrize("a,b", [
-        (KH910(), KH270()), (MachineN(), KH910()), 
+        (KH910(), KH270()), (MachineN(), KH910()),
         (XMachine(1, 3), XMachine(1, 2)), (XMachine(2, 2), XMachine(1, 2)),
         (XMachine(2, 2), XMachine(1, 3))])
     def test_unequality(self, a, b):
         assert a != b
 
     @pytest.mark.parametrize("a,b", [
-        (KH910(), KH910()), (MachineN(), MachineN()), 
+        (KH910(), KH910()), (MachineN(), MachineN()),
         (XMachine(1, 2), XMachine(1, 2))])
     def test_equality(self, a, b):
         assert a == b

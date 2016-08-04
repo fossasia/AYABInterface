@@ -10,7 +10,7 @@ from unittest.mock import Mock, call
 class TestListPorts(object):
 
     """Test the port listing."""
-    
+
     def test_list_connections_includes_serial_connections(self, monkeypatch):
         """test that all serial connections are int the listed ocnnections."""
         mocked_list = Mock()
@@ -29,23 +29,23 @@ class TestListPorts(object):
         assert listed_ports == [serial_port.return_value] * len(ports)
         serial_port.assert_has_calls(list(map(call, ports)))
         serial_ports.assert_called_once_with()
-        
+
     def test_list_serial_ports_strings_works(self):
         assert isinstance(list_serial_port_strings(), list)
 
 
 class TestSerialPort(object):
-    
+
     """Test the SerialPort."""
-    
+
     @pytest.mark.parametrize("port", ["COM1", "COM2", "COM24"])
     def test_get_name(self, port):
         serial_port = SerialPort(port)
         assert serial_port.name == port
-        
+
     def test_connect(self, monkeypatch):
         """test creating new serial.Serial instances.
-        
+
         For the baud rate see :ref:`serial-communication-specification`.
         """
         Serial = Mock()
@@ -55,7 +55,7 @@ class TestSerialPort(object):
         serial_connection = serial_port.connect()
         assert serial_connection == Serial.return_value
         Serial.assert_called_once_with(port=port, baudrate=115200)
-    
+
     def test_can_mock_serial_Serial(self):
         from serial import Serial
         assert serial.Serial == Serial
@@ -65,4 +65,3 @@ class TestSerialPort(object):
         serial_port = SerialPort(port)
         string = repr(serial_port)
         assert string == "<SerialPort \"{}\">".format(port)
-        
