@@ -7,25 +7,14 @@
 __version__ = "0.0.2"
 
 
-def Interface(*args, **kw):
-    """Create a new Interface object.
-
-    :return: an :class:`AYABInterface.interface.Interface`
-
-    .. seealso:: :class:`AYABInterface.interface.Interface`
-    """
-    from .interface import Interface
-    return Interface(*args, **kw)
-
-
 def NeedlePositions(*args, **kw):
     """Create a new NeedlePositions object.
 
-    :return: an :class:`AYABInterface.interface.NeedlePositions`
+    :return: an :class:`AYABInterface.needle_positions.NeedlePositions`
 
-    .. seealso:: :class:`AYABInterface.interface.NeedlePositions`
+    .. seealso:: :class:`AYABInterface.needle_positions.NeedlePositions`
     """
-    from .interface import NeedlePositions
+    from .needle_positions import NeedlePositions
     return NeedlePositions(*args, **kw)
 
 

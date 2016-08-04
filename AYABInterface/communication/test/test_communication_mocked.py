@@ -239,7 +239,7 @@ class TestParallelization(object):
         try:
             communication.start = start = Mock()
             communication.parallelize(0)
-            while not communication.start.called:
+            while not start.called:
                 pass
         finally:
             communication.stop()

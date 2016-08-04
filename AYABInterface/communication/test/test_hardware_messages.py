@@ -28,6 +28,11 @@ def one_byte_file(byte):
     return BytesIO(bytes([byte]))
 
 
+def assert_identify_message(message, expected_true=[]):
+    """Replace the assert_identify function and add is_from_controller()."""
+    assert_identify(message, set(expected_true) | set(["is_from_controller"]))
+
+
 class Message(BytesIO):
 
     """A message in a file."""
@@ -109,7 +114,7 @@ class TestUnknownMessage(object):
         """Test the is_* methods."""
         file = Message(bytes)
         message = UnknownMessage(file, communication)
-        assert_identify(message, ["is_unknown"])
+        assert_identify_message(message, ["is_unknown"])
         file.assert_bytes_read(index)
 
     def test_received_by(self):
@@ -133,20 +138,21 @@ class TestSuccessMessage(object):
     def test_success(self, communication):
         file = Message(self.success)
         message = self.message_type(file, communication)
-        assert_identify(message, self.identifiers + ["is_success", "is_valid"])
+        identifiers = self.identifiers + ["is_success", "is_valid"]
+        assert_identify_message(message, identifiers)
         file.assert_is_read()
 
     def test_failure(self, communication):
         file = Message(self.failure)
         message = self.message_type(file, communication)
-        assert_identify(message, self.identifiers + ["is_valid"])
+        assert_identify_message(message, self.identifiers + ["is_valid"])
         file.assert_is_read()
 
     @pytest.mark.parametrize("byte", [2, 20, 220, 255])
     def test_invalid(self, communication, byte):
         file = Message(bytes([byte]) + b"\r\n")
         message = self.message_type(file, communication)
-        assert_identify(message, self.identifiers)
+        assert_identify_message(message, self.identifiers)
         file.assert_is_read()
 
     def test_received_by(self):
@@ -190,7 +196,7 @@ class TestLineRequest(object):
         communication.last_requested_line_number = last_line
         file = Message(byte + b'\r\n')
         message = LineRequest(file, communication)
-        assert_identify(message, ["is_line_request", "is_valid"])
+        assert_identify_message(message, ["is_line_request", "is_valid"])
         assert message.line_number == next_line
         file.assert_is_read()
 
@@ -220,7 +226,8 @@ class TestInformationConfirmation(object):
         assert message.firmware_version == (bytes[1], bytes[2])
         assert message.firmware_version.major == bytes[1]
         assert message.firmware_version.minor == bytes[2]
-        assert_identify(message, ["is_information_confirmation", "is_valid"])
+        assert_identify_message(message,
+                                ["is_information_confirmation", "is_valid"])
         assert message.api_version_is_supported() == api_version
         configuration.api_version_is_supported.assert_called_once_with(
             bytes[0])
@@ -255,9 +262,9 @@ class TestStateIndication(object):
                        bytes([carriage, needle]) + b'\r\n')
         message = StateIndication(file, configuration)
         file.assert_is_read()
-        assert_identify(message, ["is_state_indication"] +
-                        ["is_valid"] * valid +
-                        ["is_ready_to_knit"] * (ready == 1))
+        assert_identify_message(message, ["is_state_indication"] +
+                                ["is_valid"] * valid +
+                                ["is_ready_to_knit"] * (ready == 1))
         assert message.left_hall_sensor_value == left_hall
         assert message.right_hall_sensor_value == right_hall
         assert_identify(message.carriage, carriage_tests)
@@ -287,7 +294,7 @@ class TestDebugMessage(object):
         file = Message(bytes)
         message = Debug(file, configuration)
         file.assert_bytes_read(bytes_read)
-        assert_identify(message, ["is_valid", "is_debug"])
+        assert_identify_message(message, ["is_valid", "is_debug"])
         assert message.bytes == bytes[:length]
 
     def test_received_by(self):

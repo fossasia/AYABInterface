@@ -143,11 +143,11 @@ class TestCreateCommunication(object):
     def test_communication_creation(self, interaction, communication, machine,
                                     Communication, file):
         assert communication == Communication.return_value
-        Communication.assert_called_once_with(file,
-                                              interaction._get_needle_positions, machine,
-                                              [interaction._on_message_received],
-                                              right_end_needle=interaction.right_end_needle,
-                                              left_end_needle=interaction.left_end_needle)
+        Communication.assert_called_once_with(
+            file, interaction._get_needle_positions, machine,
+            [interaction._on_message_received],
+            right_end_needle=interaction.right_end_needle,
+            left_end_needle=interaction.left_end_needle)
 
     def test_interaction_communication_attribute(self, interaction,
                                                  communication):

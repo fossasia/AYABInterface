@@ -19,7 +19,8 @@ class TestListPorts(object):
         mocked_list.assert_called_once_with()
 
     @pytest.mark.parametrize("ports", [["asd", "asdsd", "COM1"], [1, 2, 3, 4]])
-    def test_serial_ports_use_the_result_from_strings(self, monkeypatch, ports):
+    def test_serial_ports_use_the_result_from_strings(
+            self, monkeypatch, ports):
         serial_port = Mock()
         serial_ports = Mock()
         serial_ports.return_value = ports
@@ -54,7 +55,7 @@ class TestSerialPort(object):
         serial_port = SerialPort(port)
         serial_connection = serial_port.connect()
         assert serial_connection == Serial.return_value
-        Serial.assert_called_once_with(port=port, baudrate=115200)
+        Serial.assert_called_once_with(port, 115200)
 
     def test_can_mock_serial_Serial(self):
         from serial import Serial

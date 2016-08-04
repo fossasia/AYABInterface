@@ -9,7 +9,6 @@ try:
     import serial
     from serial import Serial
 except:
-    import sys
     print("Install the serial module width '{} -m pip install PySerial'."
           "".format(sys.executable))
 
@@ -92,7 +91,7 @@ class SerialPort(object):
         return "<{} \"{}\">".format(self.__class__.__name__,
                                     repr(self._port)[1:-1])
 
-__all__ = ["list_serial_ports_strings", "list_serial_ports", "SerialPort"]
+__all__ = ["list_serial_port_strings", "list_serial_ports", "SerialPort"]
 
 if __name__ == '__main__':
     print(list_serial_port_strings())
