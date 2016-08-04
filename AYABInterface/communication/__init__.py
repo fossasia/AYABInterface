@@ -166,7 +166,7 @@ class Communication(object):
         """The lock of the communication.
 
         In case you :meth:`parallelize` the communication, you may want to use
-        this :class:`lock <threading.RLock> to make shure the parallelization
+        this :class:`lock <threading.RLock>` to make shure the parallelization
         does not break your code.
         """
         return self._lock

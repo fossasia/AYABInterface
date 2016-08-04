@@ -7,7 +7,8 @@ The ``AYABInterface`` Module Reference
    init
    actions
    carriages
-   configuration
-   interface
+   interaction
    machines
+   needle_positions
+   serial
    utils

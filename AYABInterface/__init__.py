@@ -38,4 +38,4 @@ def get_connections():
     from .serial import list_serial_ports
     return list_serial_ports()
 
-__all__ = ["Interface", "NeedlePositions", "get_machines", "get_connections"]
+__all__ = ["NeedlePositions", "get_machines", "get_connections"]

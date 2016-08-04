@@ -22,4 +22,4 @@ class KnitCarriage(Carriage):
 
     """The carriage used for knitting."""
 
-__all__ = ["Carriage"]
+__all__ = ["Carriage", "KnitCarriage"]

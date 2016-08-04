@@ -269,4 +269,4 @@ def get_machines():
     return [CK35(), KH900(), KH910(), KH930(), KH950(), KH965(), KH270()]
 
 __all__ = ["Machine", "KH9XXSeries", "CK35", "KH900", "KH910", "KH930",
-           "KH950", "KH965", "KH270"]
+           "KH950", "KH965", "KH270", "get_machines"]
