@@ -53,5 +53,5 @@ deploy:
       secure: h66ad1+7YfosomKf/4EqscrudC2YXTaMhHvQk4QLwj7CeBOSjJNxYjGsf0aALlk7HnpfvJ9zR/pIckZwzfgO1NQulEmh6hf1Hf2c5/qCyfdVNciVbhu9wxnlL1TGMMGAajGyNW/HTPXAAhmSNJdt+ntg+ItM0Nz6wU1OFQqne/kAT+GwuL8pRba/eviSCSlY5BNHQdjMFdqywWgHA3Y7tX5vgeUbmzR3QKPYLA/uxHqyA+V229nF8MwULp1UnxLzyU9by2Vw3dXB2+OA3ZSAt8N+Hw1mPrbttVd2ldpW1hwy2AKAuzciLpmMcf2vzMr0rx0nDLr/qVCwUy57YI8Rm1SDxfwMWuL/Nuc6iE1WQN0Y/e4hX5g4hYyA8ekfM+eMbHZcXXMKRoN2wJTeMS4Hamlv6nfPCw8vY0EAiJlBksST/0EfWk4EaYXRw38os+t7tNuJFlzvCMYl+4H5G2pOhKrjbbgxy/E+BxesY/IM0uwE5EQHCg/rzzr/samFPGT558p8zHPfvifbgOtFs0PuqbKuusq2FctSnazOwYYIaMPvDSVhWMzS0e1meWXvLnzDbWDicEiuWnm6cT3j3x2tnj/p/XUBBkl0Qxxgxj8y0XToHxw7QzYkmR4LVeQ/pzbt7REmkBTM/h9OsK2BEJKicXtvxQNNoEPamHr/odTrHL8=
   on:
     tags: true
-    distributions: sdist bdist_wininst bdist_wheel
+    distributions: sdist bdist_wheel
     repo: fossasia/AYABInterface
