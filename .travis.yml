@@ -51,4 +51,4 @@ deploy:
   on:
     tags: true
     distributions: sdist bdist_wininst bdist_wheel
-    repo: AllYarnsAreBeautiful/AYABInterface
+    repo: fossasia/AYABInterface
