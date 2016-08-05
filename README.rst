@@ -37,8 +37,8 @@ AYABInterface
    :target: https://landscape.io/github/AllYarnsAreBeautiful/AYABInterface/master
    :alt: Code Health
 
-.. image:: https://badge.waffle.io/fossasia/ayab-desktop.svg?label=ready&title=issues%20ready
-   :target: https://waffle.io/fossasia/ayab-desktop
+.. image:: https://badge.waffle.io/fossasia/AYABInterface.svg?label=ready&title=issues%20ready
+   :target: https://waffle.io/fossasia/AYABInterface
    :alt: Issues ready to work on
 
 A Python library with the interface to the AYAB shield.
