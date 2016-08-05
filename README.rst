@@ -6,7 +6,7 @@ AYABInterface
    :alt: Build Status
    
 .. image:: https://ci.appveyor.com/api/projects/status/c1983ovsc8thlhvi?svg=true
-   :target: https://ci.appveyor.com/project/fossasia/AYABInterface
+   :target: https://ci.appveyor.com/project/AllYarnsAreBeautiful/AYABInterface
    :alt: AppVeyor CI build status (Windows)
    
 .. image:: https://codeclimate.com/github/fossasia/AYABInterface/badges/gpa.svg
