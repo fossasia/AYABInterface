@@ -46,7 +46,7 @@ METADATA = dict(
     author_email='niccokunzmann@rambler.ru',
     description='A Python library with the interface to the AYAB shield.',
     license='LGPL',
-    url='https://github.com/AllYarnsAreBeautiful/' + PACKAGE_NAME,
+    url='https://github.com/fossasia/' + PACKAGE_NAME,
     keywords='knitting ayab fashion',
 )
 
