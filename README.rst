@@ -33,8 +33,8 @@ AYABInterface
    :target: http://ayabinterface.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://landscape.io/github/AllYarnsAreBeautiful/AYABInterface/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/AllYarnsAreBeautiful/AYABInterface/master
+.. image:: https://landscape.io/github/fossasia/AYABInterface/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/fossasia/AYABInterface/master
    :alt: Code Health
 
 .. image:: https://badge.waffle.io/fossasia/AYABInterface.svg?label=ready&title=issues%20ready
