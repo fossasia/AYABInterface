@@ -5,7 +5,7 @@ AYABInterface
    :target: https://travis-ci.org/fossasia/AYABInterface
    :alt: Build Status
    
-.. image:: https://ci.appveyor.com/api/projects/status/c1983ovsc8thlhvi?svg=true
+.. image:: https://ci.appveyor.com/api/projects/status/a6yhbt0rqvb212s7?svg=true
    :target: https://ci.appveyor.com/project/AllYarnsAreBeautiful/AYABInterface
    :alt: AppVeyor CI build status (Windows)
    
