@@ -26,6 +26,7 @@ class Interaction(object):
         self._machine = machine
         self._communication = None
         self._rows = knitting_pattern.rows_in_knit_order()
+        self._knitting_pattern = knitting_pattern
 
     @cached_property
     def left_end_needle(self):
@@ -59,14 +60,7 @@ class Interaction(object):
 
     @cached_property
     def colors(self):
-        colors = list()
-        for instruction in self._rows[0].instructions:
-            color = instruction.color
-            if color not in colors:
-                colors.append(color)
-        assert len(colors) <= 2
-        colors.reverse()
-        return colors
+        return list(reversed(self._knitting_pattern.instruction_colors))
 
     def _get_row_needles(self, row_index):
         number_of_needles = self._rows[row_index].number_of_consumed_meshes
