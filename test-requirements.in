@@ -5,7 +5,7 @@ pylint
 pytest-pep8
 pytest-timeout
 codeclimate-test-reporter
-untangle
 sphinx
 sphinx-paramlinks
 sphinx_rtd_theme
+knittingpattern
