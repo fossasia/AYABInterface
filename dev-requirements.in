@@ -1,2 +1,2 @@
 pip-tools
-autopep8==1.2.4
+autopep8
